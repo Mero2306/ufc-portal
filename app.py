@@ -103,10 +103,8 @@ if check_password():
     if page == "🏠 Home Dashboard":
         st.markdown("<h1>🏠 UFC Command Center - Stato dell'Alleanza</h1>", unsafe_allow_html=True)
         st.write("Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale dall'OCR dell'alleanza.")
-        
         st.markdown("<br>", unsafe_allow_html=True)
-        st.info("💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode. You can check your scores and goals with maximum security.")
-        
+        st.info("💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode.")
         st.markdown("<br><br>", unsafe_allow_html=True)
         
         LINK_PULITO = "LAVORI_IN_CORSO"
@@ -122,11 +120,10 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- PAGINA 2: INFO & CHAT OPERATIVE PULITE ---
+    # --- PAGINA 2: INFO & CHAT OPERATIVE ---
     elif page == "📋 Clan Info & Chats":
         st.markdown("<h1>📋 Alliance Info & Official Channels</h1>", unsafe_allow_html=True)
-        st.write("Direttive operative e suddivisione dei canali di comunicazione ufficiali dei Raiders of Chaos.")
-        
+        st.write("Direttive operative e canali ufficiali dei Raiders of Chaos.")
         st.divider()
         st.markdown("### ⚔️ Clan Chats & Descriptions")
         
@@ -168,37 +165,35 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- PAGINA 3: SCHEDA MINIMI RICHIESTI SEPARATA ---
+    # --- PAGINA 3: EVENT MINIMUMS ---
     elif page == "📊 Event Minimums":
         st.markdown("<h1>📊 Official Event Minimums & Targets</h1>", unsafe_allow_html=True)
-        st.write("Obiettivi minimi di coalizione richiesti per la partecipazione agli eventi del Regno.")
-        
+        st.write("Obiettivi minimi di coalizione richiesti per la partecipazione agli eventi.")
         st.divider()
-        st.info("⚠️ **Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.**")
+        st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
         
         col1, col2 = st.columns(2)
-        
         with col1:
             st.markdown("### 📋 Event Minimums")
             st.write("- **Armageddon:** 50 chests")
             st.write("- **Ragnaroc:** 500m")
             st.write("- **Olympus:** 570.000")
             st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
-            
         with col2:
             st.markdown("### 📈 Tracker Goals")
             st.write("- **Punti Minimi Settimanali:** 1.000.000 di punti")
             st.write("- **Vault Goals:** Bonus 100%, Summons: 5, Time: 49 minutes")
-            st.write("- **Tinman Schedule Reset:** +0.5, +2, +4, -2, -1 (points only, not for kill)")
             st.write("- **Tinman Minimum:** 650M")
-            st.write("- **Load number for upcoming week:** 722m (for 4 Ancients) (Ancient points your own weight)")
 
-    # --- PAGINA 4: SCHEDA DISCORD ---
+    # --- PAGINA 4: DISCORD ---
     elif page == "🌐 Discord Server":
         st.markdown("<h1>🌐 Official Raiders of Chaos Discord Server</h1>", unsafe_allow_html=True)
         st.write("Accedi alla base operativa vocale e strategica dell'alleanza su Discord.")
-        
         st.divider()
-        st.markdown("### 📡 Perché è fondamentale unirsi al server Discord?")
+        st.info("💡 Istruzioni per l'accesso: Il pulsante blu verrà attivato a breve con il codice d'invito ufficiale.")
+        
         st.markdown(
-            """
+            f'''
+            <a href="#" target="_blank" style="text-decoration: none;">
+                <div style="background-color: #5865F2; color: white; text-align: center; padding: 20px 24px; border: 2px solid #bd9b53; border-radius: 10px; font-weight: bold; font-size: 20px; box-shadow: 0px 6px 10px rgba(0,0,0,0.5); cursor: pointer; font-family: 'Georgia', serif; text-shadow: 1px 1px 2px #000000;">
+                    🔮 PULSANTE DISCORD - IN ALLESTIMENTO 🔮
