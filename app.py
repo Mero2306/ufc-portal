@@ -78,12 +78,12 @@ translations = {
         "h1_disc": "Serveur Discord Officiel", "w_disc": "Accedez a la base operationnelle sur Discord.",
         "inf_disc": "Le bouton ci-dessous sera bientot active.", "btn_disc": "BOUTON DISCORD - BIENTOT DISPONIBLE",
         "h1_calc": "Manuel Tactique", "sl_calc": "Capacite maximale de marche:", "sb_calc": "Cible de l attaque:",
-        "opts_calc": ["Cryptes Niveau 35", "Citadelles"], "res_title": "Composition recommandée:",
+        "opts_calc": ["Cryptes Niveau 35", "Citadelles"], "res_title": "Composition recommandee:",
         "res_crypt": "Configuration: Envoyez {inf} Infanterie et {arc} Archers.",
         "res_cit": "Ordre de Coalition: Envoyez toute l armee equilibree."
     },
     "Español": {
-        "sub": "PORTAL DE ALIANZA - ACCESO RESTRINGIDO", "pass": "CONTRASEÑA:", "ph": "Ingrese el codigo...",
+        "sub": "PORTAL DE ALIANZA - ACCESO RESTRINGIDO", "pass": "CONTRASENA:", "ph": "Ingrese el codigo...",
         "btn": "ACCEDER", "err": "Contrasena incorrecta",
         "nav": ["Panel Principal", "Info y Chats", "Minimos de Eventos", "Servidor Discord", "Calculadora"],
         "status": "Portal protegido activo.",
