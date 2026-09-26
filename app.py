@@ -12,7 +12,6 @@ st.markdown(
     h1, h2, h3 { color: #bd9b53 !important; font-family: 'Georgia', serif; text-shadow: 2px 2px 4px #000000; font-weight: bold; }
     .stMarkdown p { color: #dfdfdf; font-size: 16px; }
     .stAlert { background-color: #2b2311 !important; border: 1px solid #bd9b53 !important; color: #e6c687 !important; }
-    .stSlider > div [data-baseweb="slider"] > div { background-color: #bd9b53; }
     .chat-box { background-color: #262626; border: 1px solid #444; border-left: 4px solid #bd9b53; padding: 14px; margin-bottom: 12px; border-radius: 4px; }
     </style>
     """,
@@ -51,7 +50,7 @@ else:
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # Selettore lingua aggiornato a 3 opzioni: aggiunto il Francese
+    # Selettore lingua stabile: Inglese, Italiano, Francese
     lang = st.sidebar.selectbox("🌐 INTERFACE LANGUAGE / LINGUA:", ["English", "Italiano", "Français"])
     st.sidebar.markdown("---")
 
@@ -67,7 +66,7 @@ else:
     
     page_index = options.index(selected_page)
 
-    # ==================== PAGINA 0: DASHBOARD PRINCIPALE ====================
+    # --- PAGINA 0: DASHBOARD PRINCIPALE ---
     if page_index == 0:
         if lang == "English":
             st.markdown("<h1>🏠 UFC Command Center - Alliance Status</h1>", unsafe_allow_html=True)
@@ -88,7 +87,7 @@ else:
             st.markdown("<br>", unsafe_allow_html=True)
             st.link_button("⚔️ CLIQUEZ ICI POUR OUVRIR LE CLASSEMENT DES COFFRES ⚔️", "https://google.com", use_container_width=True)
 
-    # ==================== PAGINA 1: CLAN INFO & CHATS ====================
+    # --- PAGINA 1: CLAN INFO & CHATS (CORRETTO INDICE NUMERICO SEQUENZIALE) ---
     elif page_index == 1:
         if lang == "English":
             st.markdown("<h1>📋 Alliance Info and Official Channels</h1>", unsafe_allow_html=True)
@@ -139,9 +138,11 @@ else:
                 """, unsafe_allow_html=True
             )
 
-    # ==================== PAGINA 2: EVENT MINIMUMS ====================
+    # --- PAGINA 2: EVENT MINIMUMS (BLOCCO SEQUENZIALE PERFETTAMENTE SEPARATO) ---
     elif page_index == 2:
         if lang == "English":
             st.markdown("<h1>📊 Official Event Minimums and Targets</h1>", unsafe_allow_html=True)
             st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
             st.markdown("### 📋 Minimums")
+            st.write("- **Monthly Minimum Points:** 1,000,000 points *(points to earn with level 30 rare crypts, level 30/35 epic crypts, and epic monster chests)*")
+            st.write("- **Armageddon:** 50 chests")
