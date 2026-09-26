@@ -39,11 +39,11 @@ st.markdown(
     .stSlider > div [data-baseweb="slider"] > div {
         background-color: #bd9b53;
     }
-    /* Centratura e riduzione logo (Dimensione ottimizzata) */
+    /* Centratura e ulteriore riduzione del logo */
     .stImage > img {
         margin: 0 auto;
         display: block;
-        max-width: 280px !important;  /* Forza il logo a essere più piccolo e proporzionato */
+        max-width: 180px !important;  /* Ridotto ulteriormente per un look compatto ed elegante */
         border-radius: 8px;
         box-shadow: 0px 4px 10px rgba(0,0,0,0.7);
     }
@@ -52,7 +52,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK CON NUOVO NOME E LOGO RIDOTTO)
+# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK CON NUOVO NOME E LOGO COMPATTO)
 def check_password():
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
@@ -64,14 +64,13 @@ def check_password():
     col_v1, col_login, col_v2 = st.columns(3)
     
     with col_login:
-        # Il server proietta il logo con la nuova dimensione ridotta
+        # Proietta il logo con la nuova dimensione compatta
         if os.path.exists("logo.png"):
             st.image("logo.png", use_container_width=True)
         else:
-            st.markdown('<h1 style="text-align: center; font-size: 60px; margin: 0px;">🛡️</h1>', unsafe_allow_html=True)
+            st.markdown('<h1 style="text-align: center; font-size: 50px; margin: 0px;">🛡️</h1>', unsafe_allow_html=True)
             
-        # AGGIORNATO IL NOME DEL CLAN DI SEGUITO
-        st.markdown("<h1 style='text-align: center; margin-top: 15px; font-size: 28px;'>UFC RAIDERS OF CHAOS</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center; margin-top: 15px; font-size: 26px;'>UFC RAIDERS OF CHAOS</h1>", unsafe_allow_html=True)
         st.markdown("<h3 style='text-align: center; font-size: 13px; letter-spacing: 2px; color: #bd9b53;'>PORTALE ALLEANZA - ACCESSO RISERVATO</h3>", unsafe_allow_html=True)
         password_entered = st.text_input("PASSWORD CLAN:", type="password", placeholder="Inserisci il codice d'accesso...")
         
@@ -87,11 +86,11 @@ def check_password():
 # 3. SE LOGGATO, APRI IL SITO DEL CLAN
 if check_password():
     
-    # BARRA LATERALE DI NAVIGAZIONE CON LOGO DEL CLAN
+    # BARRA LATERALE DI NAVIGAZIONE CON LOGO COMPATTO
     if os.path.exists("logo.png"):
-        st.sidebar.image("logo.png", width=110) # Logo più piccolo e pulito anche nella barra laterale
+        st.sidebar.image("logo.png", width=90) # Più piccolo anche nella barra laterale per non rubare spazio
     else:
-        st.sidebar.markdown("<h1 style='font-size: 50px; text-align: center; margin-bottom: 0px;'>🛡️</h1>", unsafe_allow_html=True)
+        st.sidebar.markdown("<h1 style='font-size: 40px; text-align: center; margin-bottom: 0px;'>🛡️</h1>", unsafe_allow_html=True)
         
     st.sidebar.markdown("<h2 style='font-size: 20px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "⚔️ Troops Calculator"])
@@ -108,7 +107,7 @@ if check_password():
         
         st.markdown("<br><br>", unsafe_allow_html=True)
         
-        # Segnaposto temporaneo in attesa del link finale
+        # Segnaposto temporaneo
         LINK_PULITO = "LAVORI_IN_CORSO"
         
         st.markdown(
