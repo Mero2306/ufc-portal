@@ -39,25 +39,18 @@ st.markdown(
     .stSlider > div [data-baseweb="slider"] > div {
         background-color: #bd9b53;
     }
-    /* Centratura forzata e ombra per il contenitore del logo */
-    .centered-logo-box {
+    /* Allineamento centrale per il blocco login di Streamlit */
+    [data-testid="stVerticalBlock"] > div:has(img) {
+        text-align: center !important;
         display: flex;
         justify-content: center;
-        align-items: center;
-        text-align: center;
-        margin: 0 auto;
-        padding-bottom: 10px;
-    }
-    .centered-logo-box img {
-        border-radius: 8px;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.7);
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK CON LOGO FORZATAMENTE CENTRATO)
+# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK CON CENTRATURA INTEGRATA)
 def check_password():
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
@@ -69,16 +62,9 @@ def check_password():
     col_v1, col_login, col_v2 = st.columns(3)
     
     with col_login:
-        # TRUCCO DI CENTRATURA ASSOLUTA: Usiamo codice HTML nativo per bloccare il logo al centro millimetrico
+        # LETTURA DIRETTA DEL FILE SENZA PERCORSI HTML STRANI (Bypassa i blocchi del server)
         if os.path.exists("logo.png"):
-            st.markdown(
-                """
-                <div class="centered-logo-box">
-                    <img src="app/static/logo.png" width="145">
-                </div>
-                """, 
-                unsafe_allow_html=True
-            )
+            st.image("logo.png", width=145)
         else:
             st.markdown('<h1 style="text-align: center; font-size: 45px; margin: 0px;">🛡️</h1>', unsafe_allow_html=True)
             
@@ -98,7 +84,7 @@ def check_password():
 # 3. SE LOGGATO, APRI IL SITO DEL CLAN
 if check_password():
     
-    # BARRA LATERALE DI NAVIGAZIONE CON LOGO PROPORZIONATO
+    # BARRA LATERALE DI NAVIGAZIONE CON LOGO COMPATTO
     if os.path.exists("logo.png"):
         st.sidebar.image("logo.png", width=85) 
     else:
@@ -152,6 +138,3 @@ if check_password():
         else:
             balanced = int(capacity / 3)
             st.info(f"📌 **Configurazione Standard:** Manda una ripartizione perfetta: **{balanced:,} Fanteria, {balanced:,} Arcieri, {balanced:,} Cavalleria**.".replace(",", "."))
-
- 
- 
