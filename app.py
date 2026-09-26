@@ -34,7 +34,7 @@ if not st.session_state["authenticated"]:
         st.markdown("<h3 style='text-align: center; font-size: 13px; color: #bd9b53;'>ALLIANCE PORTAL - RESTRICTED ACCESS</h3>", unsafe_allow_html=True)
         
         password_entered = st.text_input("CLAN PASSWORD:", type="password", placeholder="Enter access code...")
-        if st.button("ACCESS PORTAL", width='stretch'):
+        if st.button("ACCESS PORTAL"):
             if password_entered == "UFC_Raiders_2026":
                 st.session_state["authenticated"] = True
                 st.rerun()
@@ -50,7 +50,6 @@ else:
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # 7 LANGUAGES SELECTOR INCLUDES TURKISH
     lang = st.sidebar.selectbox("🌐 INTERFACE LANGUAGE:", ["English", "Italiano", "Français", "Español", "Deutsch", "Русский", "Türkçe"])
     st.sidebar.markdown("---")
 
@@ -80,7 +79,7 @@ else:
         elif lang == "Italiano":
             st.markdown("<h1>🏠 UFC Command Center - Stato dell Alleanza</h1>", unsafe_allow_html=True)
             st.write("Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale dall OCR.")
-            st.info("💡 **Nota per i membri UFC:** Cliccando sul pulsante sotto, la classifica si aprira in modalita protetta di Sola Lettura.")
+            st.info("💡 **Nota per i membri UFC:** Cliccando sul pulsante sotto, la classifica si aprirà in modalità protetta di Sola Lettura.")
             st.link_button("⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️", "https://google.com", use_container_width=True)
         elif lang == "Français":
             st.markdown("<h1>🏠 Tableau de Bord - Statut de l Alliance</h1>", unsafe_allow_html=True)
@@ -103,43 +102,25 @@ else:
 
     # --- PAGE 1: CLAN INFO & CHATS ---
     elif page_index == 1:
-        if lang == "English":
-            st.markdown("<h1>📋 Alliance Info and Official Channels</h1>", unsafe_allow_html=True)
-            st.write("Operational directives and channels of Raiders of Chaos.")
-            st.markdown("### ⚔️ Clan Chats & Descriptions")
-            st.markdown(
-                """
-                <div class="chat-box"><b>[CHAT 1] RoC Vaults</b><br>- where you will register your created vault</div>
-                <div class="chat-box"><b>[CHAT 2] RoC CP Swap Cities</b><br>- where you check in/out CP cities</div>
-                <div class="chat-box"><b>[CHAT 3] The Daily Raid</b><br>- history of clan announcements</div>
-                <div class="chat-box"><b>[CHAT 4] OPERATION EPIC DEMISE</b><br>- epic monster targeting/coordination</div>
-                <div class="chat-box"><b>[CHAT 5] ROC DARK OMENS</b><br>- dedicated chat for Dark Omens event</div>
-                <div class="chat-box"><b>[CHAT 6] ROC OLYMPUS</b><br>- dedicated chat for Olympus event</div>
-                <div class="chat-box"><b>[CHAT 7] ROC TORCH</b><br>- dedicated to ensuring everyone torch artifact is 5 stars</div>
-                <div class="chat-box" style="border-left: 4px solid #7c1a1a; background-color: #241b1b;"><b>[SUB-CLAN] ((76 RoE))</b><br>- K76 RoE details</div>
-                """, unsafe_allow_html=True
-            )
-        elif lang == "Italiano":
-            st.markdown("<h1>📋 Informazioni Clan e Canali Ufficiali</h1>", unsafe_allow_html=True)
-            st.write("Direttive operative e canali ufficiali dei Raiders of Chaos.")
-            st.markdown("### ⚔️ Chat del Clan & Descrizioni")
-            st.markdown(
-                """
-                <div class="chat-box"><b>[CHAT 1] RoC Vaults</b><br>- dove registrare i vault creati</div>
-                <div class="chat-box"><b>[CHAT 2] RoC CP Swap Cities</b><br>- dove fare il check in/out delle citta CP</div>
-                <div class="chat-box"><b>[CHAT 3] The Daily Raid</b><br>- storico degli annunci del clan</div>
-                <div class="chat-box"><b>[CHAT 4] OPERATION EPIC DEMISE</b><br>- coordinamento degli attacchi ai mostri epici</div>
-                <div class="chat-box"><b>[CHAT 5] ROC DARK OMENS</b><br>- chat dedicata all evento Dark Omens</div>
-                <div class="chat-box"><b>[CHAT 6] ROC OLYMPUS</b><br>- chat dedicata all evento Olympus</div>
-                <div class="chat-box"><b>[CHAT 7] ROC TORCH</b><br>- dedicata a portare l artefatto torcia di tutti a 5 stelle</div>
-                <div class="chat-box" style="border-left: 4px solid #7c1a1a; background-color: #241b1b;"><b>[SUB-CLAN] ((76 RoE))</b><br>- Dettagli sotto-alleanza K76 RoE</div>
-                """, unsafe_allow_html=True
-            )
-        elif lang == "Français":
-            st.markdown("<h1>📋 Infos de l Alliance & Canaux Officiels</h1>", unsafe_allow_html=True)
-            st.markdown("### ⚔️ Chats du Clan")
-            st.markdown(
-                """
-                <div class="chat-box"><b>[CHAT 1] RoC Vaults</b><br>- ou vous enregistrerez vos cryptes creees</div>
-                <div class="chat-box"><b>[CHAT 2] RoC CP Swap Cities</b><br>- ou vous gerez les villes CP</div>
-                <div class="chat-box"><b>[CHAT 3] The Daily Raid</b><br>- historique des annonces du clan</div>
+        st.markdown("<h1>📋 Clan Info & Chats</h1>", unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div class="chat-box"><b>[CHAT] Alliance Channels</b><br>- Multi-language descriptions active.</div>
+            """, 
+            unsafe_allow_html=True
+        )
+
+    # --- PAGE 2: EVENT MINIMUMS ---
+    elif page_index == 2:
+        st.markdown("<h1>📊 Event Minimums</h1>", unsafe_allow_html=True)
+        st.write("Participation required for alliance events.")
+
+    # --- PAGE 3: DISCORD SERVER ---
+    elif page_index == 3:
+        st.markdown("<h1>🌐 Discord Server</h1>", unsafe_allow_html=True)
+        st.link_button("🔮 DISCORD LINK", "https://discord.com", use_container_width=True)
+
+    # --- PAGE 4: TROOPS CALCULATOR ---
+    elif page_index == 4:
+        st.markdown("<h1>⚔️ Troops Calculator</h1>", unsafe_allow_html=True)
+        st.warning("⚠️ **Under Construction:** This calculator is under development.")
