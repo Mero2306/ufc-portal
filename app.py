@@ -66,8 +66,6 @@ if check_password():
         st.markdown("<br>", unsafe_allow_html=True)
         st.info("💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode.")
         st.markdown("<br>", unsafe_allow_html=True)
-        
-        # Bottone ultra-pulito senza script intrecciati per evitare qualsiasi blocco
         st.link_button("⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️", "https://google.com", use_container_width=True)
 
     # --- PAGINA 2: INFO & CHAT OPERATIVE ---
@@ -91,26 +89,19 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- PAGINA 3: EVENT MINIMUMS ---
+    # --- PAGINA 3: EVENT MINIMUMS (PULITA E ACCORPATA) ---
     elif page == "📊 Event Minimums":
         st.markdown("<h1>📊 Official Event Minimums & Targets</h1>", unsafe_allow_html=True)
         st.write("Obiettivi minimi di coalizione richiesti per la partecipazione agli eventi.")
         st.divider()
         st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
         
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown("### 📋 Event Minimums")
-            st.write("- **Armageddon:** 50 chests")
-            st.write("- **Ragnaroc:** 500m")
-            st.write("- **Olympus:** 570.000")
-            st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
-        with col2:
-            st.markdown("### 📈 Tracker Goals")
-            st.write("- **Punti Minimi Settimanali:** 1.000.000 di punti")
-            st.write("- **Vault Goals:** Bonus 100%, Summons: 5, Time: 49 minutes")
-            st.write("- **Tinman Minimum:** 650M")
-            st.write("- **Load number for upcoming week:** 722m (for 4 Ancients)")
+        st.markdown("### 📋 Event Minimums")
+        st.write("- **Punti Minimi Settimanali:** 1.000.000 di punti")
+        st.write("- **Armageddon:** 50 chests")
+        st.write("- **Ragnaroc:** 500m")
+        st.write("- **Olympus:** 570.000")
+        st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
 
     # --- PAGINA 4: DISCORD ---
     elif page == "🌐 Discord Server":
