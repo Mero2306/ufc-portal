@@ -89,7 +89,7 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- PAGE 3: EVENT MINIMUMS ---
+    # --- PAGE 3: EVENT MINIMUMS (AGGIORNATA CON LA TUA SPECIFICA SUI MOSTRI) ---
     elif page == "📊 Event Minimums":
         st.markdown("<h1>📊 Official Event Minimums & Targets</h1>", unsafe_allow_html=True)
         st.write("Minimum coalition targets required for event participation.")
@@ -97,7 +97,7 @@ if check_password():
         st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
         
         st.markdown("### 📋 Event Minimums")
-        st.write("- **Monthly Minimum Points:** 1,000,000 points *(points to earn with level 30 rare crypts, level 30/35 epic crypts)*")
+        st.write("- **Monthly Minimum Points:** 1,000,000 points *(points to earn with level 30 rare crypts, level 30/35 epic crypts, and epic monster chests)*")
         st.write("- **Armageddon:** 50 chests")
         st.write("- **Ragnaroc:** 500m")
         st.write("- **Olympus:** 570.000")
@@ -114,7 +114,7 @@ if check_password():
 
     # --- PAGE 5: TROOPS CALCULATOR ---
     elif page == "⚔️ Troops Calculator":
-        st.markdown("<h1>⚔️ UFC Tactical Manual & March Simulator</h1>", unsafe_allow_html=True)
+        st.markdown("<h1>⚔️ UFC UFC Tactical Manual & March Simulator</h1>", unsafe_allow_html=True)
         capacity = st.slider("Select your maximum march capacity:", 10000, 600000, 200000, step=5000)
         target = st.selectbox("Select attack target:", ["Level 35 Crypts", "Alliance Citadels"])
         
