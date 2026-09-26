@@ -89,7 +89,7 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- PAGINA 3: EVENT MINIMUMS (PULITA E ACCORPATA) ---
+    # --- PAGINA 3: EVENT MINIMUMS (CORRETTA) ---
     elif page == "📊 Event Minimums":
         st.markdown("<h1>📊 Official Event Minimums & Targets</h1>", unsafe_allow_html=True)
         st.write("Obiettivi minimi di coalizione richiesti per la partecipazione agli eventi.")
@@ -97,7 +97,7 @@ if check_password():
         st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
         
         st.markdown("### 📋 Event Minimums")
-        st.write("- **Punti Minimi Settimanali:** 1.000.000 di punti")
+        st.write("- **Punti Minimi Mensili:** 1.000.000 di punti *(points to earn with level 30 rare crypts, level 30/35 epic crypts)*")
         st.write("- **Armageddon:** 50 chests")
         st.write("- **Ragnaroc:** 500m")
         st.write("- **Olympus:** 570.000")
