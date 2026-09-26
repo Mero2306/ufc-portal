@@ -47,7 +47,6 @@ st.markdown(
         padding: 14px;
         margin-bottom: 12px;
         border-radius: 4px;
-        font-family: 'Courier New', Courier, monospace;
     }
     </style>
     """,
@@ -121,53 +120,69 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- PAGINA 2: LE TUE CHAT REALI DEL CLAN ---
+    # --- PAGINA 2: LE TUE CHAT REALI CON LE DESCRIZIONI ESTRATTE DALL'IMMAGINE ---
     elif page == "📋 Clan Info & Chats":
         st.markdown("<h1>📋 Alliance Info & Official Channels</h1>", unsafe_allow_html=True)
         st.write("Direttive operative e suddivisione dei canali di comunicazione ufficiali dei Raiders of Chaos.")
         
         st.divider()
-        st.markdown("### ⚔️ Tactical In-Game & Discord Chats")
-        st.write("Rimani sincronizzato sui canali operativi corretti in base alle attività militari in corso.")
+        st.markdown("### ⚔️ Clan Chats & Descriptions")
+        st.write("Rimani sincronizzato sui canali operativi corretti estratti dalla bacheca ufficiale di gioco.")
         
-        # Iniezione della tua lista esatta senza toccare maiuscole e minuscole
+        # Elenco modificato inserendo le descrizioni esatte ricavate dalla foto
         st.markdown(
             """
             <div class="chat-box">
-                <span style="color: #bd9b53; font-weight: bold;">[CHAT 1]</span> <b>RoC Vaults</b><br>
-                <span style="color: #dfdfdf; font-size: 14px;">Canale tattico dedicato al coordinamento e al tracciamento dei forzieri e delle cripte di alleanza.</span>
+                <span style="color: #bd9b53; font-weight: bold; font-family: 'Courier New';">[CHAT 1]</span> <b style="font-family: 'Courier New';">RoC Vaults</b><br>
+                <span style="color: #dfdfdf; font-size: 15px;">- where you will register your created vault</span>
             </div>
             <div class="chat-box">
-                <span style="color: #bd9b53; font-weight: bold;">[CHAT 2]</span> <b>RoC CP Swap Cities</b><br>
-                <span style="color: #dfdfdf; font-size: 14px;">Coordinamento militare per la gestione, lo scambio e il controllo dei punti di controllo e delle città.</span>
+                <span style="color: #bd9b53; font-weight: bold; font-family: 'Courier New';">[CHAT 2]</span> <b style="font-family: 'Courier New';">RoC CP Swap Cities</b><br>
+                <span style="color: #dfdfdf; font-size: 15px;">- where you check in/out CP cities</span>
             </div>
             <div class="chat-box">
-                <span style="color: #bd9b53; font-weight: bold;">[CHAT 3]</span> <b>The Daily Raid</b><br>
-                <span style="color: #dfdfdf; font-size: 14px;">Canale operativo per gli attacchi giornalieri continui e i raduni standard dell'alleanza.</span>
+                <span style="color: #bd9b53; font-weight: bold; font-family: 'Courier New';">[CHAT 3]</span> <b style="font-family: 'Courier New';">The Daily Raid</b><br>
+                <span style="color: #dfdfdf; font-size: 15px;">- history of clan announcements</span>
             </div>
             <div class="chat-box">
-                <span style="color: #bd9b53; font-weight: bold;">[CHAT 4]</span> <b>OPERATION EPIC DEMISE</b><br>
-                <span style="color: #dfdfdf; font-size: 14px;">Chat di coalizione per le manovre di attacco su larga scala contro i boss e mostri epici del regno.</span>
+                <span style="color: #bd9b53; font-weight: bold; font-family: 'Courier New';">[CHAT 4]</span> <b style="font-family: 'Courier New';">OPERATION EPIC DEMISE</b><br>
+                <span style="color: #dfdfdf; font-size: 15px;">- epic monster targeting/coordination</span>
             </div>
             <div class="chat-box">
-                <span style="color: #bd9b53; font-weight: bold;">[CHAT 5]</span> <b>ROC DARK OMENS</b><br>
-                <span style="color: #dfdfdf; font-size: 14px;">Canale strategico d'avanguardia riservato alle direttive e agli avvisi critici dei Generali.</span>
+                <span style="color: #bd9b53; font-weight: bold; font-family: 'Courier New';">[CHAT 5]</span> <b style="font-family: 'Courier New';">ROC DARK OMENS</b><br>
+                <span style="color: #dfdfdf; font-size: 15px;">- dedicated chat for Dark Omens event</span>
             </div>
             <div class="chat-box">
-                <span style="color: #bd9b53; font-weight: bold;">[CHAT 6]</span> <b>ROC OLYMPUS</b><br>
-                <span style="color: #dfdfdf; font-size: 14px;">Coordinamento per gli eventi supremi del server, tornei maggiori e battaglie d'élite.</span>
+                <span style="color: #bd9b53; font-weight: bold; font-family: 'Courier New';">[CHAT 6]</span> <b style="font-family: 'Courier New';">ROC OLYMPUS</b><br>
+                <span style="color: #dfdfdf; font-size: 15px;">- dedicated chat for Olympus event</span>
             </div>
             <div class="chat-box">
-                <span style="color: #bd9b53; font-weight: bold;">[CHAT 7]</span> <b>ROC TORCH</b><br>
-                <span style="color: #dfdfdf; font-size: 14px;">Canale di supporto tattico, logistica e comunicazioni interne del Clan.</span>
+                <span style="color: #bd9b53; font-weight: bold; font-family: 'Courier New';">[CHAT 7]</span> <b style="font-family: 'Courier New';">ROC TORCH</b><br>
+                <span style="color: #dfdfdf; font-size: 15px;">- dedicated to ensuring everyone's torch artifact is 5 stars</span>
+            </div>
+            <div class="chat-box" style="border-left: 4px solid #7c1a1a; background-color: #241b1b;">
+                <span style="color: #ff4b4b; font-weight: bold; font-family: 'Courier New';">[SUB-CLAN]</span> <b style="font-family: 'Courier New';">((76 RoE))</b><br>
+                <span style="color: #dfdfdf; font-size: 15px;">- K76 RoE details</span>
             </div>
             """, 
             unsafe_allow_html=True
         )
         
         st.divider()
-        st.markdown("### 📜 Weekly Regulations")
-        st.info("⚠️ Tutti i membri sono tenuti a seguire i canali sopra indicati e gli obiettivi settimanali estratti dal sistema OCR.")
+        st.markdown("### 📜 Event Minimums")
+        st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
+        
+        # Abbiamo aggiunto anche i dati dei forzieri minimi letti dalla bacheca!
+        col_r1, col_r2 = st.columns(2)
+        with col_r1:
+            st.markdown("#### 📊 Minimum Score Requirements")
+            st.write("- **Armageddon:** 50 chests")
+            st.write("- **Ragnarok:** 300m")
+            st.write("- **Olympus:** 570,000")
+        with col_r2:
+            st.markdown("#### 🛡️ Strategy & Vault Goals")
+            st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
+            st.write("- **Bonus:** 100%, **Summons:** 5, **Time:** 49 minutes")
 
     # --- PAGINA 3: CALCOLATORE TRUPPE ---
     elif page == "⚔️ Troops Calculator":
@@ -182,11 +197,5 @@ if check_password():
         if target == "Cripte Livello 35":
             infantry = int(capacity * 0.6)
             archers = int(capacity * 0.4)
-            st.success(f"💥 **Configurazione Cripte:** Manda **{infantry:,} Fanteria** e **{archers:,} Arcieri** (Ottimizzato per zero perdite).".replace(",", "."))
-        elif target == "Cittadelle dell'Alleanza":
-            st.warning("⚠️ **Ordine di Coalizione:** Manda l'intero esercito bilanciato secondo le precise direttive del Maresciallo in chat di gioco.")
-        else:
-            balanced = int(capacity / 3)
-            st.info(f"📌 **Configurazione Standard:** Manda una ripartizione perfetta: **{balanced:,} Fanteria, {balanced:,} Arcieri, {balanced:,} Cavalleria**.".replace(",", "."))
 
-   
+ 
