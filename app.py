@@ -70,7 +70,9 @@ else:
     
     page_index = options.index(selected_page)
 
-    # --- CHAT TRANSLATIONS DATA BOARD ---
+    # --- CHAT DICTIONARIES FOR CHAT 1 TO 7 ---
+    chat_titles = ["[CHAT 1] RoC Vaults", "[CHAT 2] RoC CP Swap Cities", "[CHAT 3] The Daily Raid", "[CHAT 4] OPERATION EPIC DEMISE", "[CHAT 5] ROC DARK OMENS", "[CHAT 6] ROC OLYMPUS", "[CHAT 7] ROC TORCH", "[SUB-CLAN] ((76 RoE))"]
+    
     chat_descs = {
         "English": ["where you will register your created vault", "where you check in/out CP cities", "history of clan announcements", "epic monster targeting/coordination", "dedicated chat for Dark Omens event", "dedicated chat for Olympus event", "dedicated to ensuring everyone torch artifact is 5 stars", "K76 RoE details"],
         "Italiano": ["dove registrare i vault creati", "dove fare il check in/out delle citta CP", "storico degli annunci del clan", "coordinamento degli attacchi ai mostri epici", "chat dedicata all evento Dark Omens", "chat dedicata all evento Olympus", "dedicata a portare l artefatto torcia di tutti a 5 stelle", "Dettagli sotto-alleanza K76 RoE"],
@@ -79,7 +81,40 @@ else:
         "Deutsch": ["Wo Sie Ihre erstellten Krypten registrieren", "Wo Sie CP-Stadte verwalten", "Verlauf der Klan-Ankündigungen", "Koordination gegen epische Monster", "Chat fur das Dark Omens Event", "Chat fur das Olympus Event", "Fur das Fackel-Artefakt auf 5 Sterne fur alle", "K76 RoE Details"],
         "Русский": ["где вы регистрируете свои созданные крипты", "где вы управляете городами CP", "история объявлений клана", "координация против эпических монстров", "чат для события Dark Omens", "чат для события Olympus", "для прокачки факела на 5 звезд для всех", "подробности K76 RoE"]
     }
-    cd = chat_descs[lang]
+
+    # --- MINIMUMS DICTIONARIES ---
+    min_labels = {
+        "English": {
+            "h1": "📊 Official Event Minimums and Targets", "warn": "Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.",
+            "pt": "Monthly Minimum Points: 1,000,000 points (crypts level 30 rare, level 30/35 epic, and epic monster chests)",
+            "arm": "Armageddon: 50 chests", "rag": "Ragnaroc: 500m", "oly": "Olympus: 570.000", "dark": "Dark Omens: 100 chests, max oil deployed and fair share of defense"
+        },
+        "Italiano": {
+            "h1": "📊 Minimi Richiesti per gli Eventi", "warn": "La partecipazione e richiesta per gli eventi Antichi, Ragnarok, Olympus e Dark Omens.",
+            "pt": "Punti Minimi Mensili: 1.000.000 di punti (cripte rare liv 30, cripte epiche liv 30/35 e forzieri mostri epici)",
+            "arm": "Armageddon: 50 forzieri", "rag": "Ragnaroc: 500m", "oly": "Olympus: 570.000", "dark": "Dark Omens: 100 forzieri, massimo olio schierato e difesa attiva"
+        },
+        "Français": {
+            "h1": "📊 Minimums et Objectifs des Événements", "warn": "Participation requise aux Ancients, Ragnarok, Olympus et Dark Omens.",
+            "pt": "Points Minimums Mensuels: 1 000 000 points (cryptes rare 30, cryptes epique 30/35, et coffres de monstres)",
+            "arm": "Armageddon: 50 coffres", "rag": "Ragnaroc: 500m", "oly": "Olympus: 570.000", "dark": "Dark Omens: 100 coffres de clan, max huile deployee"
+        },
+        "Español": {
+            "h1": "📊 Mínimos y Objetivos Oficiales", "warn": "Participación requerida en Ancients, Ragnarok, Olympus y Dark Omens.",
+            "pt": "Puntos Mínimos Mensuales: 1,000,000 puntos (criptas raras 30, epicas 30/35 y monstruos)",
+            "arm": "Armageddon: 50 cofres", "rag": "Ragnaroc: 500m", "oly": "Olympus: 570.000", "dark": "Dark Omens: 100 cofres, maximo petroleo"
+        },
+        "Deutsch": {
+            "h1": "📊 Offizielle Event Mindestwerte", "warn": "Teilnahme erforderlich fur Ancients, Ragnarok, Olympus und Dark Omens.",
+            "pt": "Monatliche Mindestpunkte: 1.000.000 Punkte (Stufe 30 Krypten, Stufe 30/35 epische Krypten)",
+            "arm": "Armageddon: 50 Kisten", "rag": "Ragnaroc: 500m", "oly": "Olympus: 570.000", "dark": "Dark Omens: 100 Kisten, max Ol"
+        },
+        "Русский": {
+            "h1": "📊 Минимальные требования к событиям", "warn": "Требуется участие в событиях Ancients, Ragnarok, Olympus и Dark Omens.",
+            "pt": "Минимальные месячные очки: 1 000 000 очков (редкие крипты 30, эпические крипты 30/35)",
+            "arm": "Armageddon: 50 сундуков", "rag": "Ragnaroc: 500m", "oly": "Olympus: 570.000", "dark": "Dark Omens: 100 сундуков, макс нефть"
+        }
+    }
 
     # --- PAGE 0: HOME DASHBOARD ---
     if page_index == 0:
@@ -96,46 +131,3 @@ else:
         elif lang == "Français":
             st.markdown("<h1>🏠 Tableau de Bord - Statut de l Alliance</h1>", unsafe_allow_html=True)
             st.info("💡 En clicking ci-dessous, le classement s ouvrira en mode lecture seule.")
-            st.link_button("⚔️ CLIQUEZ ICI POUR OUVRIR LE CLASSEMENT ⚔️", "https://google.com", use_container_width=True)
-        elif lang == "Español":
-            st.markdown("<h1>🏠 Panel Principal - Estado de Alianza</h1>", unsafe_allow_html=True)
-            st.link_button("⚔️ CLIC AQUI PARA ABRIR LA CLASIFICACION ⚔️", "https://google.com", use_container_width=True)
-        elif lang == "Deutsch":
-            st.markdown("<h1>🏠 Haupt Dashboard - Allianz Status</h1>", unsafe_allow_html=True)
-            st.link_button("⚔️ HIER KLICKEN FÜR BESTENLISTE ⚔️", "https://google.com", use_container_width=True)
-        elif lang == "Русский":
-            st.markdown("<h1>🏠 Главная панель - Статус альянса</h1>", unsafe_allow_html=True)
-            st.link_button("⚔️ НАЖМИТЕ ЗДЕСЬ ДЛЯ ОТКРЫТИЯ РЕЙТИНГА ⚔️", "https://google.com", use_container_width=True)
-
-    # --- PAGE 1: CLAN INFO & CHATS ---
-    elif page_index == 1:
-        if lang == "English":
-            st.markdown("<h1>📋 Alliance Info and Official Channels</h1>", unsafe_allow_html=True)
-            st.write("Operational directives and channels of Raiders of Chaos.")
-            st.markdown("### ⚔️ Clan Chats & Descriptions")
-        elif lang == "Italiano":
-            st.markdown("<h1>📋 Informazioni Clan and Canali Ufficiali</h1>", unsafe_allow_html=True)
-            st.write("Direttive operative dei Raiders of Chaos.")
-            st.markdown("### ⚔️ Chat del Clan and Descrizioni")
-        elif lang == "Français":
-            st.markdown("<h1>📋 Infos de l Alliance</h1>", unsafe_allow_html=True)
-            st.write("Directives operationnelles des Raiders of Chaos.")
-            st.markdown("### ⚔️ Chats du Clan")
-        elif lang == "Español":
-            st.markdown("<h1>📋 Info de Alianza</h1>", unsafe_allow_html=True)
-            st.write("Directives operativas de Raiders of Chaos.")
-            st.markdown("### ⚔️ Chats del Clan")
-        elif lang == "Deutsch":
-            st.markdown("<h1>📋 Allianz Infos</h1>", unsafe_allow_html=True)
-            st.write("Einsatzrichtlinien der Raiders of Chaos.")
-            st.markdown("### ⚔️ Klan Chats")
-        elif lang == "Русский":
-            st.markdown("<h1>📋 Информация альянса</h1>", unsafe_allow_html=True)
-            st.write("Оперативные директивы Raiders of Chaos.")
-            st.markdown("### ⚔️ Чаты клана")
-            
-        st.divider()
-        st.markdown(f'<div class="chat-box"><b>[CHAT 1] RoC Vaults</b><br>- {cd[0]}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="chat-box"><b>[CHAT 2] RoC CP Swap Cities</b><br>- {cd[1]}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="chat-box"><b>[CHAT 3] The Daily Raid</b><br>- {cd[2]}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="chat-box"><b>[CHAT 4] OPERATION EPIC DEMISE</b><br>- {cd[3]}</div>', unsafe_allow_html=True)
