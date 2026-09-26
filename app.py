@@ -86,7 +86,7 @@ def check_password():
 # 3. SE LOGGATO, APRI IL SITO DEL CLAN
 if check_password():
     
-    # BARRA LATERALE DI NAVIGAZIONE CON LA NUOVA SCHEDA DEI MINIMI
+    # BARRA LATERALE DI NAVIGAZIONE CON LA SCHEDA DEI MINIMI
     if os.path.exists("logo.png"):
         st.sidebar.image("logo.png", width=85) 
     else:
@@ -94,7 +94,7 @@ if check_password():
         
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     
-    # Menù a 5 voci aggiornato con il nuovo blocco per i minimi
+    # Menù a 5 voci aggiornato
     page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"])
     st.sidebar.markdown("---")
     st.sidebar.success("Portale protetto attivo.")
@@ -168,7 +168,7 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- NUOVA PAGINA 3: SCHEDA MINIMI RICHIESTI SEPARATA ---
+    # --- PAGINA 3: SCHEDA MINIMI RICHIESTI SEPARATA ---
     elif page == "📊 Event Minimums":
         st.markdown("<h1>📊 Official Event Minimums & Targets</h1>", unsafe_allow_html=True)
         st.write("Obiettivi minimi di coalizione richiesti per la partecipazione agli eventi del Regno.")
@@ -202,4 +202,3 @@ if check_password():
         st.markdown("### 📡 Perché è fondamentale unirsi al server Discord?")
         st.markdown(
             """
-
