@@ -49,8 +49,8 @@ if check_password():
         
         st.markdown("<br><br>", unsafe_allow_html=True)
         
-        # INSERITO IL TUO ID REALTIME ORIGINALE: 1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ
-        LINK_PULITO = "https://google.com"
+        # USA IL TUO LINK ORIGINALE DI GOOGLE SHEETS COPIATO DAL TUO BROWSER
+        LINK_PULITO = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/edit?usp=sharing"
         
         st.link_button("🛡️ OPEN OFFICIAL UFC LEADERBOARD", LINK_PULITO, width='stretch')
 
