@@ -1,10 +1,8 @@
 import streamlit as st
 import os
 
+# 1. PAGE SETTINGS & WAR DESIGN
 st.set_page_config(page_title="UFC Command Center", layout="wide", page_icon="🛡️")
-
-if "lang" not in st.session_state:
-    st.session_state["lang"] = "English"
 
 st.markdown(
     """
@@ -21,107 +19,134 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-translations = {
-    "English": {
-        "sub": "ALLIANCE PORTAL - RESTRICTED ACCESS", "pass": "CLAN PASSWORD:", "ph": "Enter access code...",
-        "btn": "ACCESS PORTAL", "err": "Incorrect password",
-        "nav": ["Home Dashboard", "Clan Info and Chats", "Event Minimums", "Discord Server", "Troops Calculator"],
-        "status": "Protected portal active.",
-        "h1_home": "UFC Command Center - Alliance Status", "w_home": "Check the official chest leaderboard updated in real-time by alliance OCR.",
-        "info_home": "Notice for UFC Members: By clicking the button below, the leaderboard will open safely in view mode.",
-        "btn_home": "CLICK HERE TO OPEN UFC CHESTS LEADERBOARD",
-        "h1_info": "Alliance Info and Official Channels", "w_info": "Operational directives and channels of Raiders of Chaos.",
-        "sub_info": "Clan Chats and Descriptions",
-        "h1_min": "Official Event Minimums and Targets", "w_min": "Minimum coalition targets required for event participation.",
-        "warn_min": "Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.",
-        "pt_min": "Monthly Minimum Points: 1,000,000 points (crypts level 30 rare, level 30/35 epic, and epic monster chests)",
-        "h1_disc": "Official Raiders of Chaos Discord Server", "w_disc": "Access the alliance voice and strategic base on Discord.",
-        "inf_disc": "The button below will be activated soon with the official invite code.", "btn_disc": "DISCORD BUTTON - COMING SOON",
-        "h1_calc": "UFC Tactical Manual and March Simulator", "sl_calc": "Select your maximum march capacity:", "sb_calc": "Select attack target:",
-        "opts_calc": ["Level 35 Crypts", "Alliance Citadels"], "res_title": "Recommended Army Composition:",
-        "res_crypt": "Crypt Configuration: Send {inf} Infantry and {arc} Archers.",
-        "res_cit": "Coalition Order: Send the entire balanced army according to directives."
-    },
-    "Italiano": {
-        "sub": "PORTALE ALLEANZA - ACCESSO RISERVATO", "pass": "PASSWORD CLAN:", "ph": "Inserisci il codice...",
-        "btn": "ACCEDI AL PORTALE", "err": "Password errata",
-        "nav": ["Dashboard Principale", "Info Clan and Chat", "Minimi Richiesti", "Server Discord", "Calcolatore Truppe"],
-        "status": "Portale protetto attivo.",
-        "h1_home": "UFC Command Center - Stato dell Alleanza", "w_home": "Consulta la classifica ufficiale dei forzieri in tempo reale.",
-        "info_home": "Nota per i membri UFC: Cliccando sul pulsante sotto, la classifica si aprira in Sola Lettura.",
-        "btn_home": "CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC",
-        "h1_info": "Informazioni Clan and Canali Ufficiali", "w_info": "Direttive operative dei Raiders of Chaos.",
-        "sub_info": "Chat del Clan and Descrizioni Tattiche",
-        "h1_min": "Minimi Richiesti per gli Eventi", "w_min": "Obiettivi minimi obbligatori per la partecipazione agli eventi.",
-        "warn_min": "La partecipazione e richiesta per gli eventi Antichi, Ragnarok, Olympus e Dark Omens.",
-        "pt_min": "Punti Minimi Mensili: 1.000.000 di punti (cripte rare liv 30, cripte epiche liv 30/35 e forzieri mostri epici)",
-        "h1_disc": "Server Discord Ufficiale Raiders of Chaos", "w_disc": "Accedi alla base operativa vocale su Discord.",
-        "inf_disc": "Il pulsante qui sotto verra attivato a breve con il codice d invito.", "btn_disc": "PULSANTE DISCORD - IN ALLESTIMENTO",
-        "h1_calc": "Manuale Tattico UFC and Simulatore Marce", "sl_calc": "Seleziona la tua capacita di marcia massima:", "sb_calc": "Seleziona il bersaglio dell attacco:",
-        "opts_calc": ["Cripte Livello 35", "Cittadelle dell Alleanza"], "res_title": "Composizione Esercito Consigliata:",
-        "res_crypt": "Configurazione Cripte: Manda {inf} Fanteria e {arc} Arcieri.",
-        "res_cit": "Ordine di Coalizione: Manda l intero esercito bilanciato."
-    },
-    "Français": {
-        "sub": "PORTAIL DE L ALLIANCE - ACCES RESTREINT", "pass": "MOT DE PASSE:", "ph": "Entrez le code...",
-        "btn": "ACCEDER AU PORTAIL", "err": "Mot de passe incorrect",
-        "nav": ["Tableau de Bord", "Infos and Chats", "Minimums", "Serveur Discord", "Simulateur"],
-        "status": "Portail protege actif.",
-        "h1_home": "UFC Command Center - Statut", "w_home": "Consultez le classement officiel des coffres.",
-        "info_home": "Avis aux membres: Le classement s ouvrira en mode lecture seule.",
-        "btn_home": "CLIQUEZ ICI POUR OUVRIR LE CLASSEMENT",
-        "h1_info": "Infos de l Alliance", "w_info": "Directives operationnelles des Raiders of Chaos.",
-        "sub_info": "Chats du Clan",
-        "h1_min": "Minimums et Objectifs", "w_min": "Objectifs minimums requis pour participer.",
-        "warn_min": "Participation obligatoire aux Ancients, Ragnarok, Olympus et Dark Omens.",
-        "pt_min": "Points Minimums Mensuels: 1 000 000 points (cryptes rare 30, cryptes epique 30/35, et coffres de monstres)",
-        "h1_disc": "Serveur Discord Officiel", "w_disc": "Accedez a la base operationnelle sur Discord.",
-        "inf_disc": "Le bouton ci-dessous sera bientot active.", "btn_disc": "BOUTON DISCORD - BIENTOT DISPONIBLE",
-        "h1_calc": "Manuel Tactique", "sl_calc": "Capacite maximale de marche:", "sb_calc": "Cible de l attaque:",
-        "opts_calc": ["Cryptes Niveau 35", "Citadelles"], "res_title": "Composition recommandee:",
-        "res_crypt": "Configuration: Envoyez {inf} Infanterie et {arc} Archers.",
-        "res_cit": "Ordre de Coalition: Envoyez toute l armee equilibree."
-    },
-    "Español": {
-        "sub": "PORTAL DE ALIANZA - ACCESO RESTRINGIDO", "pass": "CONTRASENA:", "ph": "Ingrese el codigo...",
-        "btn": "ACCEDER", "err": "Contrasena incorrecta",
-        "nav": ["Panel Principal", "Info y Chats", "Minimos de Eventos", "Servidor Discord", "Calculadora"],
-        "status": "Portal protegido activo.",
-        "h1_home": "UFC Command Center - Estado", "w_home": "Consulta la clasificacion de cofres.",
-        "info_home": "Aviso: El boton abrira la tabla de clasificacion en View-Only.",
-        "btn_home": "CLIC AQUI PARA ABRIR LA CLASIFICACION",
-        "h1_info": "Info de Alianza", "w_info": "Directivas operativas de Raiders of Chaos.",
-        "sub_info": "Chats del Clan",
-        "h1_min": "Minimos Oficiales", "w_min": "Objetivos minimos de coalicion requeridos.",
-        "warn_min": "Participacion requerida en Ancients, Ragnarok, Olympus y Dark Omens.",
-        "pt_min": "Puntos Minimos Mensuales: 1,000,000 puntos (criptas raras 30, epicas 30/35 y monstruos epicos)",
-        "h1_disc": "Servidor Discord Oficial", "w_disc": "Accede a la base estrategica en Discord.",
-        "inf_disc": "El boton se activara pronto.", "btn_disc": "BOTON DISCORD - PROXIMAMENTE",
-        "h1_calc": "Manual Tactico", "sl_calc": "Capacidad maxima de marcha:", "sb_calc": "Seleccionar objetivo:",
-        "opts_calc": ["Criptas Nivel 35", "Ciudadela"], "res_title": "Composicion recomendada:",
-        "res_crypt": "Configuracion: Enviar {inf} Infanteria y {arc} Arqueros.",
-        "res_cit": "Orden de Coalition: Enviar el ejercito completo."
-    },
-    "Deutsch": {
-        "sub": "ALLIANZ PORTAL - GESCHÜTZTER ZUGANG", "pass": "PASSWORT:", "ph": "Code eingeben...",
-        "btn": "PORTAL BETRETEN", "err": "Falsches Passwort",
-        "nav": ["Haupt Dashboard", "Klan Infos", "Event Mindestwerte", "Discord Server", "Truppen Rechner"],
-        "status": "Geschutztes Portal aktiv.",
-        "h1_home": "UFC Command Center - Allianz Status", "w_home": "Überprufe die offizielle Bestenliste.",
-        "info_home": "Hinweis: Die Bestenliste offnet sich in einem neuen Tab.",
-        "btn_home": "HIER KLICKEN FÜR BESTENLISTE",
-        "h1_info": "Allianz Infos", "w_info": "Einsatzrichtlinien der Raiders of Chaos.",
-        "sub_info": "Klan Chats Beschreibungen",
-        "h1_min": "Offizielle Mindestwerte", "w_min": "Erforderliche Mindestziele fur die Teilnahme.",
-        "warn_min": "Teilnahme erforderlich fur Ancients, Ragnarok, Olympus und Dark Omens.",
-        "pt_min": "Monatliche Mindestpunkte: 1.000.000 Punkte (Stufe 30 Krypten, Stufe 30/35 epische Krypten)",
-        "h1_disc": "Offizieller Discord Server", "w_disc": "Greife auf die Basis auf Discord zu.",
-        "inf_disc": "Der Button wird bald aktiviert.", "btn_disc": "DISCORD BUTTON - DEMNÄCHST",
-        "h1_calc": "Marsch Simulator", "sl_calc": "Maximale Marschkapazitat:", "sb_calc": "Angriffsziel wählen:",
-        "opts_calc": ["Krypten Stufe 35", "Zitadellen"], "res_title": "Empfohlene Armee:",
-        "res_crypt": "Krypta Konfiguration: Sende {inf} Infanterie und {arc} Bogenschutzen.",
-        "res_cit": "Koalitionsbefehl: Sende die gesamte Armee."
-    },
-    "Русский": {
-        "sub": "ПОРТАЛ АЛЬЯНСА - ОГРАНИЧЕННЫЙ ДОСТУП", "pass": "ПАРОЛЬ КЛАНА:", "ph": "Введите код...",
-        "btn": "ВОЙТИ НА ПОРТАЛ", "err": "Неверный пароль",
+# 2. LOGIN AUTHENTICATION
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+
+if not st.session_state["authenticated"]:
+    st.markdown("<br>", unsafe_allow_html=True)
+    col1, col_login, col2 = st.columns(3)
+    with col_login:
+        if os.path.exists("logo.png"):
+            st.image("logo.png", width=145)
+        else:
+            st.markdown('<h1 style="text-align: center; font-size: 45px; margin: 0px;">🛡️</h1>', unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center; margin-top: 15px; font-size: 26px;'>UFC RAIDERS OF CHAOS</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; font-size: 13px; color: #bd9b53;'>ALLIANCE PORTAL - RESTRICTED ACCESS</h3>", unsafe_allow_html=True)
+        
+        password_entered = st.text_input("CLAN PASSWORD:", type="password", placeholder="Enter access code...")
+        if st.button("ACCESS PORTAL", width='stretch'):
+            if password_entered == "UFC_Raiders_2026":
+                st.session_state["authenticated"] = True
+                st.rerun()
+            else:
+                st.error("❌ Incorrect password!")
+else:
+    # 3. PORTAL ACCESSED - INTERFACE
+    if os.path.exists("logo.png"):
+        st.sidebar.image("logo.png", width=85)
+    else:
+        st.sidebar.markdown("<h1 style='font-size: 38px; text-align: center; margin-bottom: 0px;'>🛡️</h1>", unsafe_allow_html=True)
+        
+    st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
+    st.sidebar.markdown("---")
+    
+    # Simple Language Selector
+    lang = st.sidebar.selectbox("🌐 INTERFACE LANGUAGE:", ["English", "Italiano"])
+    st.sidebar.markdown("---")
+
+    # ENGLISH INTERFACE
+    if lang == "English":
+        page = st.sidebar.radio("NAVIGATION:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"])
+        
+        if page == "🏠 Home Dashboard":
+            st.markdown("<h1>🏠 UFC Command Center - Alliance Status</h1>", unsafe_allow_html=True)
+            st.write("Check the official chest leaderboard updated in real-time by alliance OCR.")
+            st.info("💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode.")
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.link_button("⚔️ CLICK HERE TO OPEN UFC CHESTS LEADERBOARD ⚔️", "https://google.com", use_container_width=True)
+
+        elif page == "📋 Clan Info & Chats":
+            st.markdown("<h1>📋 Alliance Info & Official Channels</h1>", unsafe_allow_html=True)
+            st.write("Operational directives and official communication channels of the Raiders of Chaos.")
+            st.markdown("### ⚔️ Clan Chats & Descriptions")
+            st.markdown(
+                """
+                <div class="chat-box"><b>[CHAT 1] RoC Vaults</b><br>- where you will register your created vault</div>
+                <div class="chat-box"><b>[CHAT 2] RoC CP Swap Cities</b><br>- where you check in/out CP cities</div>
+                <div class="chat-box"><b>[CHAT 3] The Daily Raid</b><br>- history of clan announcements</div>
+                <div class="chat-box"><b>[CHAT 4] OPERATION EPIC DEMISE</b><br>- epic monster targeting/coordination</div>
+                <div class="chat-box"><b>[CHAT 5] ROC DARK OMENS</b><br>- dedicated chat for Dark Omens event</div>
+                <div class="chat-box"><b>[CHAT 6] ROC OLYMPUS</b><br>- dedicated chat for Olympus event</div>
+                <div class="chat-box"><b>[CHAT 7] ROC TORCH</b><br>- dedicated to ensuring everyone torch artifact is 5 stars</div>
+                <div class="chat-box" style="border-left: 4px solid #7c1a1a; background-color: #241b1b;"><b>[SUB-CLAN] ((76 RoE))</b><br>- K76 RoE details</div>
+                """, unsafe_allow_html=True
+            )
+
+        elif page == "📊 Event Minimums":
+            st.markdown("<h1>📊 Official Event Minimums & Targets</h1>", unsafe_allow_html=True)
+            st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
+            st.markdown("### 📋 Event Minimums")
+            st.write("- **Monthly Minimum Points:** 1,000,000 points *(points to earn with level 30 rare crypts, level 30/35 epic crypts, and epic monster chests)*")
+            st.write("- **Armageddon:** 50 chests")
+            st.write("- **Ragnaroc:** 500m")
+            st.write("- **Olympus:** 570.000")
+            st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
+
+        elif page == "🌐 Discord Server":
+            st.markdown("<h1>🌐 Official Raiders of Chaos Discord Server</h1>", unsafe_allow_html=True)
+            st.info("💡 Access instructions: The button below will be activated soon with the official invite code.")
+            st.link_button("🔮 DISCORD BUTTON - COMING SOON 🔮", "https://discord.com", use_container_width=True)
+
+        elif page == "⚔️ Troops Calculator":
+            st.markdown("<h1>⚔️ UFC Tactical Manual & March Simulator</h1>", unsafe_allow_html=True)
+            capacity = st.slider("Select your maximum march capacity:", 10000, 600000, 200000, step=5000)
+            target = st.selectbox("Select attack target:", ["Level 35 Crypts", "Alliance Citadels"])
+            if target == "Level 35 Crypts":
+                st.success(f"💥 **Crypt Configuration:** Send **{int(capacity * 0.6):,} Infantry** and **{int(capacity * 0.4):,} Archers**.")
+            else:
+                st.warning("⚠️ **Coalition Order:** Send the entire balanced army according to directives.")
+
+    # INTERFACCIA ITALIANA
+    else:
+        page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Dashboard Principale", "📋 Info Clan & Chat", "📊 Minimi Richiesti", "🌐 Server Discord", "⚔️ Calcolatore Truppe"])
+        
+        if page == "🏠 Dashboard Principale":
+            st.markdown("<h1>🏠 UFC Command Center - Stato dell Alleanza</h1>", unsafe_allow_html=True)
+            st.write("Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale dall OCR.")
+            st.info("💡 **Nota per i membri UFC:** Cliccando sul pulsante sotto, la classifica si aprira in modalità protetta di Sola Lettura.")
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.link_button("⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️", "https://google.com", use_container_width=True)
+
+        elif page == "📋 Info Clan & Chat":
+            st.markdown("<h1>📋 Informazioni Clan & Canali Ufficiali</h1>", unsafe_allow_html=True)
+            st.write("Direttive operative e canali ufficiali dei Raiders of Chaos.")
+            st.markdown("### ⚔️ Chat del Clan & Descrizioni")
+            st.markdown(
+                """
+                <div class="chat-box"><b>[CHAT 1] RoC Vaults</b><br>- dove registrare i vault creati</div>
+                <div class="chat-box"><b>[CHAT 2] RoC CP Swap Cities</b><br>- dove fare il check in/out delle città CP</div>
+                <div class="chat-box"><b>[CHAT 3] The Daily Raid</b><br>- storico degli annunci del clan</div>
+                <div class="chat-box"><b>[CHAT 4] OPERATION EPIC DEMISE</b><br>- coordinamento degli attacchi ai mostri epici</div>
+                <div class="chat-box"><b>[CHAT 5] ROC DARK OMENS</b><br>- chat dedicata all evento Dark Omens</div>
+                <div class="chat-box"><b>[CHAT 6] ROC OLYMPUS</b><br>- chat dedicata all evento Olympus</div>
+                <div class="chat-box"><b>[CHAT 7] ROC TORCH</b><br>- dedicata a portare l artefatto torcia di tutti a 5 stelle</div>
+                <div class="chat-box" style="border-left: 4px solid #7c1a1a; background-color: #241b1b;"><b>[SUB-CLAN] ((76 RoE))</b><br>- Dettagli sotto-alleanza K76 RoE</div>
+                """, unsafe_allow_html=True
+            )
+
+        elif page == "📊 Minimi Richiesti":
+            st.markdown("<h1>📊 Minimi Richiesti per gli Eventi</h1>", unsafe_allow_html=True)
+            st.info("⚠️ La partecipazione è richiesta per gli eventi Antichi, Ragnarok, Olympus e Dark Omens.")
+            st.markdown("### 📋 Requisiti Minimi")
+            st.write("- **Punti Minimi Mensili:** 1.000.000 di punti *(punti da guadagnare tramite cripte rare liv 30, cripte epiche liv 30/35 e forzieri mostri epici)*")
+            st.write("- **Armageddon:** 50 forzieri")
+            st.write("- **Ragnaroc:** 500m")
+            st.write("- **Olympus:** 570.000")
+            st.write("- **Dark Omens:** 100 forzieri di clan, massimo olio schierato e difesa attiva")
+
+        elif page == "🌐 Server Discord":
+            st.markdown("<h1>🌐 Server Discord Ufficiale Raiders of Chaos</h1>", unsafe_allow_html=True)
+            st.info("💡 Istruzioni per l accesso: Il pulsante qui sotto verra attivato a breve con il codice d invito.")
+            st.link_button("🔮 PULSANTE DISCORD - IN ALLESTIMENTO 🔮", "https://discord.com", use_container_width=True)
+
