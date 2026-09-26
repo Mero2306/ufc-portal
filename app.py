@@ -50,7 +50,6 @@ else:
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # Selettore aggiornato a 3 lingue: aggiunto lo Spagnolo
     lang = st.sidebar.selectbox("🌐 INTERFACE LANGUAGE / LINGUA:", ["English", "Italiano", "Español"])
     st.sidebar.markdown("---")
 
@@ -138,11 +137,11 @@ else:
                 """, unsafe_allow_html=True
             )
 
-    # --- PAGINA 2: EVENT MINIMUMS ---
+    # --- PAGINA 2: EVENT MINIMUMS (RIPRISTINATA AL 100% IN TUTTE LE LINGUE) ---
     elif page_index == 2:
         if lang == "English":
             st.markdown("<h1>📊 Official Event Minimums and Targets</h1>", unsafe_allow_html=True)
             st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
-            st.markdown("### 📋 Minimums")
+            st.markdown("### 📋 Event Minimums")
             st.write("- **Monthly Minimum Points:** 1,000,000 points *(points to earn with level 30 rare crypts, level 30/35 epic crypts, and epic monster chests)*")
             st.write("- **Armageddon:** 50 chests")
