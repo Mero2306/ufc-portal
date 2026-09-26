@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 
-# 1. IMPOSTAZIONI DEL SITO & GRAFICA DARK WAR
+# 1. SITE CONFIGURATION & DARK WAR THEME
 st.set_page_config(page_title="UFC Command Center", layout="wide", page_icon="🛡️")
 
 st.markdown(
@@ -19,7 +19,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK)
+# 2. SECURITY FUNCTION (PASSWORD LOCK)
 def check_password():
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
@@ -36,18 +36,18 @@ def check_password():
             st.markdown('<h1 style="text-align: center; font-size: 45px; margin: 0px;">🛡️</h1>', unsafe_allow_html=True)
             
         st.markdown("<h1 style='text-align: center; margin-top: 15px; font-size: 26px;'>UFC RAIDERS OF CHAOS</h1>", unsafe_allow_html=True)
-        st.markdown("<h3 style='text-align: center; font-size: 13px; letter-spacing: 2px; color: #bd9b53;'>PORTALE ALLEANZA - ACCESSO RISERVATO</h3>", unsafe_allow_html=True)
-        password_entered = st.text_input("PASSWORD CLAN:", type="password", placeholder="Inserisci il codice d'accesso...")
+        st.markdown("<h3 style='text-align: center; font-size: 13px; letter-spacing: 2px; color: #bd9b53;'>ALLIANCE PORTAL - RESTRICTED ACCESS</h3>", unsafe_allow_html=True)
+        password_entered = st.text_input("CLAN PASSWORD:", type="password", placeholder="Enter access code...")
         
-        if st.button("ACCEDI AL PORTALE", width='stretch'):
+        if st.button("ACCESS PORTAL", width='stretch'):
             if password_entered == "UFC_Raiders_2026": 
                 st.session_state["authenticated"] = True
                 st.rerun()
             else:
-                st.error("❌ Password errata! Chiedi il codice corretto ai generali.")
+                st.error("❌ Incorrect password! Ask the generals for the correct code.")
     return False
 
-# 3. SE LOGGATO, APRI IL SITO DEL CLAN
+# 3. LOGGED IN PORTAL INTERFACE
 if check_password():
     if os.path.exists("logo.png"):
         st.sidebar.image("logo.png", width=85) 
@@ -55,23 +55,23 @@ if check_password():
         st.sidebar.markdown("<h1 style='font-size: 38px; text-align: center; margin-bottom: 0px;'>🛡️</h1>", unsafe_allow_html=True)
         
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
-    page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"])
+    page = st.sidebar.radio("NAVIGATION:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"])
     st.sidebar.markdown("---")
-    st.sidebar.success("Portale protetto attivo.")
+    st.sidebar.success("Protected portal active.")
 
-    # --- PAGINA 1: DASHBOARD ---
+    # --- PAGE 1: DASHBOARD ---
     if page == "🏠 Home Dashboard":
-        st.markdown("<h1>🏠 UFC Command Center - Stato dell'Alleanza</h1>", unsafe_allow_html=True)
-        st.write("Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale dall'OCR dell'alleanza.")
+        st.markdown("<h1>🏠 UFC Command Center - Alliance Status</h1>", unsafe_allow_html=True)
+        st.write("Check the official chest leaderboard updated in real-time by alliance OCR.")
         st.markdown("<br>", unsafe_allow_html=True)
         st.info("💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode.")
         st.markdown("<br>", unsafe_allow_html=True)
-        st.link_button("⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️", "https://google.com", use_container_width=True)
+        st.link_button("⚔️ CLICK HERE TO OPEN UFC CHESTS LEADERBOARD ⚔️", "https://google.com", use_container_width=True)
 
-    # --- PAGINA 2: INFO & CHAT OPERATIVE ---
+    # --- PAGE 2: INFO & CHATS ---
     elif page == "📋 Clan Info & Chats":
         st.markdown("<h1>📋 Alliance Info & Official Channels</h1>", unsafe_allow_html=True)
-        st.write("Direttive operative e canali ufficiali dei Raiders of Chaos.")
+        st.write("Operational directives and official communication channels of the Raiders of Chaos.")
         st.divider()
         st.markdown("### ⚔️ Clan Chats & Descriptions")
         
@@ -89,38 +89,38 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- PAGINA 3: EVENT MINIMUMS (CORRETTA) ---
+    # --- PAGE 3: EVENT MINIMUMS ---
     elif page == "📊 Event Minimums":
         st.markdown("<h1>📊 Official Event Minimums & Targets</h1>", unsafe_allow_html=True)
-        st.write("Obiettivi minimi di coalizione richiesti per la partecipazione agli eventi.")
+        st.write("Minimum coalition targets required for event participation.")
         st.divider()
         st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
         
         st.markdown("### 📋 Event Minimums")
-        st.write("- **Punti Minimi Mensili:** 1.000.000 di punti *(points to earn with level 30 rare crypts, level 30/35 epic crypts)*")
+        st.write("- **Monthly Minimum Points:** 1,000,000 points *(points to earn with level 30 rare crypts, level 30/35 epic crypts)*")
         st.write("- **Armageddon:** 50 chests")
         st.write("- **Ragnaroc:** 500m")
         st.write("- **Olympus:** 570.000")
         st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
 
-    # --- PAGINA 4: DISCORD ---
+    # --- PAGE 4: DISCORD ---
     elif page == "🌐 Discord Server":
         st.markdown("<h1>🌐 Official Raiders of Chaos Discord Server</h1>", unsafe_allow_html=True)
-        st.write("Accedi alla base operativa vocale e strategica dell'alleanza su Discord.")
+        st.write("Access the alliance's voice and strategic operational base on Discord.")
         st.divider()
-        st.info("💡 Istruzioni per l'accesso: Il pulsante qui sotto verrà attivato a breve con il codice d'invito ufficiale.")
+        st.info("💡 Access instructions: The button below will be activated soon with the official invite code.")
         st.markdown("<br>", unsafe_allow_html=True)
-        st.link_button("🔮 PULSANTE DISCORD - IN ALLESTIMENTO 🔮", "https://discord.com", use_container_width=True)
+        st.link_button("🔮 DISCORD BUTTON - COMING SOON 🔮", "https://discord.com", use_container_width=True)
 
-    # --- PAGINA 5: CALCOLATORE ---
+    # --- PAGE 5: TROOPS CALCULATOR ---
     elif page == "⚔️ Troops Calculator":
-        st.markdown("<h1>⚔️ Manuale Tattico UFC & Simulatore Marce</h1>", unsafe_allow_html=True)
-        capacity = st.slider("Seleziona la tua capacità di marcia massima:", 10000, 600000, 200000, step=5000)
-        target = st.selectbox("Seleziona il bersaglio dell'attacco:", ["Cripte Livello 35", "Cittadelle dell'Alleanza"])
+        st.markdown("<h1>⚔️ UFC Tactical Manual & March Simulator</h1>", unsafe_allow_html=True)
+        capacity = st.slider("Select your maximum march capacity:", 10000, 600000, 200000, step=5000)
+        target = st.selectbox("Select attack target:", ["Level 35 Crypts", "Alliance Citadels"])
         
-        if target == "Cripte Livello 35":
+        if target == "Level 35 Crypts":
             infantry = int(capacity * 0.6)
             archers = int(capacity * 0.4)
-            st.success(f"💥 Configurazione Cripte: Manda {infantry:,} Fanteria e {archers:,} Arcieri.")
+            st.success(f"💥 Crypt Configuration: Send {infantry:,} Infantry and {archers:,} Archers.")
         else:
-            st.warning("⚠️ Ordine di Coalizione: Manda l'intero esercito bilanciato secondo le direttive.")
+            st.warning("⚠️ Coalition Order: Send the entire balanced army according to directives.")
