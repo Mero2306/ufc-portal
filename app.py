@@ -70,7 +70,7 @@ else:
     
     page_index = options.index(selected_page)
 
-    # --- CHAT DICTIONARIES FOR CHAT 1 TO 7 ---
+    # --- CHAT DATA ---
     chat_titles = ["[CHAT 1] RoC Vaults", "[CHAT 2] RoC CP Swap Cities", "[CHAT 3] The Daily Raid", "[CHAT 4] OPERATION EPIC DEMISE", "[CHAT 5] ROC DARK OMENS", "[CHAT 6] ROC OLYMPUS", "[CHAT 7] ROC TORCH", "[SUB-CLAN] ((76 RoE))"]
     
     chat_descs = {
@@ -82,7 +82,7 @@ else:
         "Русский": ["где вы регистрируете свои созданные крипты", "где вы управляете городами CP", "история объявлений клана", "координация против эпических монстров", "чат для события Dark Omens", "чат для события Olympus", "для прокачки факела на 5 звезд для всех", "подробности K76 RoE"]
     }
 
-    # --- MINIMUMS DICTIONARIES ---
+    # --- MINIMUMS DATA ---
     min_labels = {
         "English": {
             "h1": "📊 Official Event Minimums and Targets", "warn": "Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.",
@@ -130,4 +130,4 @@ else:
             st.link_button("⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️", "https://google.com", use_container_width=True)
         elif lang == "Français":
             st.markdown("<h1>🏠 Tableau de Bord - Statut de l Alliance</h1>", unsafe_allow_html=True)
-            st.info("💡 En clicking ci-dessous, le classement s ouvrira en mode lecture seule.")
+            st.info("💡 En cliquant ci-dessous, le classement s ouvrira en mode lecture seule.")
