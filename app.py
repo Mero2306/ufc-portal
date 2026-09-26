@@ -55,7 +55,7 @@ else:
     lang = st.sidebar.selectbox("🌐 INTERFACE LANGUAGE:", ["English", "Italiano", "Français", "Español", "Deutsch", "Русский"])
     st.sidebar.markdown("---")
 
-    # MAPPATURA DIZIONARI NAVIGAZIONE ED ELEMENTI
+    # NAVIGATION DICTIONARIES
     menu_config = {
         "English": ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"],
         "Italiano": ["🏠 Dashboard Principale", "📋 Info Clan & Chat", "📊 Minimi Richiesti", "🌐 Server Discord", "⚔️ Calcolatore Truppe"],
@@ -65,15 +65,13 @@ else:
         "Русский": ["🏠 Главная панель", "📋 Информация и чаты", "📊 Требования", "🌐 Сервер Discord", "⚔️ Калькулятор"]
     }
     
-    # Genera il menu radio in base alla lingua scelta
     options = menu_config[lang]
     selected_page = st.sidebar.radio("NAVIGATION / NAVIGAZIONE:", options)
     st.sidebar.markdown("---")
     
-    # Trova l'indice della pagina (0, 1, 2, 3, 4) per non sbagliare la traduzione interna
     page_index = options.index(selected_page)
 
-    # --- PAGINA 0: HOME DASHBOARD ---
+    # --- PAGE 0: HOME DASHBOARD ---
     if page_index == 0:
         if lang == "English":
             st.markdown("<h1>🏠 UFC Command Center - Alliance Status</h1>", unsafe_allow_html=True)
@@ -99,7 +97,7 @@ else:
             st.markdown("<h1>🏠 Главная панель - Статус альянса</h1>", unsafe_allow_html=True)
             st.link_button("⚔️ НАЖМИТЕ ЗДЕСЬ ДЛЯ ОТКРЫТИЯ РЕЙТИНГА ⚔️", "https://google.com", use_container_width=True)
 
-    # --- PAGINA 1: CLAN INFO & CHATS ---
+    # --- PAGE 1: CLAN INFO & CHATS ---
     elif page_index == 1:
         if lang == "English":
             st.markdown("<h1>📋 Alliance Info and Official Channels</h1>", unsafe_allow_html=True)
@@ -134,7 +132,7 @@ else:
             """, unsafe_allow_html=True
         )
 
-    # --- PAGINA 2: EVENT MINIMUMS ---
+    # --- PAGE 2: EVENT MINIMUMS ---
     elif page_index == 2:
         if lang == "English":
             st.markdown("<h1>📊 Official Event Minimums and Targets</h1>", unsafe_allow_html=True)
@@ -154,3 +152,4 @@ else:
             st.markdown("<h1>📊 Offizielle Event Mindestwerte</h1>", unsafe_allow_html=True)
             st.write("- **Monatliche Mindestpunkte:** 1.000.000 Punkte *(Stufe 30 Krypten, Stufe 30/35 epische Krypten)*")
         elif lang == "Русский":
+            st.markdown("<h1>📊 Минимальные требования к событиям</h1>", unsafe_allow_html=True)
