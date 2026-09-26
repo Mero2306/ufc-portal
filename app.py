@@ -12,7 +12,6 @@ st.markdown(
     h1, h2, h3 { color: #bd9b53 !important; font-family: 'Georgia', serif; text-shadow: 2px 2px 4px #000000; font-weight: bold; }
     .stMarkdown p { color: #dfdfdf; font-size: 16px; }
     .stAlert { background-color: #2b2311 !important; border: 1px solid #bd9b53 !important; color: #e6c687 !important; }
-    .stSlider > div [data-baseweb="slider"] > div { background-color: #bd9b53; }
     .chat-box { background-color: #262626; border: 1px solid #444; border-left: 4px solid #bd9b53; padding: 14px; margin-bottom: 12px; border-radius: 4px; }
     </style>
     """,
@@ -51,9 +50,12 @@ else:
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # Selettore lingua semplificato: Solo Inglese e Italiano
+    # Selettore lingua
     lang = st.sidebar.selectbox("🌐 INTERFACE LANGUAGE / LINGUA:", ["English", "Italiano"])
     st.sidebar.markdown("---")
+
+    # LINK AL CALCOLATORE MILITARE UFFICIALE AVANZATO
+    LINK_CALCOLATORE_WIKI = "https://fandom.com"
 
     # ==================== INTERFACCIA IN INGLESE ====================
     if lang == "English":
@@ -99,13 +101,12 @@ else:
             st.link_button("🔮 DISCORD BUTTON - COMING SOON 🔮", "https://discord.com", use_container_width=True)
 
         elif page == "⚔️ Troops Calculator":
-            st.markdown("<h1>⚔️ UFC Tactical Manual & March Simulator</h1>", unsafe_allow_html=True)
-            capacity = st.slider("Select maximum march capacity:", 10000, 600000, 200000, step=5000)
-            target = st.selectbox("Select attack target:", ["Level 35 Crypts", "Alliance Citadels"])
-            if target == "Level 35 Crypts":
-                st.success(f"💥 **Crypt Configuration:** Send **{int(capacity * 0.6):,} Infantry** and **{int(capacity * 0.4):,} Archers**.")
-            else:
-                st.warning("⚠️ Send the entire balanced army according to directives.")
+            st.markdown("<h1>⚔️ Advanced Military March Calculator</h1>", unsafe_allow_html=True)
+            st.write("Stop guessing your army setup. Access the most efficient battle and march simulator used by elite players.")
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.info("💡 **Tactical Directive:** Clicking the button below opens the official automated calculator. It dynamically factors in your Captains, Heroes, Dragons, and current game multipliers for zero-loss runs.")
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.link_button("🛡️ OPEN ADVANCED MARCH SIMULATOR 🛡️", LINK_CALCOLATORE_WIKI, use_container_width=True)
 
     # ==================== INTERFACCIA IN ITALIANO ====================
     else:
@@ -147,5 +148,3 @@ else:
         elif page == "🌐 Server Discord":
             st.markdown("<h1>🌐 Server Discord Ufficiale Raiders of Chaos</h1>", unsafe_allow_html=True)
             st.info("💡 Istruzioni per l accesso: Il pulsante qui sotto verra attivato a breve con il codice d invito.")
-            st.link_button("🔮 PULSANTE DISCORD - IN ALLESTIMENTO 🔮", "https://discord.com", use_container_width=True)
-
