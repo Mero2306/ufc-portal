@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 
-# 1. IMPOSTAZIONI PAGINA & TEMA DARK WAR
+# 1. PAGE SETTINGS & WAR DESIGN
 st.set_page_config(page_title="UFC Command Center", layout="wide", page_icon="🛡️")
 
 st.markdown(
@@ -18,7 +18,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 2. SCHERMATA DI LOGIN
+# 2. LOGIN AUTHENTICATION
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
@@ -41,7 +41,7 @@ if not st.session_state["authenticated"]:
             else:
                 st.error("❌ Incorrect password!")
 else:
-    # 3. INTERFACCIA PORTALE (ACCESSO EFFETTUATO)
+    # 3. PORTAL ACCESSED - INTERFACE
     if os.path.exists("logo.png"):
         st.sidebar.image("logo.png", width=85)
     else:
@@ -50,25 +50,49 @@ else:
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # Selettore lingua
+    # Selettore lingua stabile
     lang = st.sidebar.selectbox("🌐 INTERFACE LANGUAGE / LINGUA:", ["English", "Italiano"])
     st.sidebar.markdown("---")
 
-    # ==================== INTERFACCIA IN INGLESE ====================
-    if lang == "English":
-        page = st.sidebar.radio("NAVIGATION:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"])
-        
-        if page == "🏠 Home Dashboard":
+    # Configurazione dei menu
+    menu_config = {
+        "English": ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"],
+        "Italiano": ["🏠 Dashboard Principale", "📋 Info Clan & Chat", "📊 Minimi Richiesti", "🌐 Server Discord", "⚔️ Calcolatore Truppe"]
+    }
+    
+    options = menu_config[lang]
+    selected_page = st.sidebar.radio("NAVIGATION / NAVIGAZIONE:", options)
+    st.sidebar.markdown("---")
+    
+    # TROVA L'INDICE NUMERICO (0, 1, 2, 3, 4) - Questo risolve il bug e sblocca i link in italiano!
+    page_index = options.index(selected_page)
+
+    # --- PAGINA 0: DASHBOARD PRINCIPALE ---
+    if page_index == 0:
+        if lang == "English":
             st.markdown("<h1>🏠 UFC Command Center - Alliance Status</h1>", unsafe_allow_html=True)
             st.write("Check the official chest leaderboard updated in real-time by alliance OCR.")
-            st.info("💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode.")
-            st.markdown("<br>", unsafe_allow_html=True)
+            st.info("💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in view mode.")
             st.link_button("⚔️ CLICK HERE TO OPEN UFC CHESTS LEADERBOARD ⚔️", "https://google.com", use_container_width=True)
+        else:
+            st.markdown("<h1>🏠 UFC Command Center - Stato dell Alleanza</h1>", unsafe_allow_html=True)
+            st.write("Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale dall OCR.")
+            st.info("💡 **Nota per i membri UFC:** Cliccando sul pulsante sotto, la classifica si aprirà in modalità protetta di Sola Lettura.")
+            st.link_button("⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️", "https://google.com", use_container_width=True)
 
-        elif page == "📋 Clan Info & Chats":
+    # --- PAGINA 1: CLAN INFO & CHATS ---
+    elif page_index == 1:
+        if lang == "English":
             st.markdown("<h1>📋 Alliance Info and Official Channels</h1>", unsafe_allow_html=True)
             st.write("Operational directives and channels of Raiders of Chaos.")
             st.markdown("### ⚔️ Clan Chats & Descriptions")
+        else:
+            st.markdown("<h1>📋 Informazioni Clan e Canali Ufficiali</h1>", unsafe_allow_html=True)
+            st.write("Direttive operative e canali ufficiali dei Raiders of Chaos.")
+            st.markdown("### ⚔️ Chat del Clan & Descrizioni")
+            
+        st.divider()
+        if lang == "English":
             st.markdown(
                 """
                 <div class="chat-box"><b>[CHAT 1] RoC Vaults</b><br>- where you will register your created vault</div>
@@ -81,56 +105,7 @@ else:
                 <div class="chat-box" style="border-left: 4px solid #7c1a1a; background-color: #241b1b;"><b>[SUB-CLAN] ((76 RoE))</b><br>- K76 RoE details</div>
                 """, unsafe_allow_html=True
             )
-
-        elif page == "📊 Event Minimums":
-            st.markdown("<h1>📊 Official Event Minimums and Targets</h1>", unsafe_allow_html=True)
-            st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
-            st.markdown("### 📋 Minimums")
-            st.write("- **Monthly Minimum Points:** 1,000,000 points *(points to earn with level 30 rare crypts, level 30/35 epic crypts, and epic monster chests)*")
-            st.write("- **Armageddon:** 50 chests")
-            st.write("- **Ragnaroc:** 500m")
-            st.write("- **Olympus:** 570.000")
-            st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
-
-        elif page == "🌐 Discord Server":
-            st.markdown("<h1>🌐 Official Raiders of Chaos Discord Server</h1>", unsafe_allow_html=True)
-            st.info("💡 The button below will be activated soon with the official invite code.")
-            st.link_button("🔮 DISCORD BUTTON - COMING SOON 🔮", "https://discord.com", use_container_width=True)
-
-        elif page == "⚔️ Troops Calculator":
-            st.markdown("<h1>⚔️ Official Internal March Calculator</h1>", unsafe_allow_html=True)
-            st.write("Calculate your optimal army setup safely inside the alliance portal.")
-            st.markdown("<br>", unsafe_allow_html=True)
-            
-            capacity = st.number_input("Enter your maximum march capacity:", min_value=1000, max_value=1000000, value=250000, step=5000)
-            target = st.selectbox("Select tactical target:", ["Level 30 Rare Crypts", "Level 30/35 Epic Crypts", "Epic Monsters / World Bosses", "Alliance Citadels (Coalition)"])
-            
-            st.markdown("### 📋 Recommended Army Composition:")
-            if "Crypts" in target:
-                infantry = int(capacity * 0.6)
-                archers = int(capacity * 0.4)
-                st.success(f"💥 **Crypts Setup:** Send **{infantry:,} Infantry** and **{archers:,} Archers** (Optimized for zero-loss run).")
-            elif "Monsters" in target:
-                cavalry = int(capacity * 0.7)
-                archers = int(capacity * 0.3)
-                st.success(f"⚔️ **Monster Hunt Setup:** Send **{cavalry:,} Cavalry** and **{archers:,} Archers** (Optimized for maximum speed and damage).")
-            else:
-                st.warning("⚠️ **Coalition Order:** Send your full army balanced according to the direct orders issued by the Marshal in game chat.")
-
-    # ==================== INTERFACCIA IN ITALIANO ====================
-    else:
-        page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Dashboard Principale", "📋 Info Clan & Chat", "📊 Minimi Richiesti", "🌐 Server Discord", "⚔️ Calcolatore Truppe"])
-        
-        if page == "🏠 Dashboard Principale":
-            st.markdown("<h1>🏠 UFC Command Center - Stato dell Alleanza</h1>", unsafe_allow_html=True)
-            st.write("Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale.")
-            st.info("💡 **Nota per i membri UFC:** Cliccando sul pulsante sotto, la classifica si aprira in modalità protetta di Sola Lettura.")
-            st.link_button("⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️", "https://google.com", use_container_width=True)
-
-        elif page == "📋 Info Clan & Chat":
-            st.markdown("<h1>📋 Informazioni Clan & Canali Ufficiali</h1>", unsafe_allow_html=True)
-            st.write("Direttive operative e canali ufficiali dei Raiders of Chaos.")
-            st.markdown("### ⚔️ Chat del Clan & Descrizioni")
+        else:
             st.markdown(
                 """
                 <div class="chat-box"><b>[CHAT 1] RoC Vaults</b><br>- dove registrare i vault creati</div>
@@ -144,8 +119,43 @@ else:
                 """, unsafe_allow_html=True
             )
 
-        elif page == "📊 Minimi Richiesti":
+    # --- PAGINA 2: EVENT MINIMUMS ---
+    elif page_index == 2:
+        if lang == "English":
+            st.markdown("<h1>📊 Official Event Minimums and Targets</h1>", unsafe_allow_html=True)
+            st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
+            st.markdown("### 📋 Minimums")
+            st.write("- **Monthly Minimum Points:** 1,000,000 points *(crypts level 30 rare, level 30/35 epic, and epic monster chests)*")
+            st.write("- **Armageddon:** 50 chests")
+            st.write("- **Ragnaroc:** 500m")
+            st.write("- **Olympus:** 570.000")
+            st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
+        else:
             st.markdown("<h1>📊 Minimi Richiesti per gli Eventi</h1>", unsafe_allow_html=True)
             st.info("⚠️ La partecipazione è richiesta per gli eventi Antichi, Ragnarok, Olympus e Dark Omens.")
             st.markdown("### 📋 Requisiti Minimi")
             st.write("- **Punti Minimi Mensili:** 1.000.000 di punti *(cripte rare liv 30, cripte epiche liv 30/35 e forzieri mostri epici)*")
+            st.write("- **Armageddon:** 50 forzieri")
+            st.write("- **Ragnaroc:** 500m")
+            st.write("- **Olympus:** 570.000")
+            st.write("- **Dark Omens:** 100 forzieri di clan, massimo olio schierato e difesa attiva")
+
+    # --- PAGINA 3: DISCORD SERVER ---
+    elif page_index == 3:
+        if lang == "English":
+            st.markdown("<h1>🌐 Official Raiders of Chaos Discord Server</h1>", unsafe_allow_html=True)
+            st.info("💡 The button below will be activated soon with the invite code.")
+            st.link_button("🔮 DISCORD BUTTON - COMING SOON 🔮", "https://discord.com", use_container_width=True)
+        else:
+            st.markdown("<h1>🌐 Server Discord Ufficiale Raiders of Chaos</h1>", unsafe_allow_html=True)
+            st.info("💡 Istruzioni per l accesso: Il pulsante qui sotto verra attivato a breve con il codice d invito.")
+            st.link_button("🔮 PULSANTE DISCORD - IN ALLESTIMENTO 🔮", "https://discord.com", use_container_width=True)
+
+    # --- PAGINA 4: TROOPS CALCULATOR ---
+    elif page_index == 4:
+        if lang == "English":
+            st.markdown("<h1>⚔️ Official Internal March Calculator</h1>", unsafe_allow_html=True)
+            capacity = st.slider("Select maximum march capacity:", 10000, 600000, 200000, step=5000)
+            st.success(f"💥 **Crypt Configuration:** Send **{int(capacity * 0.6):,} Infantry** and **{int(capacity * 0.4):,} Archers**.")
+        else:
+            st.markdown("<h1>⚔️ Calcolatore Ufficiale Interno Marce</h1>", unsafe_allow_html=True)
