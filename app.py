@@ -71,13 +71,13 @@ else:
     if page_index == 0:
         if lang == "English":
             st.markdown("<h1>🏠 UFC Command Center - Alliance Status</h1>", unsafe_allow_html=True)
-            st.write("Check the official chest leaderboard updated in real-time by alliance OCR.")
+            st.write("Check the official chest leaderboard updated.")
             st.info("💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in view mode.")
             st.markdown("<br>", unsafe_allow_html=True)
             st.link_button("⚔️ CLICK HERE TO OPEN UFC CHESTS LEADERBOARD ⚔️", GOOGLE_SHEET_LINK, use_container_width=True)
         else:
             st.markdown("<h1>🏠 UFC Command Center - Stato dell Alleanza</h1>", unsafe_allow_html=True)
-            st.write("Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale dall OCR.")
+            st.write("Consulta la classifica ufficiale dei forzieri aggiornata.")
             st.info("💡 **Nota per i membri UFC:** Cliccando sul pulsante sotto, la classifica si aprira in modalita protetta di Sola Lettura.")
             st.markdown("<br>", unsafe_allow_html=True)
             st.link_button("⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️", GOOGLE_SHEET_LINK, use_container_width=True)
