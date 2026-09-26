@@ -21,7 +21,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# MULTILANGUAGE TEXTS
+# MULTILANGUAGE TEXTS (CORRECTED DICTIONARY SYNTAX)
 translations = {
     "English": {
         "sub": "ALLIANCE PORTAL - RESTRICTED ACCESS", "pass": "CLAN PASSWORD:", "ph": "Enter access code...",
@@ -101,7 +101,7 @@ translations = {
         "h1_calc": "⚔️ Manual Táctico y Simulador", "sl_calc": "Capacidad máxima de marcha:", "sb_calc": "Seleccionar objetivo:",
         "opts_calc": ["Criptas Nivel 35", "Ciudadela de Alianza"], "res_title": "📋 Composición de Ejército Recomendada:",
         "res_crypt": "💥 **Configuración:** Enviar **{inf:,} Infantería** y **{arc:,} Arqueros**.",
-        "res_cit": "⚠️ **Orden de Coalición:** Enviar el ejército completo y equilibrado."
+        "res_cit": "⚠️ **Orden de Coalition:** Enviar el ejército completo y equilibrado."
     },
     "Deutsch": {
         "sub": "ALLIANZ-PORTAL - GESCHÜTZTER ZUGANG", "pass": "KLAN-PASSWORT:", "ph": "Zugangscode eingeben...",
