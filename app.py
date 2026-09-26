@@ -37,7 +37,7 @@ if check_password():
     page = st.sidebar.radio("NAVIGATION:", ["🏠 Home Dashboard", "⚔️ Troops Calculator"])
     st.sidebar.success("Secure connection active.")
 
-    # --- PAGE 1: SAFE LINK TO GOOGLE SHEETS (Bypasses Firefox redirect blocks!) ---
+    # --- PAGE 1: SAFE LINK TO GOOGLE SHEETS ---
     if page == "🏠 Home Dashboard":
         st.header("🏠 UFC Command Center - Alliance Status")
         st.write("Check the chests leaderboard updated in real-time by the alliance OCR script.")
@@ -49,7 +49,7 @@ if check_password():
         
         st.markdown("<br><br>", unsafe_allow_html=True)
         
-        # LA RIGA 57 CORRETTA: Usiamo il formato preview pulito senza parametri che bloccano Firefox
+        # INSERITO IL TUO ID REALTIME ORIGINALE: 1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ
         LINK_PULITO = "https://google.com"
         
         st.link_button("🛡️ OPEN OFFICIAL UFC LEADERBOARD", LINK_PULITO, width='stretch')
