@@ -39,18 +39,22 @@ st.markdown(
     .stSlider > div [data-baseweb="slider"] > div {
         background-color: #bd9b53;
     }
-    /* Allineamento centrale per il blocco login di Streamlit */
-    [data-testid="stVerticalBlock"] > div:has(img) {
-        text-align: center !important;
-        display: flex;
-        justify-content: center;
+    /* Contenitore per le chat tattiche militarizzato */
+    .chat-box {
+        background-color: #262626;
+        border: 1px solid #444;
+        border-left: 4px solid #bd9b53;
+        padding: 14px;
+        margin-bottom: 12px;
+        border-radius: 4px;
+        font-family: 'Courier New', Courier, monospace;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK CON CENTRATURA INTEGRATA)
+# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK)
 def check_password():
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
@@ -62,7 +66,6 @@ def check_password():
     col_v1, col_login, col_v2 = st.columns(3)
     
     with col_login:
-        # LETTURA DIRETTA DEL FILE SENZA PERCORSI HTML STRANI (Bypassa i blocchi del server)
         if os.path.exists("logo.png"):
             st.image("logo.png", width=145)
         else:
@@ -84,14 +87,14 @@ def check_password():
 # 3. SE LOGGATO, APRI IL SITO DEL CLAN
 if check_password():
     
-    # BARRA LATERALE DI NAVIGAZIONE CON LOGO COMPATTO
+    # BARRA LATERALE DI NAVIGAZIONE
     if os.path.exists("logo.png"):
         st.sidebar.image("logo.png", width=85) 
     else:
         st.sidebar.markdown("<h1 style='font-size: 38px; text-align: center; margin-bottom: 0px;'>🛡️</h1>", unsafe_allow_html=True)
         
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
-    page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "⚔️ Troops Calculator"])
+    page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "⚔️ Troops Calculator"])
     st.sidebar.markdown("---")
     st.sidebar.success("Portale protetto attivo.")
 
@@ -101,11 +104,10 @@ if check_password():
         st.write("Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale dall'OCR dell'alleanza.")
         
         st.markdown("<br>", unsafe_allow_html=True)
-        st.info("💡 **Nota per i membri UFC:** Cliccando sul pulsante d'acciaio qui sotto, la classifica ufficiale si aprirà in una nuova scheda del browser in modalità protetta di Sola Lettura. Controlla i tuoi punti e gli obiettivi in totale sicurezza.")
+        st.info("💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode. You can check your scores and goals with maximum security.")
         
         st.markdown("<br><br>", unsafe_allow_html=True)
         
-        # Segnaposto temporaneo in attesa del link finale
         LINK_PULITO = "LAVORI_IN_CORSO"
         
         st.markdown(
@@ -119,7 +121,55 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- PAGINA 2: CALCOLATORE TRUPPE INTERATTIVO ---
+    # --- PAGINA 2: LE TUE CHAT REALI DEL CLAN ---
+    elif page == "📋 Clan Info & Chats":
+        st.markdown("<h1>📋 Alliance Info & Official Channels</h1>", unsafe_allow_html=True)
+        st.write("Direttive operative e suddivisione dei canali di comunicazione ufficiali dei Raiders of Chaos.")
+        
+        st.divider()
+        st.markdown("### ⚔️ Tactical In-Game & Discord Chats")
+        st.write("Rimani sincronizzato sui canali operativi corretti in base alle attività militari in corso.")
+        
+        # Iniezione della tua lista esatta senza toccare maiuscole e minuscole
+        st.markdown(
+            """
+            <div class="chat-box">
+                <span style="color: #bd9b53; font-weight: bold;">[CHAT 1]</span> <b>RoC Vaults</b><br>
+                <span style="color: #dfdfdf; font-size: 14px;">Canale tattico dedicato al coordinamento e al tracciamento dei forzieri e delle cripte di alleanza.</span>
+            </div>
+            <div class="chat-box">
+                <span style="color: #bd9b53; font-weight: bold;">[CHAT 2]</span> <b>RoC CP Swap Cities</b><br>
+                <span style="color: #dfdfdf; font-size: 14px;">Coordinamento militare per la gestione, lo scambio e il controllo dei punti di controllo e delle città.</span>
+            </div>
+            <div class="chat-box">
+                <span style="color: #bd9b53; font-weight: bold;">[CHAT 3]</span> <b>The Daily Raid</b><br>
+                <span style="color: #dfdfdf; font-size: 14px;">Canale operativo per gli attacchi giornalieri continui e i raduni standard dell'alleanza.</span>
+            </div>
+            <div class="chat-box">
+                <span style="color: #bd9b53; font-weight: bold;">[CHAT 4]</span> <b>OPERATION EPIC DEMISE</b><br>
+                <span style="color: #dfdfdf; font-size: 14px;">Chat di coalizione per le manovre di attacco su larga scala contro i boss e mostri epici del regno.</span>
+            </div>
+            <div class="chat-box">
+                <span style="color: #bd9b53; font-weight: bold;">[CHAT 5]</span> <b>ROC DARK OMENS</b><br>
+                <span style="color: #dfdfdf; font-size: 14px;">Canale strategico d'avanguardia riservato alle direttive e agli avvisi critici dei Generali.</span>
+            </div>
+            <div class="chat-box">
+                <span style="color: #bd9b53; font-weight: bold;">[CHAT 6]</span> <b>ROC OLYMPUS</b><br>
+                <span style="color: #dfdfdf; font-size: 14px;">Coordinamento per gli eventi supremi del server, tornei maggiori e battaglie d'élite.</span>
+            </div>
+            <div class="chat-box">
+                <span style="color: #bd9b53; font-weight: bold;">[CHAT 7]</span> <b>ROC TORCH</b><br>
+                <span style="color: #dfdfdf; font-size: 14px;">Canale di supporto tattico, logistica e comunicazioni interne del Clan.</span>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
+        
+        st.divider()
+        st.markdown("### 📜 Weekly Regulations")
+        st.info("⚠️ Tutti i membri sono tenuti a seguire i canali sopra indicati e gli obiettivi settimanali estratti dal sistema OCR.")
+
+    # --- PAGINA 3: CALCOLATORE TRUPPE ---
     elif page == "⚔️ Troops Calculator":
         st.markdown("<h1>⚔️ Manuale Tattico UFC & Simulatore Marce</h1>", unsafe_allow_html=True)
         st.write("Imposta la tua capacità massima dell'eroe per calcolare la configurazione ottimale dell'esercito.")
@@ -138,3 +188,5 @@ if check_password():
         else:
             balanced = int(capacity / 3)
             st.info(f"📌 **Configurazione Standard:** Manda una ripartizione perfetta: **{balanced:,} Fanteria, {balanced:,} Arcieri, {balanced:,} Cavalleria**.".replace(",", "."))
+
+   
