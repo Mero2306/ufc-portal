@@ -54,9 +54,6 @@ else:
     lang = st.sidebar.selectbox("🌐 INTERFACE LANGUAGE / LINGUA:", ["English", "Italiano"])
     st.sidebar.markdown("---")
 
-    # LINK AL CALCOLATORE MILITARE UFFICIALE AVANZATO
-    LINK_CALCOLATORE_WIKI = "https://fandom.com"
-
     # ==================== INTERFACCIA IN INGLESE ====================
     if lang == "English":
         page = st.sidebar.radio("NAVIGATION:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"])
@@ -101,12 +98,24 @@ else:
             st.link_button("🔮 DISCORD BUTTON - COMING SOON 🔮", "https://discord.com", use_container_width=True)
 
         elif page == "⚔️ Troops Calculator":
-            st.markdown("<h1>⚔️ Advanced Military March Calculator</h1>", unsafe_allow_html=True)
-            st.write("Stop guessing your army setup. Access the most efficient battle and march simulator used by elite players.")
+            st.markdown("<h1>⚔️ Official Internal March Calculator</h1>", unsafe_allow_html=True)
+            st.write("Calculate your optimal army setup safely inside the alliance portal.")
             st.markdown("<br>", unsafe_allow_html=True)
-            st.info("💡 **Tactical Directive:** Clicking the button below opens the official automated calculator. It dynamically factors in your Captains, Heroes, Dragons, and current game multipliers for zero-loss runs.")
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.link_button("🛡️ OPEN ADVANCED MARCH SIMULATOR 🛡️", LINK_CALCOLATORE_WIKI, use_container_width=True)
+            
+            capacity = st.number_input("Enter your maximum march capacity:", min_value=1000, max_value=1000000, value=250000, step=5000)
+            target = st.selectbox("Select tactical target:", ["Level 30 Rare Crypts", "Level 30/35 Epic Crypts", "Epic Monsters / World Bosses", "Alliance Citadels (Coalition)"])
+            
+            st.markdown("### 📋 Recommended Army Composition:")
+            if "Crypts" in target:
+                infantry = int(capacity * 0.6)
+                archers = int(capacity * 0.4)
+                st.success(f"💥 **Crypts Setup:** Send **{infantry:,} Infantry** and **{archers:,} Archers** (Optimized for zero-loss run).")
+            elif "Monsters" in target:
+                cavalry = int(capacity * 0.7)
+                archers = int(capacity * 0.3)
+                st.success(f"⚔️ **Monster Hunt Setup:** Send **{cavalry:,} Cavalry** and **{archers:,} Archers** (Optimized for maximum speed and damage).")
+            else:
+                st.warning("⚠️ **Coalition Order:** Send your full army balanced according to the direct orders issued by the Marshal in game chat.")
 
     # ==================== INTERFACCIA IN ITALIANO ====================
     else:
@@ -140,11 +149,3 @@ else:
             st.info("⚠️ La partecipazione è richiesta per gli eventi Antichi, Ragnarok, Olympus e Dark Omens.")
             st.markdown("### 📋 Requisiti Minimi")
             st.write("- **Punti Minimi Mensili:** 1.000.000 di punti *(cripte rare liv 30, cripte epiche liv 30/35 e forzieri mostri epici)*")
-            st.write("- **Armageddon:** 50 forzieri")
-            st.write("- **Ragnaroc:** 500m")
-            st.write("- **Olympus:** 570.000")
-            st.write("- **Dark Omens:** 100 forzieri di clan, massimo olio schierato e difesa attiva")
-
-        elif page == "🌐 Server Discord":
-            st.markdown("<h1>🌐 Server Discord Ufficiale Raiders of Chaos</h1>", unsafe_allow_html=True)
-            st.info("💡 Istruzioni per l accesso: Il pulsante qui sotto verra attivato a breve con il codice d invito.")
