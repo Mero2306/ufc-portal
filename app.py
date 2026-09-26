@@ -86,7 +86,7 @@ def check_password():
 # 3. SE LOGGATO, APRI IL SITO DEL CLAN
 if check_password():
     
-    # BARRA LATERALE DI NAVIGAZIONE CON LA NUOVA VOCE DISCORD
+    # BARRA LATERALE DI NAVIGAZIONE CON LA NUOVA SCHEDA DEI MINIMI
     if os.path.exists("logo.png"):
         st.sidebar.image("logo.png", width=85) 
     else:
@@ -94,8 +94,8 @@ if check_password():
         
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     
-    # Menù a 4 voci con inserimento di Discord
-    page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "🌐 Discord Server", "⚔️ Troops Calculator"])
+    # Menù a 5 voci aggiornato con il nuovo blocco per i minimi
+    page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"])
     st.sidebar.markdown("---")
     st.sidebar.success("Portale protetto attivo.")
 
@@ -122,7 +122,7 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- PAGINA 2: INFO & CHAT OPERATIVE ---
+    # --- PAGINA 2: INFO & CHAT OPERATIVE PULITE ---
     elif page == "📋 Clan Info & Chats":
         st.markdown("<h1>📋 Alliance Info & Official Channels</h1>", unsafe_allow_html=True)
         st.write("Direttive operative e suddivisione dei canali di comunicazione ufficiali dei Raiders of Chaos.")
@@ -167,38 +167,39 @@ if check_password():
             """, 
             unsafe_allow_html=True
         )
+
+    # --- NUOVA PAGINA 3: SCHEDA MINIMI RICHIESTI SEPARATA ---
+    elif page == "📊 Event Minimums":
+        st.markdown("<h1>📊 Official Event Minimums & Targets</h1>", unsafe_allow_html=True)
+        st.write("Obiettivi minimi di coalizione richiesti per la partecipazione agli eventi del Regno.")
         
         st.divider()
-        st.markdown("### 📜 Event Minimums")
-        st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
+        st.info("⚠️ **Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.**")
         
-        col_r1, col_r2 = st.columns(2)
-        with col_r1:
-            st.markdown("#### 📊 Minimum Score Requirements")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### 📋 Event Minimums")
             st.write("- **Armageddon:** 50 chests")
-            st.write("- **Ragnarok:** 300m")
-            st.write("- **Olympus:** 570,000")
-        with col_r2:
-            st.markdown("#### 🛡️ Strategy & Vault Goals")
+            st.write("- **Ragnaroc:** 500m")
+            st.write("- **Olympus:** 570.000")
             st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
-            st.write("- **Bonus:** 100%, **Summons:** 5, **Time:** 49 minutes")
+            
+        with col2:
+            st.markdown("### 📈 Tracker Goals")
+            st.write("- **Punti Minimi Settimanali:** 1.000.000 di punti")
+            st.write("- **Vault Goals:** Bonus 100%, Summons: 5, Time: 49 minutes")
+            st.write("- **Tinman Schedule Reset:** +0.5, +2, +4, -2, -1 (points only, not for kill)")
+            st.write("- **Tinman Minimum:** 650M")
+            st.write("- **Load number for upcoming week:** 722m (for 4 Ancients) (Ancient points your own weight)")
 
-    # --- PAGINA 3: SCHEDA DISCORD STRUTTURATA (Senza link attivi) ---
+    # --- PAGINA 4: SCHEDA DISCORD ---
     elif page == "🌐 Discord Server":
         st.markdown("<h1>🌐 Official Raiders of Chaos Discord Server</h1>", unsafe_allow_html=True)
         st.write("Accedi alla base operativa vocale e strategica dell'alleanza su Discord.")
         
         st.divider()
         st.markdown("### 📡 Perché è fondamentale unirsi al server Discord?")
-        
         st.markdown(
             """
-            * 🔊 **Raduni Vocali in Tempo Reale:** Coordinazione immediata durante le guerre del Regno (KvK) e gli attacchi alle Cittadelle.
-            * 📚 **Guide & Tattiche Avanzate:** Sezioni speciali dedicate alle configurazioni dei Capitani, equipaggiamenti ed eroi.
-            * 🤖 **Notifiche Automatiche:** Avvisi istantanei sui timer dei raduni e messaggi importanti dei Generali.
-            * 💬 **Community Globale:** Chiacchiera e scambia report di battaglia con i membri di tutto il mondo.
-            """,
-            unsafe_allow_html=True
-        )
-        
-        st.markdown("<br><br>", unsafe_allow_html=True)
+
