@@ -51,7 +51,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK CON LOGO DIMEZZATO)
+# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK CON LOGO AUMENTATO DEL 30%)
 def check_password():
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
@@ -63,11 +63,11 @@ def check_password():
     col_v1, col_login, col_v2 = st.columns(3)
     
     with col_login:
-        # ABBIAMO DIMEZZATO LA GRANDEZZA DEL LOGO: width=110 forza la miniatura pulita e compatta
+        # AUMENTATO DEL 30%: width=145 fornisce la dimensione perfetta, fiera e bilanciata
         if os.path.exists("logo.png"):
-            st.image("logo.png", width=110)
+            st.image("logo.png", width=145)
         else:
-            st.markdown('<h1 style="text-align: center; font-size: 40px; margin: 0px;">🛡️</h1>', unsafe_allow_html=True)
+            st.markdown('<h1 style="text-align: center; font-size: 45px; margin: 0px;">🛡️</h1>', unsafe_allow_html=True)
             
         st.markdown("<h1 style='text-align: center; margin-top: 15px; font-size: 26px;'>UFC RAIDERS OF CHAOS</h1>", unsafe_allow_html=True)
         st.markdown("<h3 style='text-align: center; font-size: 13px; letter-spacing: 2px; color: #bd9b53;'>PORTALE ALLEANZA - ACCESSO RISERVATO</h3>", unsafe_allow_html=True)
@@ -85,11 +85,11 @@ def check_password():
 # 3. SE LOGGATO, APRI IL SITO DEL CLAN
 if check_password():
     
-    # BARRA LATERALE DI NAVIGAZIONE CON LOGO SCALA 50%
+    # BARRA LATERALE DI NAVIGAZIONE CON LOGO PROPORZIONATO
     if os.path.exists("logo.png"):
-        st.sidebar.image("logo.png", width=65) # Miniatura ultra-compatta ed elegante per il menu laterale
+        st.sidebar.image("logo.png", width=85) # Dimensione ottimizzata per il menu di navigazione
     else:
-        st.sidebar.markdown("<h1 style='font-size: 35px; text-align: center; margin-bottom: 0px;'>🛡️</h1>", unsafe_allow_html=True)
+        st.sidebar.markdown("<h1 style='font-size: 38px; text-align: center; margin-bottom: 0px;'>🛡️</h1>", unsafe_allow_html=True)
         
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "⚔️ Troops Calculator"])
@@ -139,5 +139,3 @@ if check_password():
         else:
             balanced = int(capacity / 3)
             st.info(f"📌 **Configurazione Standard:** Manda una ripartizione perfetta: **{balanced:,} Fanteria, {balanced:,} Arcieri, {balanced:,} Cavalleria**.".replace(",", "."))
-
-    
