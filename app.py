@@ -49,8 +49,7 @@ if check_password():
         
         st.markdown("<br><br>", unsafe_allow_html=True)
         
-        # IL TRUCCO DEFINITIVO: Usiamo il comando nativo st.link_button con il link pulito senza parametri spuri.
-        # Questo forza il browser ad aprire la scheda direttamente senza passare dai controlli X-Frame!
+        # LA RIGA 57 CORRETTA: Usiamo il formato preview pulito senza parametri che bloccano Firefox
         LINK_PULITO = "https://google.com"
         
         st.link_button("🛡️ OPEN OFFICIAL UFC LEADERBOARD", LINK_PULITO, width='stretch')
