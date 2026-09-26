@@ -86,14 +86,16 @@ def check_password():
 # 3. SE LOGGATO, APRI IL SITO DEL CLAN
 if check_password():
     
-    # BARRA LATERALE DI NAVIGAZIONE
+    # BARRA LATERALE DI NAVIGAZIONE CON LA NUOVA VOCE DISCORD
     if os.path.exists("logo.png"):
         st.sidebar.image("logo.png", width=85) 
     else:
         st.sidebar.markdown("<h1 style='font-size: 38px; text-align: center; margin-bottom: 0px;'>🛡️</h1>", unsafe_allow_html=True)
         
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
-    page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "⚔️ Troops Calculator"])
+    
+    # Menù a 4 voci con inserimento di Discord
+    page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "📋 Clan Info & Chats", "🌐 Discord Server", "⚔️ Troops Calculator"])
     st.sidebar.markdown("---")
     st.sidebar.success("Portale protetto attivo.")
 
@@ -120,16 +122,14 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    # --- PAGINA 2: LE TUE CHAT REALI CON LE DESCRIZIONI ESTRATTE DALL'IMMAGINE ---
+    # --- PAGINA 2: INFO & CHAT OPERATIVE ---
     elif page == "📋 Clan Info & Chats":
         st.markdown("<h1>📋 Alliance Info & Official Channels</h1>", unsafe_allow_html=True)
         st.write("Direttive operative e suddivisione dei canali di comunicazione ufficiali dei Raiders of Chaos.")
         
         st.divider()
         st.markdown("### ⚔️ Clan Chats & Descriptions")
-        st.write("Rimani sincronizzato sui canali operativi corretti estratti dalla bacheca ufficiale di gioco.")
         
-        # Elenco modificato inserendo le descrizioni esatte ricavate dalla foto
         st.markdown(
             """
             <div class="chat-box">
@@ -172,7 +172,6 @@ if check_password():
         st.markdown("### 📜 Event Minimums")
         st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
         
-        # Abbiamo aggiunto anche i dati dei forzieri minimi letti dalla bacheca!
         col_r1, col_r2 = st.columns(2)
         with col_r1:
             st.markdown("#### 📊 Minimum Score Requirements")
@@ -184,18 +183,22 @@ if check_password():
             st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
             st.write("- **Bonus:** 100%, **Summons:** 5, **Time:** 49 minutes")
 
-    # --- PAGINA 3: CALCOLATORE TRUPPE ---
-    elif page == "⚔️ Troops Calculator":
-        st.markdown("<h1>⚔️ Manuale Tattico UFC & Simulatore Marce</h1>", unsafe_allow_html=True)
-        st.write("Imposta la tua capacità massima dell'eroe per calcolare la configurazione ottimale dell'esercito.")
+    # --- PAGINA 3: SCHEDA DISCORD STRUTTURATA (Senza link attivi) ---
+    elif page == "🌐 Discord Server":
+        st.markdown("<h1>🌐 Official Raiders of Chaos Discord Server</h1>", unsafe_allow_html=True)
+        st.write("Accedi alla base operativa vocale e strategica dell'alleanza su Discord.")
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        capacity = st.slider("Seleziona la tua capacità di marcia massima:", 10000, 600000, 200000, step=5000)
-        target = st.selectbox("Seleziona il bersaglio dell'attacco:", ["Cripte Livello 35", "Cittadelle dell'Alleanza", "Squadre Non-Morti Epiche"])
+        st.divider()
+        st.markdown("### 📡 Perché è fondamentale unirsi al server Discord?")
         
-        st.markdown("<br><h3>📋 Composizione Esercito Consigliata:</h3>", unsafe_allow_html=True)
-        if target == "Cripte Livello 35":
-            infantry = int(capacity * 0.6)
-            archers = int(capacity * 0.4)
-
- 
+        st.markdown(
+            """
+            * 🔊 **Raduni Vocali in Tempo Reale:** Coordinazione immediata durante le guerre del Regno (KvK) e gli attacchi alle Cittadelle.
+            * 📚 **Guide & Tattiche Avanzate:** Sezioni speciali dedicate alle configurazioni dei Capitani, equipaggiamenti ed eroi.
+            * 🤖 **Notifiche Automatiche:** Avvisi istantanei sui timer dei raduni e messaggi importanti dei Generali.
+            * 💬 **Community Globale:** Chiacchiera e scambia report di battaglia con i membri di tutto il mondo.
+            """,
+            unsafe_allow_html=True
+        )
+        
+        st.markdown("<br><br>", unsafe_allow_html=True)
