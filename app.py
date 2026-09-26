@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 
 # 1. IMPOSTAZIONI DEL SITO & GRAFICA DARK WAR (HTML/CSS)
 st.set_page_config(page_title="UFC Command Center", layout="wide", page_icon="🛡️")
@@ -38,18 +39,19 @@ st.markdown(
     .stSlider > div [data-baseweb="slider"] > div {
         background-color: #bd9b53;
     }
-    /* Centratura logo login */
-    .login-logo {
-        display: flex;
-        justify-content: center;
-        margin-bottom: -20px;
+    /* Centratura logo */
+    .stImage > img {
+        margin: 0 auto;
+        display: block;
+        border-radius: 8px;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.7);
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK CON LOGO MEDIEVALE)
+# 2. FUNZIONE DI SICUREZZA (PASSWORD LOCK CON LOGO REALE CARICATO)
 def check_password():
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
@@ -61,17 +63,14 @@ def check_password():
     col_v1, col_login, col_v2 = st.columns(3)
     
     with col_login:
-        # TRUCCO GRAFICO: Inseriamo l'icona ufficiale dello scudo da guerra centrato sopra i testi
-        st.markdown(
-            """
-            <div class="login-logo">
-                <img src="https://icons8.com" width="130" style="filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.7));">
-            </div>
-            """, 
-            unsafe_allow_html=True
-        )
-        st.markdown("<h1 style='text-align: center; margin-top: 10px;'>🛡️ UFC HIGHLAND RAIDERS</h1>", unsafe_allow_html=True)
-        st.markdown("<h3 style='text-align: center; font-size: 16px; letter-spacing: 1px;'>PORTALE ALLEANZA - ACCESSO RISERVATO</h3>", unsafe_allow_html=True)
+        # Se il file logo.png esiste su GitHub, lo proietta sopra i campi di login
+        if os.path.exists("logo.png"):
+            st.image("logo.png", use_container_width=True)
+        else:
+            st.markdown('<h1 style="text-align: center; font-size: 80px; margin: 0px;">🛡️</h1>', unsafe_allow_html=True)
+            
+        st.markdown("<h1 style='text-align: center; margin-top: 15px;'>UFC HIGHLAND RAIDERS</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; font-size: 14px; letter-spacing: 2px; color: #bd9b53;'>PORTALE ALLEANZA - ACCESSO RISERVATO</h3>", unsafe_allow_html=True)
         password_entered = st.text_input("PASSWORD CLAN:", type="password", placeholder="Inserisci il codice d'accesso...")
         
         if st.button("ACCEDI AL PORTALE", width='stretch'):
@@ -86,29 +85,30 @@ def check_password():
 # 3. SE LOGGATO, APRI IL SITO DEL CLAN
 if check_password():
     
-    # BARRA LATERALE DI NAVIGAZIONE CON LOGO COORDINATO
-    st.sidebar.image("https://icons8.com", width=60)
-    st.sidebar.markdown("<h2 style='font-size: 22px; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
+    # BARRA LATERALE DI NAVIGAZIONE COORDINATA CON IL TUO LOGO REALE
+    if os.path.exists("logo.png"):
+        st.sidebar.image("logo.png", width=150)
+    else:
+        st.sidebar.markdown("<h1 style='font-size: 60px; text-align: center; margin-bottom: 0px;'>🛡️</h1>", unsafe_allow_html=True)
+        
+    st.sidebar.markdown("<h2 style='font-size: 22px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     page = st.sidebar.radio("NAVIGAZIONE:", ["🏠 Home Dashboard", "⚔️ Troops Calculator"])
     st.sidebar.markdown("---")
     st.sidebar.success("Portale protetto attivo.")
 
-    # --- PAGINA 1: DASHBOARD (In attesa del link finale) ---
+    # --- PAGINA 1: DASHBOARD ---
     if page == "🏠 Home Dashboard":
         st.markdown("<h1>🏠 UFC Command Center - Stato dell'Alleanza</h1>", unsafe_allow_html=True)
         st.write("Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale dall'OCR dell'alleanza.")
         
         st.markdown("<br>", unsafe_allow_html=True)
-        
-        # Bacheca informazioni stile bacheca ordini
         st.info("💡 **Nota per i membri UFC:** Cliccando sul pulsante d'acciaio qui sotto, la classifica ufficiale si aprirà in una nuova scheda del browser in modalità protetta di Sola Lettura. Controlla i tuoi punti e gli obiettivi in totale sicurezza.")
         
         st.markdown("<br><br>", unsafe_allow_html=True)
         
-        # Lasciamo il segnaposto temporaneo come stabilito!
+        # Segnaposto temporaneo in attesa del link finale
         LINK_PULITO = "LAVORI_IN_CORSO"
         
-        # Bottone d'acciaio rosso ad impatto visivo massimo
         st.markdown(
             f'''
             <a href="#" target="_blank" style="text-decoration: none;">
@@ -140,4 +140,4 @@ if check_password():
             balanced = int(capacity / 3)
             st.info(f"📌 **Configurazione Standard:** Manda una ripartizione perfetta: **{balanced:,} Fanteria, {balanced:,} Arcieri, {balanced:,} Cavalleria**.".replace(",", "."))
 
-
+    
