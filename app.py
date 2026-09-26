@@ -64,8 +64,8 @@ else:
     
     page_index = options.index(selected_page)
 
-    # RIGA 63: IL TUO LINK REALE DI GOOGLE SHEET GIÀ INSERITO PERFETTAMENTE
-    GOOGLE_SHEET_LINK = "https://google.com"
+    # RIGA 63: IL TUO LINK REALE DI GOOGLE SHEET GIÀ INSERITO PERFETTAMENT
+    GOOGLE_SHEET_LINK = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/edit?usp=sharing"
 
     # --- PAGINA 0: DASHBOARD PRINCIPALE ---
     if page_index == 0:
