@@ -1,0 +1,42 @@
+{
+  "menu_home": "🏠 Tableau de Bord",
+  "menu_info": "📋 Infos & Chats du Clan",
+  "menu_min": "📊 Minimums Événements",
+  "menu_disc": "🌐 Serveur Discord",
+  "menu_calc": "⚔️ Simulateur de Troupes",
+  
+  "home_h1": "🏠 Tableau de Bord - Statut de l Alliance",
+  "home_write": "Consultez le classement officiel des coffres mis a jour en temps reel par l OCR.",
+  "home_info": "💡 **Avis aux membres UFC:** En cliquant sur le bouton ci-dessous, le classement s ouvrira en mode lecture seule.",
+  "home_btn": "⚔️ CLIQUEZ ICI POUR OUVRIR LE CLASSEMENT DES COFFRES ⚔️",
+  
+  "info_h1": "📋 Informations de l Alliance & Canaux Officiels",
+  "info_write": "Directives operationnelles et canaux de communication officiels des Raiders of Chaos.",
+  "info_h3": "### ⚔️ Discussions du Clan & Descriptions",
+  "info_c1": "<b> RoC Vaults</b><br>- ou vous enregistrerez vos cryptes creees",
+  "info_c2": "<b> RoC CP Swap Cities</b><br>- ou vous gerez les villes CP",
+  "info_c3": "<b> The Daily Raid</b><br>- historique des annonces du clan",
+  "info_c4": "<b> OPERATION EPIC DEMISE</b><br>- coordination contre les monstres epiques",
+  "info_c5": "<b> ROC DARK OMENS</b><br>- chat dedie a l evenement Dark Omens",
+  "info_c6": "<b> ROC OLYMPUS</b><br>- chat dedie a l evenement Olympus",
+  "info_c7": "<b> ROC TORCH</b><br>- dedie a l artefact torche 5 etoiles pour tous",
+  "info_sub": "<b>[SUB-CLAN] ((76 RoE))</b><br>- details de la sous-alliance K76 RoE",
+  
+  "min_h1": "📊 Minimums Officiels et Objectifs d Événement",
+  "min_info": "⚠️ Participation requise aux Ancients, Armageddon, Ragnarok, Olympus et Dark Omens.",
+  "min_h3": "### 📋 Exigences Minimales",
+  "min_w1": "- **Points Minimums Mensuels:** 1 000 000 points total.",
+  "min_w2": "- **Armageddon:** 50 coffres",
+  "min_w3": "- **Ragnaroc:** 500m",
+  "min_w4": "- **Olympus:** 570.000",
+  "min_w5": "- **Dark Omens:** 100 coffres de clan, max huile deployee et part equitable de la defense",
+  
+  "disc_h1": "🌐 Serveur Discord Officiel des Raiders of Chaos",
+  "disc_info": "💡 Instructions d acces: Le bouton ci-dessous sera bientot active avec le code d invitation.",
+  "disc_btn": "🔮 BOUTON DISCORD - BIENTÔT DISPONIBLE 🔮",
+  
+  "calc_h1": "⚔️ Calcolatore Ufficiale Marce di Alleanza",
+  "calc_write": "Accedi al simulatore di marce e formazioni più efficiente utilizzato dai clan d elite mondiali.",
+  "calc_info": "💡 **Direttiva Tattica:** Questo pulsante ti reindirizza in sicurezza al Kaiculator ufficiale. Calcola dinamicamente i bonus di Capitani, Draghi e moltiplicatori del server per attacchi a perdite zero.",
+  "calc_btn": "🛡️ APRI IL SIMULATORE DI MARCIA AVANZATO 🛡️"
+}
