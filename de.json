@@ -1,0 +1,42 @@
+{
+  "menu_home": "🏠 Haupt-Dashboard",
+  "menu_info": "📋 Clan-Infos & Chats",
+  "menu_min": "📊 Event-Mindestwerte",
+  "menu_disc": "🌐 Discord-Server",
+  "menu_calc": "⚔️ Truppen-Rechner",
+  
+  "home_h1": "🏠 UFC Command Center - Allianz-Status",
+  "home_write": "Überprüfen Sie die offizielle Truhen-Bestenliste, die von der Allianz-OCR in Echtzeit aktualisiert wird.",
+  "home_info": "💡 **Hinweis für UFC-Mitglieder:** Wenn Sie auf die Schaltfläche unten klicken, wird die offizielle Bestenliste im schreibgeschützten Modus sicher geöffnet.",
+  "home_btn": "⚔️ HIER KLICKEN, UM DIE UFC-TRUHEN-BESTENLISTE ZU ÖFFNEN ⚔️",
+  
+  "info_h1": "📋 Allianz-Infos und offizielle Kanäle",
+  "info_write": "Einsatzrichtlinien und Kanäle der Raiders of Chaos.",
+  "info_h3": "### ⚔️ Clan-Chats & Beschreibungen",
+  "info_c1": "<b> RoC Vaults</b><br>- Wo Sie Ihre erstellten Krypten registrieren",
+  "info_c2": "<b> RoC CP Swap Cities</b><br>- Wo Sie CP-Städte verwalten",
+  "info_c3": "<b> The Daily Raid</b><br>- Verlauf der Klan-Ankündigungen",
+  "info_c4": "<b> OPERATION EPIC DEMISE</b><br>- Koordination gegen epische Monster",
+  "info_c5": "<b> ROC DARK OMENS</b><br>- Chat für das Dark Omens Event",
+  "info_c6": "<b> ROC OLYMPUS</b><br>- Chat für das Olympus Event",
+  "info_c7": "<b> ROC TORCH</b><br>- Für das Fackel-Artefakt auf 5 Sterne für alle",
+  "info_sub": "<b>[SUB-CLAN] ((76 RoE))</b><br>- K76 RoE Details",
+  
+  "min_h1": "📊 Offizielle Event-Mindestwerte und Ziele",
+  "min_info": "⚠️ Teilnahme erforderlich für die Events Ancients, Armageddon, Ragnarok, Olympus und Dark Omens.",
+  "min_h3": "### 📋 Monatliche Mindestwerte",
+  "min_w1": "- **Monatliche Mindestpunkte:** Insgesamt 1.000.000 Punkte.",
+  "min_w2": "- **Armageddon:** 50 Kisten",
+  "min_w3": "- **Ragnaroc:** 500m",
+  "min_w4": "- **Olympus:** 570.000",
+  "min_w5": "- **Dark Omens:** 100 Klan-Kisten, maximales Öl eingesetzt und fairer Anteil an der Verteidigung",
+  
+  "disc_h1": "🌐 Offizieller Raiders of Chaos Discord-Server",
+  "disc_info": "💡 Zugangsanweisungen: Die Schaltfläche unten wird in Kürze mit dem offiziellen Einladungscode aktiviert.",
+  "disc_btn": "🔮 DISCORD-SCHALTFLÄCHE - DEMNÄCHST 🔮",
+  
+  "calc_h1": "⚔️ Offizieller Allianz-Marschrechner",
+  "calc_write": "Greifen Sie auf den effizientesten Stack- und Armeesimulator zu, der von Elite-Spielern von Total Battle verwendet wird.",
+  "calc_info": "💡 **Taktischer Hinweis:** Diese Schaltfläche leitet Sie sicher zum offiziellen Kaiculator weiter. Er berechnet dynamisch Ihre Kapitäne, Drachen und Multiplikatoren für verlustfreie Angriffe.",
+  "calc_btn": "🛡️ RECHNER FÜR ERWEITERTEN MARSCH ÖFFNEN 🛡️"
+}
