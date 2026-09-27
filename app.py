@@ -50,27 +50,20 @@ else:
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # Selettore della lingua nella barra laterale
+    # SELETTORE DELLA LINGUA RICHIESTO
     lang = st.sidebar.selectbox("🌐 LANGUAGE / LINGUA:", ["English", "Italiano"])
     st.sidebar.markdown("---")
 
-    # Configurazione del menu laterale in base alla lingua scelta
-    if lang == "Italiano":
-        options = ["🏠 Dashboard Principale", "📋 Info Clan & Chat", "📊 Minimi Richiesti", "🌐 Server Discord", "⚔️ Calcolatore Truppe"]
-    else:
-        options = ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"]
-        
-    page = st.sidebar.radio("NAVIGATION / NAVIGAZIONE:", options)
+    # Menu laterale fisso e pulito in lingua inglese
+    options = ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"]
+    page = st.sidebar.radio("NAVIGATION:", options)
     st.sidebar.markdown("---")
     
-    # Mappatura costante degli indici delle pagine per non perdere i link
-    menu_config = ["🏠 Dashboard Principale", "🏠 Home Dashboard", "📋 Info Clan & Chat", "📋 Clan Info & Chats", "📊 Minimi Richiesti", "📊 Event Minimums", "🌐 Server Discord", "🌐 Discord Server", "⚔️ Calcolatore Truppe", "⚔️ Troops Calculator"]
-    
-    # RIGA 59: IL TUO LINK REALE DI GOOGLE SHEET CONFIGURATO
+    # IL TUO LINK REALE DI GOOGLE SHEET CONFIGURATO
     GOOGLE_SHEET_LINK = "https://google.com"
 
     # --- PAGINA 0: HOME DASHBOARD ---
-    if page in ["🏠 Home Dashboard", "🏠 Dashboard Principale"]:
+    if page == "🏠 Home Dashboard":
         st.markdown("<h1>🏠 UFC Command Center - Alliance Status</h1>", unsafe_allow_html=True)
         st.write("Check the official chest leaderboard updated in real-time by alliance OCR.")
         st.info("💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode.")
@@ -78,7 +71,7 @@ else:
         st.link_button("⚔️ CLICK HERE TO OPEN UFC CHESTS LEADERBOARD ⚔️", GOOGLE_SHEET_LINK, use_container_width=True)
 
     # --- PAGINA 1: CLAN INFO & CHATS ---
-    elif page in ["📋 Clan Info & Chats", "📋 Info Clan & Chat"]:
+    elif page == "📋 Clan Info & Chats":
         st.markdown("<h1>📋 Alliance Info and Official Channels</h1>", unsafe_allow_html=True)
         st.write("Operational directives and channels of Raiders of Chaos.")
         st.markdown("### ⚔️ Clan Chats & Descriptions")
@@ -95,8 +88,8 @@ else:
             """, unsafe_allow_html=True
         )
 
-    # --- PAGINA 2: EVENT MINIMUMS (AGGIORNATO CON I NUOVI REQUISITI DEL RESET) ---
-    elif page in ["📊 Event Minimums", "📊 Minimi Richiesti"]:
+    # --- PAGINA 2: EVENT MINIMUMS ---
+    elif page == "📊 Event Minimums":
         st.markdown("<h1>📊 Official Event Minimums and Targets</h1>", unsafe_allow_html=True)
         st.info("⚠️ Participation required for events Ancients, Armageddon, Ragnarok, Olympus, and Dark Omens.")
         st.markdown("### 📋 Monthly Minimums")
@@ -108,16 +101,16 @@ else:
         st.write("- **Golden Pass:** Rewards **4,000 points** for each Triumphal Challenge chest (no longer a flat 20k bonus).")
 
     # --- PAGINA 3: DISCORD SERVER ---
-    elif page in ["🌐 Discord Server", "🌐 Server Discord"]:
+    elif page == "🌐 Discord Server":
         st.markdown("<h1>🌐 Official Raiders of Chaos Discord Server</h1>", unsafe_allow_html=True)
         st.info("💡 The button below will be activated soon with the official invite code.")
         st.link_button("🔮 DISCORD BUTTON - COMING SOON 🔮", "https://discord.com", use_container_width=True)
 
-    # --- PAGINA 4: TROOPS CALCULATOR (CON LINK AL KAICULATOR FUNZIONANTE) ---
-    elif page in ["⚔️ Troops Calculator", "⚔️ Calcolatore Truppe"]:
+    # --- PAGINA 4: TROOPS CALCULATOR (ATTIVO CON COLLEGAMENTO REALE) ---
+    elif page == "⚔️ Troops Calculator":
         st.markdown("<h1>⚔️ Official Alliance March Calculator</h1>", unsafe_allow_html=True)
         st.write("Access the most efficient stack and army simulator used by elite Total Battle players.")
         st.markdown("<br>", unsafe_allow_html=True)
         st.info("💡 **Tactical Notice:** This button redirects you securely to the official Kaiculator. It dynamically factors in your Captains, Dragons, and multipliers for zero-loss runs.")
         st.markdown("<br>", unsafe_allow_html=True)
-        st.link_button("🛡️ OPEN OFFICIAL KAICULATOR 🛡️", "https://kaiculator.kaikaiju.com", use_container_width=True)
+        st.link_button("🛡️ OPEN OFFICIAL KAICULATOR 🛡️", "https://kaikaiju.com", use_container_width=True)
