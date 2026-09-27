@@ -60,7 +60,7 @@ else:
     st.sidebar.markdown("---")
     
     # IL TUO LINK REALE DI GOOGLE SHEET CONFIGURATO
-    GOOGLE_SHEET_LINK = "https://google.com"
+    GOOGLE_SHEET_LINK = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/edit?usp=sharing"
 
     # --- PAGINA 0: HOME DASHBOARD ---
     if page == "🏠 Home Dashboard":
