@@ -106,13 +106,13 @@ else:
             st.markdown("### ⚔️ Chat del Clan & Descrizioni")
             st.markdown(
                 """
-                <div class="chat-box"><b>[CHAT 1] RoC Vaults</b><br>- dove registrare i vault creati</div>
-                <div class="chat-box"><b>[CHAT 2] RoC CP Swap Cities</b><br>- dove fare il check in/out delle citta CP</div>
-                <div class="chat-box"><b>[CHAT 3] The Daily Raid</b><br>- storico degli annunci del clan</div>
-                <div class="chat-box"><b>[CHAT 4] OPERATION EPIC DEMISE</b><br>- coordinamento degli attacchi ai mostri epici</div>
-                <div class="chat-box"><b>[CHAT 5] ROC DARK OMENS</b><br>- chat dedicata all evento Dark Omens</div>
-                <div class="chat-box"><b>[CHAT 6] ROC OLYMPUS</b><br>- chat dedicata all evento Olympus</div>
-                <div class="chat-box"><b>[CHAT 7] ROC TORCH</b><br>- dedicata a portare l artefatto torcia di tutti a 5 stelle</div>
+                <div class="chat-box"><b> RoC Vaults</b><br>- dove registrare i vault creati</div>
+                <div class="chat-box"><b> RoC CP Swap Cities</b><br>- dove fare il check in/out delle citta CP</div>
+                <div class="chat-box"><b> The Daily Raid</b><br>- storico degli annunci del clan</div>
+                <div class="chat-box"><b> OPERATION EPIC DEMISE</b><br>- coordinamento degli attacchi ai mostri epici</div>
+                <div class="chat-box"><b> ROC DARK OMENS</b><br>- chat dedicata all evento Dark Omens</div>
+                <div class="chat-box"><b> ROC OLYMPUS</b><br>- chat dedicata all evento Olympus</div>
+                <div class="chat-box"><b> ROC TORCH</b><br>- dedicata a portare l artefatto torcia di tutti a 5 stelle</div>
                 <div class="chat-box" style="border-left: 4px solid #7c1a1a; background-color: #241b1b;"><b>[SUB-CLAN] ((76 RoE))</b><br>- Dettagli sotto-alleanza K76 RoE</div>
                 """, unsafe_allow_html=True
             )
