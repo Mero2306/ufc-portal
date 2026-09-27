@@ -51,7 +51,7 @@ else:
     st.sidebar.markdown("---")
     
     # SELETTORE DELLA LINGUA RICHIESTO
-    lang = st.sidebar.selectbox("🌐 LANGUAGE:", ["English")
+    lang = st.sidebar.selectbox("🌐 LANGUAGE:", ["English"])
     st.sidebar.markdown("---")
 
     # Menu laterale fisso e pulito in lingua inglese
