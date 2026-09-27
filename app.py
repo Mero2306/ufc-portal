@@ -96,7 +96,6 @@ else:
         st.write("- **Monthly Minimum Points:** 1,000,000 points total.")
         st.write("- **Armageddon Minimum:** 50 clan chests.")
         st.write("- **Dark Omens Minimum:** 100 epic clan chests.")
-        st.markdown("### 📈 Score Updates & Rules")
         st.write("- **Epic Dark Omens:** Rewards **1,000 points** per chest.")
         st.write("- **Golden Pass:** Rewards **4,000 points** for each Triumphal Challenge chest (no longer a flat 20k bonus).")
 
