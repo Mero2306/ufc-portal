@@ -50,14 +50,34 @@ else:
     st.sidebar.markdown("<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
     
-    # SELETTORE DELLA LINGUA RICHIESTO (SOLO INGLESE)
-    lang = st.sidebar.selectbox("🌐 LANGUAGE:", ["English"])
+       # SELETTORE DELLA LINGUA RICHIESTO (COLLEGATO AI TUOI FILE JSON)
+    import json
+    lang_choice = st.sidebar.selectbox("🌐 LANGUAGE / LINGUA:", ["English", "Italiano", "Français", "Español", "Deutsch", "Русский", "Türkçe"])
     st.sidebar.markdown("---")
 
-    # Menu laterale fisso e pulito in lingua inglese
-    options = ["🏠 Home Dashboard", "📋 Clan Info & Chats", "📊 Event Minimums", "🌐 Discord Server", "⚔️ Troops Calculator"]
+    # Mappatura dei file esterni caricati sul tuo GitHub
+    lang_files = {"Italiano": "it.json", "Français": "fr.json", "Español": "es.json", "Deutsch": "de.json", "Русский": "ru.json", "Türkçe": "tr.json"}
+    
+    # Caricamento dinamico dei testi per la barra laterale
+    ctx = {}
+    if lang_choice in lang_files and os.path.exists(lang_files[lang_choice]):
+        try:
+            with open(lang_files[lang_choice], "r", encoding="utf-8") as f:
+                ctx = json.load(f)
+        except Exception:
+            ctx = {}
+
+    # Menu laterale che cambia lingua prendendo i dati dai tuoi JSON
+    options = [
+        ctx.get("menu_home", "🏠 Home Dashboard"),
+        ctx.get("menu_info", "📋 Clan Info & Chats"),
+        ctx.get("menu_min", "📊 Event Minimums"),
+        ctx.get("menu_disc", "🌐 Discord Server"),
+        ctx.get("menu_calc", "⚔️ Troops Calculator")
+    ]
     page = st.sidebar.radio("NAVIGATION:", options)
     st.sidebar.markdown("---")
+
     
     # IL TUO LINK REALE DI GOOGLE SHEET CONFIGURATO
     GOOGLE_SHEET_LINK = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/edit?usp=sharing"
