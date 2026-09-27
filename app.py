@@ -17,7 +17,7 @@ if "page" in locals() or "page" in globals():
 st.markdown(
     f"""
     <style>
-    @import url('https://googleapis.comcss2?family=Cinzel:wght@700&family=Inter:wght@400;600&display=swap');
+    @import url('https://fonts.://googleapis.com/css2?family=Cinzel:wght@700/&family=Inter:wght@400;600&display=swap');
     
     /* Sfondo Dinamico Personalizzato con Patina Scura Protettiva all'85% */
     .stApp {{ 
