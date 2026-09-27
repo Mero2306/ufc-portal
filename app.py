@@ -153,7 +153,7 @@ else:
     elif page_index == 4:
         if lang == "English":
             st.markdown("<h1>⚔️ Troops Calculator</h1>", unsafe_allow_html=True)
-            st.warning("⚠️ **Under Construction:** This calculator is being re-engineered for the new alliance systems.")
+            st.warning("⚠️ **Under Construction:** This calculator is currently being designed..")
         else:
             st.markdown("<h1>⚔️ Calcolatore Truppe</h1>", unsafe_allow_html=True)
             st.warning("⚠️ **In fase di realizzazione:** Questo calcolatore è in fase di progettazione.")
