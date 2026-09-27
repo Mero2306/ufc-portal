@@ -52,7 +52,7 @@ else:
     
        # SELETTORE DELLA LINGUA RICHIESTO (COLLEGATO AI TUOI FILE JSON)
     import json
-    lang_choice = st.sidebar.selectbox("🌐 LANGUAGE / LINGUA:", ["English", "Italiano", "Français", "Español", "Deutsch", "Русский", "Türkçe"])
+    lang_choice = st.sidebar.selectbox("🌐 LANGUAGE ", ["English", "Italiano", "Français", "Español", "Deutsch", "Русский", "Türkçe"])
     st.sidebar.markdown("---")
 
     # Mappatura dei file esterni caricati sul tuo GitHub
