@@ -121,7 +121,7 @@ else:
     elif page_index == 2:
         if lang == "English":
             st.markdown("<h1>📊 Official Event Minimums and Targets</h1>", unsafe_allow_html=True)
-            st.info("⚠️ Participation required for events Ancients, Ragnarok, Olympus, and Dark Omens.")
+            st.info("⚠️ Participation required for events Ancients, Armageddon, Ragnarok, Olympus, and Dark Omens.")
             st.markdown("### 📋 Minimums")
             st.write("- **Monthly Minimum Points:** 1,000,000 points *(points to earn with level 30 rare crypts, level 30/35 epic crypts, and epic monster chests)*")
             st.write("- **Armageddon:** 50 chests")
@@ -130,7 +130,7 @@ else:
             st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
         else:
             st.markdown("<h1>📊 Minimi Richiesti per gli Eventi</h1>", unsafe_allow_html=True)
-            st.info("⚠️ La partecipazione è richiesta per gli eventi Antichi, Ragnarok, Olympus e Dark Omens.")
+            st.info("⚠️ La partecipazione è richiesta per gli eventi Antichi, Armageddon, Ragnarok, Olympus e Dark Omens.")
             st.markdown("### 📋 Requisiti Minimi")
             st.write("- **Punti Minimi Mensili:** 1.000.000 di punti *(punti da guadagnare tramite cripte rare liv 30, cripte epiche liv 30/35 e forzieri mostri epici)*")
             st.write("- **Armageddon:** 50 forzieri")
