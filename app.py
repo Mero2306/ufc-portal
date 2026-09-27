@@ -6,13 +6,8 @@ import json
 # 1. PAGE SETTINGS & WAR DESIGN
 st.set_page_config(page_title="UFC Command Center", layout="wide", page_icon="🛡️")
 
-# DETERMINAZIONE DELLO SFONDO CORRENTE IN BASE ALLA PAGINA ATTIVA
 bg_image = "bg_home.jpg"
-if "page" in locals() or "page" in globals():
-    if page in ["📋 Clan Info & Chats", ctx.get("menu_info")]: bg_image = "bg_info.jpg"
-    elif page in ["📊 Event Minimums", ctx.get("menu_min")]: bg_image = "bg_min.jpg"
-    elif page in ["🌐 Discord Server", ctx.get("menu_disc")]: bg_image = "bg_disc.jpg"
-    elif page in ["⚔️ Troops Calculator", ctx.get("menu_calc")]: bg_image = "bg_calc.jpg"
+
 
 st.markdown(
     f"""
@@ -21,7 +16,7 @@ st.markdown(
     
     /* Sfondo Dinamico Personalizzato con Patina Scura Protettiva all'85% */
     .stApp {{ 
-        background: linear-gradient(rgba(13, 10, 8, 0.85), rgba(13, 10, 8, 0.85)), url('app/static/{bg_image}') no-repeat center center fixed;
+        background: linear-gradient(rgba(13, 10, 8, 0.85), rgba(13, 10, 8, 0.85)), url('{bg_image}') no-repeat center center fixed;
         background-size: cover;
         color: #f0e6d2; 
         font-family: 'Inter', sans-serif; 
