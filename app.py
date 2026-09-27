@@ -88,14 +88,20 @@ else:
             """, unsafe_allow_html=True
         )
 
-    # --- PAGINA 2: EVENT MINIMUMS ---
+        # --- PAGINA 2: EVENT MINIMUMS (ALL DATA FROM THE SCREENSHOT) ---
     elif page == "📊 Event Minimums":
         st.markdown("<h1>📊 Official Event Minimums and Targets</h1>", unsafe_allow_html=True)
         st.info("⚠️ Participation required for events Ancients, Armageddon, Ragnarok, Olympus, and Dark Omens.")
         st.markdown("### 📋 Monthly Minimums")
         st.write("- **Monthly Minimum Points:** 1,000,000 points total.")
-        st.write("- **Armageddon Minimum:** 50 clan chests.")
-        st.write("- **Dark Omens Minimum:** 100 epic clan chests.")
+        st.write("- **Armageddon:** 50 chests")
+        st.write("- **Ragnaroc:** 500m")
+        st.write("- **Olympus:** 570,000")
+        st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
+        st.markdown("### 📈 Score Updates & Rules")
+        st.write("- **Epic Dark Omens:** Rewards **1,000 points** per chest.")
+        st.write("- **Golden Pass:** Rewards **4,000 points** for each Triumphal Challenge chest (no longer a flat 20k bonus).")
+
         
     # --- PAGINA 3: DISCORD SERVER ---
     elif page == "🌐 Discord Server":
