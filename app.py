@@ -107,4 +107,4 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.info("💡 **Tactical Notice:** This button redirects you securely to the official Kaiculator. It dynamically factors in your Captains, Dragons, and multipliers for zero-loss runs.")
         st.markdown("<br>", unsafe_allow_html=True)
-        st.link_button("🛡️ OPEN OFFICIAL KAICULATOR 🛡️", "https://kaikaiju.com", use_container_width=True)
+        st.link_button("🛡️ OPEN OFFICIAL KAICULATOR 🛡️", "https://kaiculator.kaikaiju.com/", use_container_width=True)
