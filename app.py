@@ -3,7 +3,7 @@ import json
 import os
 import streamlit as st
 
-# 1. SETTAGGI DELLA PAGINA
+# 1. PAGE SETTINGS & WAR DESIGN
 st.set_page_config(
     page_title="UFC Command Center", layout="wide", page_icon="🛡️"
 )
@@ -17,7 +17,7 @@ def get_base64_image(image_path):
     return ""
 
 
-# Funzione per applicare lo stile CSS con lo sfondo codificato
+# Funzione per applicare lo stile CSS con lo sfondo codificato e la patina scura
 def apply_custom_style(image_path):
     bin_str = get_base64_image(image_path)
     bg_src = (
@@ -88,7 +88,7 @@ def apply_custom_style(image_path):
     )
 
 
-# 2. SCHERMATA DI LOGIN DI SICUREZZA
+# 2. SECURITY LOGIN
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
@@ -124,7 +124,7 @@ if not st.session_state["authenticated"]:
             else:
                 st.error("❌ Incorrect password!")
 else:
-    # 3. INTERFACCIA DEL PORTALE (DOPO IL LOGIN)
+    # 3. PORTAL INTERFACE
     if os.path.exists("logo.png"):
         st.sidebar.image("logo.png", width=85)
     else:
@@ -139,7 +139,7 @@ else:
     )
     st.sidebar.markdown("---")
 
-    # SELETTORE DELLA LINGUA
+    # SELETTORE DELLA LINGUA RICHIESTO (COLLEGATO AI TUOI FILE JSON)
     lang_choice = st.sidebar.selectbox(
         "🌐",
         [
@@ -153,6 +153,7 @@ else:
         ],
     )
 
+    # Mappatura dei file esterni caricati sul tuo GitHub
     lang_files = {
         "Italiano": "it.json",
         "Français": "fr.json",
@@ -162,6 +163,7 @@ else:
         "Türkçe": "tr.json",
     }
 
+    # Caricamento dinamico dei testi per la barra laterale
     ctx = {}
     if lang_choice in lang_files and os.path.exists(lang_files[lang_choice]):
         try:
@@ -170,7 +172,7 @@ else:
         except Exception:
             ctx = {}
 
-    # Menu laterale dinamico
+    # Menu laterale che cambia lingua prendendo i dati dai tuoi JSON
     options = [
         ctx.get("menu_home", "🏠 Home Dashboard"),
         ctx.get("menu_info", "📋 Clan Info & Chats"),
@@ -181,13 +183,12 @@ else:
     page = st.sidebar.radio("NAVIGATION:", options)
     st.sidebar.markdown("---")
 
+    # IL TUO LINK REALE DI GOOGLE SHEET CONFIGURATO
     GOOGLE_SHEET_LINK = "https://google.com"
-
-    # --- LOGICA DELLE PAGINE CON SFONDI DINAMICI ---
 
     # --- PAGINA 0: HOME DASHBOARD ---
     if page in ["🏠 Home Dashboard", ctx.get("menu_home")]:
-        apply_custom_style("bg_home.jpg")  # Imposta lo sfondo della Home
+        apply_custom_style("bg_home.jpg")
 
         st.markdown(
             f"<h1>{ctx.get('home_h1', '🏠 UFC Command Center - Alliance Status')}</h1>",
@@ -216,7 +217,7 @@ else:
 
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
-        apply_custom_style("bg_info.jpg")  # Imposta lo sfondo Info
+        apply_custom_style("bg_info.jpg")
 
         st.markdown(
             f"<h1>{ctx.get('info_h1', '📋 Alliance Info and Official Channels')}</h1>",
@@ -279,17 +280,77 @@ else:
     # --- PAGINA 2: EVENT MINIMUMS ---
     elif page in ["📊 Event Minimums", ctx.get("menu_min")]:
         apply_custom_style("bg_min.jpg")
-        st.markdown("<h1>📊 Event Minimums</h1>", unsafe_allow_html=True)
-        st.write("Content for Event Minimums coming soon...")
+
+        st.markdown(
+            f"<h1>{ctx.get('min_h1', '📊 Official Event Minimums and Targets')}</h1>",
+            unsafe_allow_html=True,
+        )
+        st.info(
+            ctx.get(
+                "min_info",
+                "⚠️ Participation required for events Ancients, Armageddon, Ragnarok, Olympus, and Dark Omens.",
+            )
+        )
+        st.markdown(ctx.get("min_h3", "### 📋 Monthly Minimums"))
+        st.write(
+            ctx.get(
+                "min_w1", "- **Monthly Minimum Points:** 1,000,000 points total."
+            )
+        )
+        st.write(ctx.get("min_w2", "- **Armageddon:** 50 chests"))
+        st.write(ctx.get("min_w3", "- **Ragnaroc:** 500m"))
+        st.write(ctx.get("min_w4", "- **Olympus:** 570,000"))
+        st.write(
+            ctx.get(
+                "min_w5",
+                "- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense",
+            )
+        )
 
     # --- PAGINA 3: DISCORD SERVER ---
     elif page in ["🌐 Discord Server", ctx.get("menu_disc")]:
         apply_custom_style("bg_disc.jpg")
-        st.markdown("<h1>🌐 Discord Server</h1>", unsafe_allow_html=True)
-        st.write("Content for Discord Server coming soon...")
+
+        st.markdown(
+            f"<h1>{ctx.get('disc_h1', '🌐 Official Raiders of Chaos Discord Server')}</h1>",
+            unsafe_allow_html=True,
+        )
+        st.info(
+            ctx.get(
+                "disc_info",
+                "💡 The button below will be activated soon with the official invite code.",
+            )
+        )
+        st.link_button(
+            ctx.get("disc_btn", "🔮 DISCORD BUTTON - COMING SOON 🔮"),
+            "https://discord.com",
+            use_container_width=True,
+        )
 
     # --- PAGINA 4: TROOPS CALCULATOR ---
     elif page in ["⚔️ Troops Calculator", ctx.get("menu_calc")]:
         apply_custom_style("bg_calc.jpg")
-        st.markdown("<h1>⚔️ Troops Calculator</h1>", unsafe_allow_html=True)
-        st.write("Content for Troops Calculator coming soon...")
+
+        st.markdown(
+            f"<h1>{ctx.get('calc_h1', '⚔️ Official Alliance March Calculator')}</h1>",
+            unsafe_allow_html=True,
+        )
+        st.write(
+            ctx.get(
+                "calc_write",
+                "Access the most efficient stack and army simulator used by elite Total Battle players.",
+            )
+        )
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.info(
+            ctx.get(
+                "calc_info",
+                "💡 **Tactical Notice:** This button redirects you securely to the official Kaiculator. It dynamically factors in your Captains, Dragons, and multipliers for zero-loss runs.",
+            )
+        )
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.link_button(
+            ctx.get("calc_btn", "🛡️ OPEN OFFICIAL KAICULATOR 🛡️"),
+            "https://kaikaiju.com",
+            use_container_width=True,
+        )
