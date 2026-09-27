@@ -1,0 +1,42 @@
+{
+  "menu_home": "🏠 Panel Principal",
+  "menu_info": "📋 Info & Chats del Clan",
+  "menu_min": "📊 Mínimos de Eventos",
+  "menu_disc": "🌐 Servidor Discord",
+  "menu_calc": "⚔️ Calculadora de Tropas",
+  
+  "home_h1": "🏠 Panel Principal - Estado de la Alianza",
+  "home_write": "Consulte la tabla de clasificación oficial de cofres actualizada en tiempo real por el OCR.",
+  "home_info": "💡 **Aviso para los miembros de UFC:** Al hacer clic en el botón de abajo, la clasificación oficial se abrirá de forma segura en modo de Solo Lectura.",
+  "home_btn": "⚔️ HAGA CLIC AQUÍ PARA ABRIR LA CLASIFICACIÓN DE COFRES UFC ⚔️",
+  
+  "info_h1": "📋 Información de la Alianza & Canales Oficiales",
+  "info_write": "Directivas operativas y canales oficiales de comunicación de los Raiders of Chaos.",
+  "info_h3": "### ⚔️ Chats del Clan & Descripciones",
+  "info_c1": "<b> RoC Vaults</b><br>- donde registrará sus criptas creadas",
+  "info_c2": "<b> RoC CP Swap Cities</b><br>- donde gestionará las ciudades CP",
+  "info_c3": "<b> The Daily Raid</b><br>- historial de anuncios del clan",
+  "info_c4": "<b> OPERATION EPIC DEMISE</b><br>- coordinación de ataques contra monstruos épicos",
+  "info_c5": "<b> ROC DARK OMENS</b><br>- chat dedicado al evento Dark Omens",
+  "info_c6": "<b> ROC OLYMPUS</b><br>- chat dedicado al evento Olympus",
+  "info_c7": "<b> ROC TORCH</b><br>- dedicado a asegurar que el artefacto antorcha de todos esté en 5 estrellas",
+  "info_sub": "<b>[SUB-CLAN] ((76 RoE))</b><br>- Detalles de la sub-alianza K76 RoE",
+  
+  "min_h1": "📊 Mínimos Oficiales de Eventos y Objetivos",
+  "min_info": "⚠️ Se requiere participación obligatoria en los eventos de Ancients, Armageddon, Ragnarok, Olympus y Dark Omens.",
+  "min_h3": "### 📋 Requisitos Mínimos",
+  "min_w1": "- **Puntos Mínimos Mensuales:** 1,000,000 puntos totales.",
+  "min_w2": "- **Armageddon:** 50 cofres",
+  "min_w3": "- **Ragnaroc:** 500m",
+  "min_w4": "- **Olympus:** 570.000",
+  "min_w5": "- **Dark Omens:** 100 cofres de clan, máximo petróleo desplegado y participación justa en la defensa",
+  
+  "disc_h1": "🌐 Servidor Oficial de Discord de Raiders of Chaos",
+  "disc_info": "💡 Instrucciones de acceso: El botón de abajo se activará pronto con el código de invitación oficial.",
+  "disc_btn": "🔮 BOTÓN DE DISCORD - PRÓXIMAMENTE 🔮",
+  
+  "calc_h1": "⚔️ Calculadora de Tropas",
+  "calc_write": "Acceda al simulador de marchas y formaciones más eficiente utilizado por los clanes de élite mundiales.",
+  "calc_info": "💡 **Directiva Táctica:** Este botón le redirige de forma segura al Kaiculator oficial. Calcula dinámicamente las bonificaciones de Capitanes, Dragones y multiplicadores del servidor para ataques con cero pérdidas.",
+  "calc_btn": "🛡️ ABRIR EL SIMULADOR DE MARCHA AVANZADO 🛡️"
+}
