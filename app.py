@@ -156,4 +156,4 @@ else:
             st.warning("⚠️ **Under Construction:** This calculator is being re-engineered for the new alliance systems.")
         else:
             st.markdown("<h1>⚔️ Calcolatore Truppe</h1>", unsafe_allow_html=True)
-            st.warning("⚠️ **In fase di realizzazione:** Questo calcolatore è in fase di riprogettazione per i nuovi sistemi di alleanza.")
+            st.warning("⚠️ **In fase di realizzazione:** Questo calcolatore è in fase di progettazione.")
