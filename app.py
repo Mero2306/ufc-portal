@@ -6,19 +6,75 @@ import json
 # 1. PAGE SETTINGS & WAR DESIGN
 st.set_page_config(page_title="UFC Command Center", layout="wide", page_icon="🛡️")
 
+# DETERMINAZIONE DELLO SFONDO CORRENTE IN BASE ALLA PAGINA ATTIVA
+bg_image = "bg_home.jpg"
+if "page" in locals() or "page" in globals():
+    if page in ["📋 Clan Info & Chats", ctx.get("menu_info")]: bg_image = "bg_info.jpg"
+    elif page in ["📊 Event Minimums", ctx.get("menu_min")]: bg_image = "bg_min.jpg"
+    elif page in ["🌐 Discord Server", ctx.get("menu_disc")]: bg_image = "bg_disc.jpg"
+    elif page in ["⚔️ Troops Calculator", ctx.get("menu_calc")]: bg_image = "bg_calc.jpg"
+
 st.markdown(
-    """
+    f"""
     <style>
-    .stApp { background-color: #1a1a1a; color: #e6c687; }
-    [data-testid="stSidebar"] { background-color: #262626; border-right: 2px solid #bd9b53; }
-    h1, h2, h3 { color: #bd9b53 !important; font-family: 'Georgia', serif; text-shadow: 2px 2px 4px #000000; font-weight: bold; }
-    .stMarkdown p { color: #dfdfdf; font-size: 16px; }
-    .stAlert { background-color: #2b2311 !important; border: 1px solid #bd9b53 !important; color: #e6c687 !important; }
-    .chat-box { background-color: #262626; border: 1px solid #444; border-left: 4px solid #bd9b53; padding: 14px; margin-bottom: 12px; border-radius: 4px; }
+    @import url('https://googleapis.com');
+    
+    /* Sfondo Dinamico Personalizzato con Patina Scura Protettiva all'85% */
+    .stApp {{ 
+        background: linear-gradient(rgba(13, 10, 8, 0.85), rgba(13, 10, 8, 0.85)), url('app/static/{bg_image}') no-repeat center center fixed;
+        background-size: cover;
+        color: #f0e6d2; 
+        font-family: 'Inter', sans-serif; 
+    }}
+    
+    [data-testid="stSidebar"] {{ background-color: #121212; border-right: 2px solid #bd9b53; box-shadow: 5px 0 15px rgba(0,0,0,0.7); }}
+    
+    /* Titoli stile Epic War */
+    h1, h2, h3 {{ color: #d4b373 !important; font-family: 'Cinzel', serif !important; text-shadow: 3px 3px 6px #000000; letter-spacing: 1px; font-weight: 700; }}
+    h1 {{ border-bottom: 2px solid #bd9b53; padding-bottom: 10px; margin-bottom: 25px !important; font-size: 28px !important; }}
+    
+    /* Box delle Chat e Contenitori con effetto Glow Dorato */
+    .chat-box, .stAlert {{ 
+        background: linear-gradient(145, #1e1a13, #14120e) !important; 
+        border: 1px solid #bd9b53 !important; 
+        border-left: 5px solid #bd9b53 !important; 
+        padding: 16px !important; 
+        margin-bottom: 15px !important; 
+        border-radius: 6px !important;
+        box-shadow: 0 4px 15px rgba(189, 155, 83, 0.15) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }}
+    .chat-box:hover {{ transform: translateY(-2px); box-shadow: 0 6px 20px rgba(189, 155, 83, 0.3) !important; }}
+    
+    /* Pulsanti d'Acciaio Reattivi (Link Buttons) */
+    .stLinkButton a {{
+        background: linear-gradient(135, #8c1d1d 0%, #591010 100%) !important;
+        color: #f0e6d2 !important;
+        border: 2px solid #bd9b53 !important;
+        font-family: 'Cinzel', serif !important;
+        font-weight: 700 !important;
+        letter-spacing: 1px !important;
+        border-radius: 4px !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
+        transition: all 0.3s ease !important;
+    }}
+    .stLinkButton a:hover {{ 
+        background: linear-gradient(135, #b32424 0%, #7c1515 100%) !important;
+        box-shadow: 0 0 15px #bd9b53 !important;
+        transform: scale(1.01);
+    }}
+    
+    /* Ottimizzazione Mobile */
+    @media (max-width: 768px) {{
+        h1 {{ font-size: 22px !important; }}
+        .stMarkdown p {{ font-size: 14px !important; }}
+        .chat-box {{ padding: 12px !important; }}
+    }}
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 # 2. SECURITY LOGIN
 if "authenticated" not in st.session_state:
