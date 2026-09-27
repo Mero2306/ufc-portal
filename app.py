@@ -98,10 +98,7 @@ else:
         st.write("- **Ragnaroc:** 500m")
         st.write("- **Olympus:** 570,000")
         st.write("- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense")
-        st.markdown("### 📈 Score Updates & Rules")
-        st.write("- **Epic Dark Omens:** Rewards **1,000 points** per chest.")
-        st.write("- **Golden Pass:** Rewards **4,000 points** for each Triumphal Challenge chest (no longer a flat 20k bonus).")
-
+        
         
     # --- PAGINA 3: DISCORD SERVER ---
     elif page == "🌐 Discord Server":
