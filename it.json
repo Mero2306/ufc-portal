@@ -23,10 +23,12 @@
   "info_sub": "<b>[SUB-CLAN] ((76 RoE))</b><br>- Dettagli sotto-alleanza K76 RoE",
   
   "min_h1": "📊 Minimi Richiesti per gli Eventi",
-  "min_info": "⚠️ La partecipazione è richiesta per gli events Antichi, Armageddon, Ragnarok, Olympus e Dark Omens.",
-  "min_h3": "### 📋 Requisitos Mínimos",
+  "min_info": "⚠️ La partecipazione è richiesta per gli eventi Antichi, Armageddon, Ragnarok, Olympus e Dark Omens.",
+  "min_h3": "### 📋 Requisiti Minimi",
   "min_w1": "- **Punti Minimi Mensili:** 1.000.000 di punti totali.",
   "min_w2": "- **Armageddon:** 50 forzieri",
+  "min_w3": "- **Ragnaroc:** 500m",
+  "min_w4": "- **Olympus:** 570.000",
   "min_w5": "- **Dark Omens:** 100 forzieri di clan, massimo olio schierato e difesa attiva",
   
   "disc_h1": "🌐 Server Discord Ufficiale Raiders of Chaos",
