@@ -252,7 +252,7 @@ else:
         apply_custom_style("bg_info.jpg")
 
         st.markdown(
-            f"<h1>{ctx.get('info_h1', '📋 Alliance Info and Official Channels')}</h1>",
+            f"<h1>{ctx.get('info_h1', '📋 Clan Info and Official Channels')}</h1>",
             unsafe_allow_html=True,
         )
         st.write(
