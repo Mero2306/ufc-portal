@@ -185,6 +185,20 @@ else:
 
     # IL TUO LINK REALE DI GOOGLE SHEET CONFIGURATO
     GOOGLE_SHEET_LINK = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/edit?usp=sharing"
+    # MOTORE DI LETTURA AUTOMATICA DEI RISULTATI DALLA DASHBOARD DEL FOGLIO GOOGLE
+    CSV_URL = GOOGLE_SHEET_LINK.replace("/edit?usp=sharing", "/export?format=csv")
+    
+    @st.cache_data(ttl=300)  # Rinfresca i dati ogni 5 minuti per non rallentare il sito
+    def load_clan_results(url):
+        import pandas as pd
+        try:
+            # Legge il foglio in background senza mostrare link esterni
+            df = pd.read_csv(url)
+            return df
+        except Exception:
+            return None
+
+    results_data = load_clan_results(CSV_URL)
 
     # --- PAGINA 0: HOME DASHBOARD ---
     if page in ["🏠 Home Dashboard", ctx.get("menu_home")]:
