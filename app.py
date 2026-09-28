@@ -417,7 +417,7 @@ else:
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
         st.markdown(f"<h1>{ctx.get('res_h1', '🏆 Clan Real-Time Results')}</h1>", unsafe_allow_html=True)
-        st.write(ctx.get("res_write", "Live statistics directly from the alliance war log."))
+        st.write(ctx.get("res_write", "Live statistics extracted directly from the chest counter."))
         
         # Svuota forzatamente la memoria interna ogni volta che entri o clicchi
         st.cache_data.clear()
