@@ -371,71 +371,90 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-    # --- PAGINA 5: CLAN RESULTS (DASHBOARD REALE) ---
-        # --- PAGINA 5: CLAN RESULTS (ESTRAZIONE DATI REALI DA DASHBOARD) ---
+        # --- PAGINA 5: CLAN RESULTS (RAGGRUPPAMENTO BOX E TABELLA DETTAGLIATA) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
         st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Valori di ripiego sicuri se il foglio Google è momentaneamente irraggiungibile
+        # 1. Valori di ripiego statici per i 3 Box Principali
         val_cripte = "1,577"
         val_mostri = "5,987"
         val_totale = "7,564"
 
-        # Estrazione dinamica delle celle reali dal foglio Google
+        # Dati pronti per la tabella dettagliata
+        dettagli_forzieri = [
+            {"Chest Name": "Rare Crypt 30", "Total Chests": "129"},
+            {"Chest Name": "Epic Crypt 30", "Total Chests": "104"},
+            {"Chest Name": "Epic Crypt 35", "Total Chests": "1,344"},
+            {"Chest Name": "Arachne's Swarm", "Total Chests": "285"},
+            {"Chest Name": "Epic Undead Squad", "Total Chests": "0"},
+            {"Chest Name": "Shadow City", "Total Chests": "0"},
+            {"Chest Name": "Armageddon", "Total Chests": "0"},
+            {"Chest Name": "Hellforge", "Total Chests": "0"},
+            {"Chest Name": "Epic Fenrir Squad", "Total Chests": "0"},
+            {"Chest Name": "Jormungandr Squad", "Total Chests": "0"},
+            {"Chest Name": "Epic Chimera Squad", "Total Chests": "0"},
+            {"Chest Name": "Epic Basilisk Squad", "Total Chests": "0"},
+            {"Chest Name": "Epic Briareus Squad", "Total Chests": "0"},
+            {"Chest Name": "Sands of Eternity", "Total Chests": "0"},
+            {"Chest Name": "Arcanomancer squad", "Total Chests": "5,702"},
+            {"Chest Name": "Yokai", "Total Chests": "0"}
+        ]
+
+        # 2. Lettura dinamica avanzata dal file caricato in background
         if results_data is not None:
             try:
-                # Trasformiamo i nomi delle colonne in stringhe pulite
                 results_data.columns = results_data.columns.astype(str).str.strip()
-                
-                # Cerchiamo la riga che contiene i riassunti delle categorie
+                # Cerchiamo di aggiornare i 3 totali principali al volo
                 for idx, row in results_data.iterrows():
-                    row_text = str(row.iloc[0]).strip()
-                    if "Crypts (Rare & Epic)" in row_text:
-                        val_cripte = str(row.iloc[1]).strip()
-                    elif "Epic Monsters" in row_text:
-                        val_mostri = str(row.iloc[1]).strip()
-                    elif "TOTAL CLAN CHESTS" in row_text:
-                        val_totale = str(row.iloc[1]).strip()
+                    r_text = str(row.iloc[0]).strip() if len(row) > 0 else ""
+                    r_val = str(row.iloc[1]).strip() if len(row) > 1 else ""
+                    if "Crypts (Rare & Epic)" in r_text: val_cripte = r_val
+                    elif "Epic Monsters" in r_text: val_mostri = r_val
+                    elif "TOTAL CLAN CHESTS" in r_text: val_totale = r_val
+                
+                # Proviamo a ricreare i dettagli se le righe corrispondono alla struttura
+                temp_dettagli = []
+                for idx, row in results_data.iterrows():
+                    r_text = str(row.iloc[0]).strip() if len(row) > 0 else ""
+                    r_val = str(row.iloc[1]).strip() if len(row) > 1 else ""
+                    if r_text and r_val and r_text not in ["Category", "TOTAL CLAN CHESTS", "Crypts (Rare & Epic)", "Epic Monsters", "Chest Name"]:
+                        temp_dettagli.append({"Chest Name": r_text, "Total Chests": r_val})
+                if len(temp_dettagli) > 0:
+                    dettagli_forzieri = temp_dettagli
             except Exception:
                 pass
 
-        # COSTRUZIONE GRAFICA DEI TRE BOX REATTIVI CON I TUOI DATI REALI
+        # 3. COMPILAZIONE GRAFICA DEI TRE BOX IN CIMA
         col_cripte, col_mostri, col_totale = st.columns(3)
-        
         with col_cripte:
-            st.markdown(
-                f"""
-                <div class="chat-box" style="text-align: center;">
-                    <h3 style='margin:0; font-size:16px;'>🏰 CRYPTS TOTAL</h3>
-                    <p style='font-size: 28px; font-weight: bold; color: #bd9b53; margin: 10px 0 0 0;'>{val_cripte}</p>
-                </div>
-                """, 
-                unsafe_allow_html=True
-            )
-            
+            st.markdown(f'<div class="chat-box" style="text-align: center;"><h3 style="margin:0; font-size:16px;">🏰 CRYPTS TOTAL</h3><p style="font-size: 28px; font-weight: bold; color: #bd9b53; margin: 10px 0 0 0;">{val_cripte}</p></div>', unsafe_allow_html=True)
         with col_mostri:
-            st.markdown(
-                f"""
-                <div class="chat-box" style="text-align: center; border-left: 5px solid #9e1b1b !important;">
-                    <h3 style='margin:0; font-size:16px;'>👹 EPIC MONSTERS</h3>
-                    <p style='font-size: 28px; font-weight: bold; color: #9e1b1b; margin: 10px 0 0 0;'>{val_mostri}</p>
-                </div>
-                """, 
-                unsafe_allow_html=True
-            )
-            
+            st.markdown(f'<div class="chat-box" style="text-align: center; border-left: 5px solid #9e1b1b !important;"><h3 style="margin:0; font-size:16px;">👹 EPIC MONSTERS</h3><p style="font-size: 28px; font-weight: bold; color: #9e1b1b; margin: 10px 0 0 0;">{val_mostri}</p></div>', unsafe_allow_html=True)
         with col_totale:
-            st.markdown(
-                f"""
-                <div class="chat-box" style="text-align: center; background: linear-gradient(145, #241f16, #14120e) !important;">
-                    <h3 style='margin:0; font-size:16px;'>🏆 TOTAL CLAN CHESTS</h3>
-                    <p style='font-size: 32px; font-weight: bold; color: #d4b373; margin: 10px 0 0 0; text-shadow: 0 0 10px #bd9b53;'>{val_totale}</p>
-                </div>
-                """, 
-                unsafe_allow_html=True
-            )
+            st.markdown(f'<div class="chat-box" style="text-align: center; background: linear-gradient(145, #241f16, #14120e) !important;"><h3 style="margin:0; font-size:16px;">🏆 TOTAL CLAN CHESTS</h3><p style="font-size: 32px; font-weight: bold; color: #d4b373; margin: 10px 0 0 0; text-shadow: 0 0 10px #bd9b53;">{val_totale}</p></div>', unsafe_allow_html=True)
             
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("### 📊 Detailed Chest Summary")
+
+        # 4. GENERAZIONE DELLA TABELLA DETTAGLIATA STILIZZATA IN STILE GUERRA MEDIEVALE
+        html_table = """
+        <table style="width:100%; border-collapse: collapse; background: #14120e; border: 1px solid #bd9b53; font-family: 'Inter', sans-serif;">
+            <tr style="background: linear-gradient(135, #1e1a13, #14120e); border-bottom: 2px solid #bd9b53;">
+                <th style="padding: 12px; text-align: left; color: #d4b373; font-family: 'Cinzel', serif;">Chest Name</th>
+                <th style="padding: 12px; text-align: right; color: #d4b373; font-family: 'Cinzel', serif;">Total Chests</th>
+            </tr>
+        """
+        for item in dettagli_forzieri:
+            html_table += f"""
+            <tr style="border-bottom: 1px solid rgba(189, 155, 83, 0.2); transition: background 0.2s;">
+                <td style="padding: 10px; text-align: left; color: #f0e6d2;">{item['Chest Name']}</td>
+                <td style="padding: 10px; text-align: right; color: #bd9b53; font-weight: bold;">{item['Total Chests']}</td>
+            </tr>
+            """
+        html_table += "</table>"
+        
+        st.markdown(html_table, unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         st.info("📊 *Notice:* These statistics are synchronized directly with the main war log sheets to monitor general alliance efficiency.")
