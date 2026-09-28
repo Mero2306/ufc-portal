@@ -1,3 +1,91 @@
+        # 3. COMPILAZIONE GRAFICA DEI TRE BOX IN CIMA
+        col_cripte, col_mostri, col_totale = st.columns(3)
+        with col_cripte:
+            st.markdown(f'<div class="chat-box" style="text-align: center;"><h3 style="margin:0; font-size:16px;">🏰 CRYPTS TOTAL</h3><p style="font-size: 28px; font-weight: bold; color: #4a86e8; margin: 10px 0 0 0;">{val_cripte}</p></div>', unsafe_allow_html=True)
+        with col_mostri:
+            st.markdown(f'<div class="chat-box" style="text-align: center; border-left: 5px solid #990000 !important;"><h3 style="margin:0; font-size:16px;">👹 EPIC MONSTERS</h3><p style="font-size: 28px; font-weight: bold; color: #990000; margin: 10px 0 0 0;">{val_mostri}</p></div>', unsafe_allow_html=True)
+        with col_totale:
+            st.markdown(f'<div class="chat-box" style="text-align: center; background: linear-gradient(145, #241f16, #14120e) !important;"><h3 style="margin:0; font-size:16px;">🏆 TOTAL CLAN CHESTS</h3><p style="font-size: 32px; font-weight: bold; color: #d4b373; margin: 10px 0 0 0; text-shadow: 0 0 10px #bd9b53;">{val_totale}</p></div>', unsafe_allow_html=True)
+            
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # 4. GENERAZIONE DEL GRAFICO CON I COLORI PERSONALIZZATI DEL FOGLIO GOOGLE
+        import plotly.express as px
+        
+        torta_nomi = []
+        torta_valori = []
+        
+        mappa_colori_clan = {
+            "Rare Crypt 30": "#4a86e8", "Epic Crypt 30": "#9900ff", "Epic Crypt 35": "#674ea7",
+            "Arachne's Swarm": "#990000", "Epic Undead Squad": "#e6b8af", "Shadow City": "#f4cccc",
+            "Armageddon": "#fce5cd", "Hellforge": "#eaeaea", "Epic Fenrir Squad": "#00bfff",
+            "Jormungandr Squad": "#4682b4", "Epic Chimera Squad": "#ffd700", "Epic Basilisk Squad": "#ffaa00",
+            "Epic Briareus Squad": "#fff2cc", "Sands of Eternity": "#ff4500", "Arcanomancer squad": "#e60000",
+            "Yokai": "#38761d"
+        }
+        
+        for item in dettagli_forzieri:
+            try:
+                num_pulito = int(item["Total Chests"].replace(",", "").replace(".", ""))
+                if num_pulito > 0:
+                    torta_nomi.append(item["Chest Name"])
+                    torta_valori.append(num_pulito)
+            except Exception:
+                pass
+
+        if len(torta_valori) > 0:
+            fig = px.pie(
+                names=torta_nomi, 
+                values=torta_valori, 
+                color=torta_nomi,
+                color_discrete_map=mappa_colori_clan, 
+                hole=0.35
+            )
+            fig.update_traces(
+                textposition='auto', textinfo='percent',
+                textfont=dict(color='#f0e6d2', size=13, family='Inter', weight='bold'),
+                marker=dict(line=dict(color='#14120e', width=2))
+            )
+            fig.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', showlegend=True,
+                legend=dict(
+                    orientation="h", yanchor="top", y=-0.1, xanchor="center", x=0.5,
+                    font=dict(color='#f0e6d2', size=11, family='Inter')
+                ),
+                margin=dict(t=10, b=40, l=10, r=10), height=480
+            )
+            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        else:
+            st.warning("⚠️ No active data available for the chart summary.")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("### 📊 Detailed Chest Summary")
+
+        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI CON VALORI REALI
+        for item in dettagli_forzieri:
+            st.markdown(
+                f"""
+                <div class="chat-box" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px !important; margin-bottom: 8px !important;">
+                    <span style="color: #f0e6d2; font-weight: 500;">{item['Chest Name']}</span>
+                    <span style="color: #bd9b53; font-weight: bold; font-family: 'Cinzel', serif; font-size: 18px;">{item['Total Chests']}</span>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            
+        st.markdown("<br>", unsafe_allow_html=True)
+                
+        text_res_info = ctx.get("res_info", "📊 *Notice:* These statistics are synchronized directly with the main war log sheets to monitor general alliance efficiency.")
+        st.markdown(
+            f"""
+            <div style="background-color: rgba(28, 142, 230, 0.1); border-left: 5px solid rgb(28, 142, 230); padding: 16px 20px; border-radius: 4px; margin-bottom: 15px;">
+                <p style="color: #f0e6d2; margin: 0; font-size: 16px; font-weight: 500; font-style: italic; line-height: 1.6; letter-spacing: 0.3px;">
+                    {text_res_info}
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 import base64
 import json
 import os
