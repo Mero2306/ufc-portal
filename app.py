@@ -413,7 +413,7 @@ else:
             "https://kaikaiju.com",
             use_container_width=True,
         )
-           # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
+         # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -502,7 +502,9 @@ else:
         
         for item in dettagli_forzieri:
             try:
-                num_pulito = int(item["Total Chests"].replace(",", "").replace(".", ""))
+                # Pulizia avanzata per gestire sia i punti che le virgole nei numeri grandi del tuo foglio
+                val_stringa = item["Total Chests"].replace(",", "").replace(".", "").strip()
+                num_pulito = int(val_stringa)
                 if num_pulito > 0:
                     torta_nomi.append(item["Chest Name"])
                     torta_valori.append(num_pulito)
@@ -537,7 +539,7 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("### 📊 Detailed Chest Summary")
 
-        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI CON VALORI AGGIORNATI
+        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI CON VALORI AGGIORNATI VIVI
         for item in dettagli_forzieri:
             st.markdown(
                 f"""
