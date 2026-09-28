@@ -209,7 +209,7 @@ else:
 
     results_data = load_clan_results(CSV_URL)
 
-    # --- PAGINA 0: HOME DASHBOARD ---
+        # --- PAGINA 0: HOME DASHBOARD ---
     if page in ["🏠 Home Dashboard", ctx.get("menu_home")]:
         apply_custom_style("bg_home.jpg")
 
@@ -221,16 +221,22 @@ else:
             ctx.get(
                 "home_write",
                 "Check the official chest leaderboard updated in real-time.",
-
-
             )
         )
-        st.info(
-            ctx.get(
-                "home_info",
-                "💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode.",
-            )
+        
+        # NUOVO BOX AZZURRO AD ALTA LEGGIBILITÀ
+        text_home_info = ctx.get("home_info", "💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode.")
+        st.markdown(
+            f"""
+            <div style="background-color: rgba(28, 142, 230, 0.1); border-left: 5px solid rgb(28, 142, 230); padding: 16px 20px; border-radius: 4px; margin-bottom: 15px;">
+                <p style="color: #f0e6d2; margin: 0; font-size: 16px; font-weight: 500; line-height: 1.6; letter-spacing: 0.3px;">
+                    {text_home_info}
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
+        
         st.markdown("<br>", unsafe_allow_html=True)
         st.link_button(
             ctx.get(
@@ -239,6 +245,7 @@ else:
             GOOGLE_SHEET_LINK,
             use_container_width=True,
         )
+
 
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
