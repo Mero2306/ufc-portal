@@ -413,7 +413,7 @@ else:
             "https://kaikaiju.com",
             use_container_width=True,
         )
-         # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
+        # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -446,11 +446,11 @@ else:
             {"Chest Name": "Yokai", "Total Chests": "0"}
         ]
 
-        # Forziamo la lettura della scheda specifica "Dashboard" cambiando l'esportazione CSV
+        # Forziamo la lettura della scheda specifica "Dashboard" cambiando l'esportazione CSV con GID corretto
         CSV_URL_DASHBOARD = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/export?format=csv&gid=432024066"
         results_data_dashboard = load_clan_results(CSV_URL_DASHBOARD)
 
-        # 2. LETTURA RIGIDA DI OGNI SINGOLA RIGA E COLONNA DEL FOGLIO GOOGLE
+        # 2. LETTURA DI OGNI SINGOLA RIGA E COLONNA DEL FOGLIO GOOGLE (COLONNA A E B)
         if results_data_dashboard is not None:
             try:
                 df_clean = results_data_dashboard.reset_index(drop=True)
@@ -485,8 +485,9 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 4. GENERAZIONE DEL GRAFICO CON I TUOI COLORI SPECIFICI
+        # 4. GENERAZIONE DEL GRAFICO CON PULIZIA AVANZATA DEI VALORI NUMERICI
         import plotly.express as px
+        import re
         
         torta_nomi = []
         torta_valori = []
@@ -502,9 +503,9 @@ else:
         
         for item in dettagli_forzieri:
             try:
-                # Pulizia avanzata per gestire sia i punti che le virgole nei numeri grandi del tuo foglio
-                val_stringa = item["Total Chests"].replace(",", "").replace(".", "").strip()
-                num_pulito = int(val_stringa)
+                # Il filtro Regex estrae solo i numeri puri eliminando qualsiasi spazio o carattere di testo
+                stringa_pulita = re.sub(r'\D', '', item["Total Chests"])
+                num_pulito = int(stringa_pulita) if stringa_pulita else 0
                 if num_pulito > 0:
                     torta_nomi.append(item["Chest Name"])
                     torta_valori.append(num_pulito)
@@ -539,7 +540,7 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("### 📊 Detailed Chest Summary")
 
-        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI CON VALORI AGGIORNATI VIVI
+        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI CON VALORI AGGIORNATI
         for item in dettagli_forzieri:
             st.markdown(
                 f"""
