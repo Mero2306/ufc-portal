@@ -125,20 +125,28 @@ if not st.session_state["authenticated"]:
                 st.error("❌ Incorrect password!")
 else:
 
-        # 3. PORTAL INTERFACE
+           # 3. PORTAL INTERFACE (LOGO MAXI E CENTRATO AL 100%)
     if os.path.exists("logo.png"):
-        st.sidebar.image("logo.png", width=120)
+        st.sidebar.markdown(
+            """
+            <div style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 10px 0;">
+                <img src="https://githubusercontent.com" style="width: 170px; max-width: 85%; height: auto; object-fit: contain;">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     else:
         st.sidebar.markdown(
-            "<h1 style='font-size: 38px; text-align: center; margin-bottom: 0px;'>🛡️</h1>",
+            "<div style='text-align: center;'><h1 style='font-size: 45px; margin-bottom: 0px;'>🛡️</h1></div>",
             unsafe_allow_html=True,
         )
 
     st.sidebar.markdown(
-        "<h2 style='font-size: 18px; text-align: center; margin-top: 0px;'>UFC Portal</h2>",
+        "<h2 style='font-size: 20px; text-align: center; margin-top: 10px; margin-bottom: 15px;'>UFC Portal</h2>",
         unsafe_allow_html=True,
     )
     st.sidebar.markdown("---")
+
 
 
        # SELETTORE DELLA LINGUA CON BANDIERE
