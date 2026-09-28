@@ -413,12 +413,20 @@ else:
             "https://kaikaiju.com",
             use_container_width=True,
         )
-         # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
+    # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
         st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
         st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
+        
+        # PULSANTE DI REFRESH PER FORZARE L'AGGIORNAMENTO IMMEDIATO DELLA CACHE GOOGLE
+        col_titolo, col_refresh = st.columns([4, 1])
+        with col_refresh:
+            if st.button("🔄 Rinfresca Dati", use_container_width=True):
+                st.cache_data.clear()
+                st.rerun()
+
         st.markdown("<br>", unsafe_allow_html=True)
 
         # 1. Valori iniziali pronti per essere sovrascritti
@@ -450,37 +458,31 @@ else:
         CSV_URL_DASHBOARD = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/export?format=csv&gid=432024066"
         results_data_dashboard = load_clan_results(CSV_URL_DASHBOARD)
 
-                # 2. LETTURA FLUIDA CON RICERCA PARZIALE DELLE PAROLE CHIAVE
+        # 2. LETTURA SICURA CON CONFRONTO ESATTO PER EVITARE ACCAVALLAMENTI
         if results_data_dashboard is not None:
             try:
-                df_clean = results_data_dashboard.reset_index(drop=True)
-                for idx in range(len(df_clean)):
-                    # Leggiamo e puliamo il testo, convertendolo tutto in minuscolo
-                    r_text_lower = str(df_clean.iat[idx, 0]).lower().strip()
-                    r_val = str(df_clean.iat[idx, 1]).strip()
+                for idx in range(len(results_data_dashboard)):
+                    r_text_clean = str(results_data_dashboard.iat[idx, 0]).strip()
+                    r_text_lower = r_text_clean.lower()
+                    r_val = str(results_data_dashboard.iat[idx, 1]).strip()
                     
                     if r_val.lower() == "nan" or r_val == "":
                         r_val = "0"
                     
-                    # Controlli flessibili per i tre box grandi in alto
-                    if "crypt" in r_text_lower: 
+                    # Cerca la corrispondenza esatta della cella per evitare conflitti di testo
+                    if r_text_lower == "crypts (rare & epic)": 
                         val_cripte = r_val
-                    elif "monster" in r_text_lower: 
+                    elif r_text_lower == "epic monsters": 
                         val_mostri = r_val
-                    elif "total clan" in r_text_lower or "total chest" in r_text_lower: 
+                    elif r_text_lower == "total clan chests": 
                         val_totale = r_val
                     
-                    # Controlli flessibili per i 16 forzieri (cerca se un pezzo del nome è contenuto nella cella)
+                    # Associazione esatta per i 16 forzieri della lista
                     for item in dettagli_forzieri:
-                        nome_forziere_lower = item["Chest Name"].lower()
-                        # Taglia il nome prendendo la parola principale (es. 'rare', 'arachne', 'arcanomancer')
-                        parola_chiave = nome_forziere_lower.split()[0].replace("'s", "")
-                        
-                        if parola_chiave in r_text_lower:
+                        if item["Chest Name"].lower() == r_text_lower:
                             item["Total Chests"] = r_val
             except Exception:
                 pass
-
 
         # 3. COMPILAZIONE GRAFICA DEI TRE BOX IN CIMA
         col_cripte, col_mostri, col_totale = st.columns(3)
