@@ -413,15 +413,14 @@ else:
             "https://kaikaiju.com",
             use_container_width=True,
         )
-       # --- PAGINA 5: CLAN RESULTS (VERSIONE COMPATTA ANTI-TAGLIO) ---
+         # --- PAGINA 5: CLAN RESULTS (VERSIONE COMPLETA E OTTIMIZZATA) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
         st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
         st.write(ctx.get("res_write", "Live statistics directly from the alliance war log."))
         
-        if st.button("🔄 Rinfresca Dati", use_container_width=True):
-            st.cache_data.clear()
-            st.rerun()
+        # Svuota forzatamente la memoria interna ogni volta che entri o clicchi
+        st.cache_data.clear()
 
         val_cripte, val_mostri, val_totale = "0", "0", "0"
         nomi = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai"]
@@ -435,20 +434,27 @@ else:
                 for idx in range(len(results_data_dashboard)):
                     r_text = str(results_data_dashboard.iloc[idx, 0]).strip().lower()
                     r_val = str(results_data_dashboard.iloc[idx, 1]).strip()
-                    if r_val.lower() == "nan" or r_val == "": r_val = "0"
+                    if r_val.lower() == "nan" or r_val == "": 
+                        r_val = "0"
                     
-                    if r_text == "crypts (rare & epic)": val_cripte = r_val
-                    elif r_text == "epic monsters": val_mostri = r_val
-                    elif r_text == "total clan chests": val_totale = r_val
+                    # Riconoscimento flessibile per i tre contatori principali
+                    if "crypts" in r_text: val_cripte = r_val
+                    elif "monster" in r_text: val_mostri = r_val
+                    elif "total clan" in r_text or "total chest" in r_text: val_totale = r_val
                     
+                    # Riconoscimento per la lista dettagliata dei 16 forzieri
                     for item in dettagli_forzieri:
-                        if item["Chest Name"].lower() == r_text: item["Total Chests"] = r_val
-            except Exception: pass
+                        if item["Chest Name"].lower() in r_text: 
+                            item["Total Chests"] = r_val
+            except Exception: 
+                pass
 
         c1, c2, c3 = st.columns(3)
-        c1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>🏰 CRYPTS</h3><p style="font-size:28px;color:#4a86e8;">{val_cripte}</p></div>', unsafe_allow_html=True)
-        c2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>👹 MONSTERS</h3><p style="font-size:28px;color:#990000;">{val_mostri}</p></div>', unsafe_allow_html=True)
-        c3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>🏆 TOTAL</h3><p style="font-size:32px;color:#d4b373;">{val_totale}</p></div>', unsafe_allow_html=True)
+        c1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>🏰 CRYPTS</h3><p style="font-size:28px;color:#4a86e8;font-weight:bold;">{val_cripte}</p></div>', unsafe_allow_html=True)
+        c2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>👹 MONSTERS</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{val_mostri}</p></div>', unsafe_allow_html=True)
+        c3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>🏆 TOTAL</h3><p style="font-size:32px;color:#d4b373;font-weight:bold;">{val_totale}</p></div>', unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
 
         import plotly.express as px
         t_nomi, t_valori = [], []
@@ -456,18 +462,22 @@ else:
         
         for item in dettagli_forzieri:
             try:
-                num = int(item["Total Chests"].replace(",", "").replace(".", ""))
+                val_pulito = item["Total Chests"].replace(",", "").replace(".", "").strip()
+                num = int(val_pulito)
                 if num > 0:
                     t_nomi.append(item["Chest Name"])
                     t_valori.append(num)
-            except Exception: pass
+            except Exception: 
+                pass
 
         if len(t_valori) > 0:
             fig = px.pie(names=t_nomi, values=t_valori, color=t_nomi, color_discrete_map=colori, hole=0.35)
-            fig.update_traces(textposition='auto', textinfo='percent', textfont=dict(color='#f0e6d2', size=13, weight='bold'))
-            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', showlegend=True, height=400, margin=dict(t=10,b=10,l=10,r=10))
+            fig.update_traces(textposition='auto', textinfo='percent', textfont=dict(color='#f0e6d2', size=13, weight='bold'), marker=dict(line=dict(color='#14120e', width=2)))
+            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', showlegend=True, legend=dict(orientation="h", yanchor="top", y=-0.1, xanchor="center", x=0.5, font=dict(color='#f0e6d2', size=11)), margin=dict(t=10,b=40,l=10,r=10), height=450)
             st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        else:
+            st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
-        st.markdown("### 📊 Detailed Chest Summary")
+        st.markdown("<br>### 📊 Detailed Chest Summary", unsafe_allow_html=True)
         for item in dettagli_forzieri:
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{item["Chest Name"]}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
