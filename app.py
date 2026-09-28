@@ -382,7 +382,7 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-                 # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
+                # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -443,26 +443,25 @@ else:
         
         torta_nomi = []
         torta_valori = []
-        torta_colori_mappa = []
         
-        # Mappatura dei colori esatti associati ai forzieri attivi
+        # Mappatura aggiornata con i codici colore estratti dal tuo foglio Google
         mappa_colori_clan = {
-            "Rare Crypt 30": "#1e90ff",       # Azzurro Brillante
-            "Epic Crypt 30": "#a020f0",       # Viola Cripta Epica 1
-            "Epic Crypt 35": "#7a1fa2",       # Viola Cripta Epica 2
-            "Arachne's Swarm": "#ff0000",     # Rosso Fuoco (Arcane)
-            "Epic Undead Squad": "#2c3e50",   # Antracite
-            "Shadow City": "#7f8c8d",         # Grigio Acciaio
-            "Armageddon": "#34495e",          # Grigio Scuro
-            "Hellforge": "#95a5a6",           # Metallo Chiaro
-            "Epic Fenrir Squad": "#0000ff",   # Sfumatura Blu 1
-            "Jormungandr Squad": "#00ced1",   # Sfumatura Blu 2
-            "Epic Chimera Squad": "#ffd700",  # Sfumatura Giallo 1
-            "Epic Basilisk Squad": "#ffaa00", # Sfumatura Giallo 2 (Ocra)
-            "Epic Briareus Squad": "#e59866", # Sfumatura Giallo 3 (Ambra)
-            "Sands of Eternity": "#d35400",   # Arancione Scuro
-            "Arcanomancer squad": "#16a085",  # Verde Petrolio
-            "Yokai": "#27ae60"                # Verde Smeraldo
+            "Rare Crypt 30": "#4a86e8",       # Blu classico
+            "Epic Crypt 30": "#9900ff",       # Viola Cripta
+            "Epic Crypt 35": "#674ea7",       # Viola Scuro Cripta 35
+            "Arachne's Swarm": "#cc0000",     # Rosso Scuro
+            "Epic Undead Squad": "#e6b8af",   # Rosa Antico
+            "Shadow City": "#f4cccc",         # Rosa Chiaro
+            "Armageddon": "#fce5cd",          # Arancione Pastello
+            "Hellforge": "#fff2cc",           # Giallo Pastello
+            "Epic Fenrir Squad": "#d9ead3",   # Verde Pastello
+            "Jormungandr Squad": "#d0e0e3",   # Acqua Pastello
+            "Epic Chimera Squad": "#c9daf8",  # Carta da Zucchero
+            "Epic Basilisk Squad": "#cfe2f3", # Sfumatura Azzurro
+            "Epic Briareus Squad": "#d9d2e9", # Lilla Pastello
+            "Sands of Eternity": "#f1c232",   # Oro / Sabbia
+            "Arcanomancer squad": "#bf9000",  # Ocra / Bronzo
+            "Yokai": "#38761d"                # Verde Scuro
         }
         
         for item in dettagli_forzieri:
@@ -471,7 +470,6 @@ else:
                 if num_pulito > 0:
                     torta_nomi.append(item["Chest Name"])
                     torta_valori.append(num_pulito)
-                    torta_colori_mappa.append(mappa_colori_clan.get(item["Chest Name"], "#7f8c8d"))
             except Exception:
                 pass
 
@@ -479,7 +477,8 @@ else:
             fig = px.pie(
                 names=torta_nomi, 
                 values=torta_valori, 
-                color_discrete_sequence=torta_colori_mappa, 
+                color=torta_nomi,
+                color_discrete_map=mappa_colori_clan, 
                 hole=0.35
             )
             
