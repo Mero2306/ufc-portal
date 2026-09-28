@@ -214,7 +214,7 @@ else:
         apply_custom_style("bg_home.jpg")
 
         st.markdown(
-            f"<h1>{ctx.get('home_h1', '🏠 UFC Command Center - Alliance Status')}</h1>",
+            f"<h1>{ctx.get('home_h1', '🏠 UFC Raiders of Chaos')}</h1>",
             unsafe_allow_html=True,
         )
         st.write(
