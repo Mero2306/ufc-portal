@@ -377,8 +377,7 @@ else:
             use_container_width=True,
         )
 
-    # --- PAGINA 4: TROOPS CALCULATOR ---
-        # --- PAGINA 4: TROOPS CALCULATOR ---
+    #    # --- PAGINA 4: TROOPS CALCULATOR ---
     elif page in ["⚔️ Troops Calculator", ctx.get("menu_calc")]:
         apply_custom_style("bg_calc.jpg")
 
@@ -394,18 +393,27 @@ else:
             )
         )
         st.markdown("<br>", unsafe_allow_html=True)
-        st.info(
-            ctx.get(
-                "calc_info",
-                "💡 **Tactical Notice:** This button redirects you securely to the official Kaiculator. It dynamically factors in your Captains, Dragons, and multipliers for zero-loss runs.",
-            )
+        
+        # NUOVO BOX AZZURRO AD ALTA LEGGIBILITÀ
+        text_calc_info = ctx.get("calc_info", "💡 **Tactical Notice:** This button redirects you securely to the official Kaiculator. It dynamically factors in your Captains, Dragons, and multipliers for zero-loss runs.")
+        st.markdown(
+            f"""
+            <div style="background-color: rgba(28, 142, 230, 0.1); border-left: 5px solid rgb(28, 142, 230); padding: 16px 20px; border-radius: 4px; margin-bottom: 15px;">
+                <p style="color: #f0e6d2; margin: 0; font-size: 16px; font-weight: 500; line-height: 1.6; letter-spacing: 0.3px;">
+                    {text_calc_info}
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
+        
         st.markdown("<br>", unsafe_allow_html=True)
         st.link_button(
             ctx.get("calc_btn", "🛡️ OPEN OFFICIAL KAICULATOR 🛡️"),
-            "https://kaiculator.kaikaiju.com",
+            "https://kaikaiju.com",
             use_container_width=True,
         )
+
                # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
