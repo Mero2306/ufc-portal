@@ -245,7 +245,8 @@ else:
         st.write(
             ctx.get(
                 "info_write",
-                "Operational directives and channels of Raiders of Chaos.",
+                "Official UFC Raiders of Chaos channels.",
+
             )
         )
         st.markdown(ctx.get("info_h3", "### ⚔️ Clan Chats & Descriptions"))
