@@ -348,12 +348,15 @@ else:
         )
 
     # --- PAGINA 4: TROOPS CALCULATOR ---
+        # --- PAGINA 4: TROOPS CALCULATOR ---
     elif page in ["⚔️ Troops Calculator", ctx.get("menu_calc")]:
         apply_custom_style("bg_calc.jpg")
 
         st.markdown(
-                        f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>",
+            f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>",
+            unsafe_allow_html=True,
         )
+
         st.write(
             ctx.get(
                 "calc_write",
