@@ -410,7 +410,7 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.link_button(
             ctx.get("calc_btn", "🛡️ OPEN OFFICIAL KAICULATOR 🛡️"),
-            "https://kaikaiju.com",
+            "https://kaiculator.kaikaiju.com/",
             use_container_width=True,
         )
          # --- PAGINA 5: CLAN RESULTS (VERSIONE COMPLETA E OTTIMIZZATA) ---
