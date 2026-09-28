@@ -450,29 +450,37 @@ else:
         CSV_URL_DASHBOARD = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/export?format=csv&gid=432024066"
         results_data_dashboard = load_clan_results(CSV_URL_DASHBOARD)
 
-        # 2. LETTURA RIGIDA DI OGNI SINGOLA RIGA E COLONNA DEL FOGLIO GOOGLE
+                # 2. LETTURA FLUIDA CON RICERCA PARZIALE DELLE PAROLE CHIAVE
         if results_data_dashboard is not None:
             try:
                 df_clean = results_data_dashboard.reset_index(drop=True)
                 for idx in range(len(df_clean)):
-                    r_text = str(df_clean.iat[idx, 0]).strip()
+                    # Leggiamo e puliamo il testo, convertendolo tutto in minuscolo
+                    r_text_lower = str(df_clean.iat[idx, 0]).lower().strip()
                     r_val = str(df_clean.iat[idx, 1]).strip()
                     
                     if r_val.lower() == "nan" or r_val == "":
                         r_val = "0"
                     
-                    if "Crypts (Rare & Epic)" in r_text: 
+                    # Controlli flessibili per i tre box grandi in alto
+                    if "crypt" in r_text_lower: 
                         val_cripte = r_val
-                    elif "Epic Monsters" in r_text: 
+                    elif "monster" in r_text_lower: 
                         val_mostri = r_val
-                    elif "TOTAL CLAN CHESTS" in r_text: 
+                    elif "total clan" in r_text_lower or "total chest" in r_text_lower: 
                         val_totale = r_val
                     
+                    # Controlli flessibili per i 16 forzieri (cerca se un pezzo del nome è contenuto nella cella)
                     for item in dettagli_forzieri:
-                        if item["Chest Name"].lower() == r_text.lower():
+                        nome_forziere_lower = item["Chest Name"].lower()
+                        # Taglia il nome prendendo la parola principale (es. 'rare', 'arachne', 'arcanomancer')
+                        parola_chiave = nome_forziere_lower.split()[0].replace("'s", "")
+                        
+                        if parola_chiave in r_text_lower:
                             item["Total Chests"] = r_val
             except Exception:
                 pass
+
 
         # 3. COMPILAZIONE GRAFICA DEI TRE BOX IN CIMA
         col_cripte, col_mostri, col_totale = st.columns(3)
