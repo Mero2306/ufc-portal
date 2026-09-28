@@ -427,7 +427,7 @@ else:
         nomi = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai"]
         dettagli_forzieri = [{"Chest Name": n, "Total Chests": "0"} for n in nomi]
 
-        CSV_URL_DASHBOARD = "https://google.com"
+        CSV_URL_DASHBOARD = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/export?format=csv&gid=432024066"
         results_data_dashboard = load_clan_results(CSV_URL_DASHBOARD)
 
         if results_data_dashboard is not None:
