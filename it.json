@@ -7,7 +7,7 @@
   "menu_calc": "⚔️ Calcolatore Truppe",
   "menu_res": "🏆 Risultati Clan",
   
-  "home_h1": "🏠 UFC Command Center - Stato dell Alleanza",
+  "home_h1": "🏠 UFC Raiders of Caos - Stato dell Alleanza",
   "home_write": "Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale.",
   "home_info": "💡 **Nota per i membri UFC:** Cliccando sul pulsante sotto, la classifica si aprirà in modalità protetta di Sola Lettura.",
   "home_btn": "⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️",
@@ -31,17 +31,17 @@
   "min_w2": "- **Armageddon:** 50 forzieri",
   "min_w3": "- **Ragnarok:** 500 M",
   "min_w4": "- **Olympus:** 570.000",
-  "min_w5": "- **Dark Omens:** 100 forzieri di clan, massimo olio schierato e difesa attiva",
+  "min_w5": "- **Dark Omens:** 100 forzieri di clan, massimo olio versato e difesa attiva",
   
   "disc_h1": "🌐 Server Discord Ufficiale Raiders of Chaos",
   "disc_info": "💡 Istruzioni per l accesso: Il pulsante qui sotto verrà attivato a breve con il codice d invito.",
   "disc_btn": "🔮 PULSANTE DISCORD - IN ALLESTIMENTO 🔮",
   
-  "calc_h1": "⚔️ Calcolatore Ufficiale Marce di Alleanza",
-  "calc_write": "Accedi al simulatore di marce e formazioni più efficiente utilizzato dai clan d elite mondiali.",
-  "calc_info": "💡 **Direttiva Tattica:** Questo pompante ti reindirizza in sicurezza al Kaiculator ufficiale. Calcola dinamicamente i bonus di Capitani, Draghi e moltiplicatori del server per attacchi a perdite zero.",
+  "calc_h1": "⚔️ Calcolatore Ufficiale per attacchi a mostri epici.",
+  "calc_write": "Accedi al simulatore di marce e formazioni più efficiente utilizzato dalla maggior parte dei clan.",
+  "calc_info": "💡 **Direttiva Tattica:** Questo pulsante ti reindirizza al Kaiculator . Calcola dinamicamente i bonus di Capitani e moltiplicatori per attacchi efficienti.",
   "calc_btn": "🛡️ APRI IL SIMULATORE DI MARCIA AVANZATO 🛡️",
 
   "res_h1": "🏆 Risultati Clan",
-  "res_write": "Statistiche in tempo reale e contatori dei forzieri estratti direttamente dal registro di guerra dell alleanza."
+  "res_write": "Statistiche in tempo reale e contatori dei forzieri estratti direttamente dal registro del clan."
 }
