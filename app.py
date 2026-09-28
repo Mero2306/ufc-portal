@@ -98,10 +98,9 @@ if not st.session_state["authenticated"]:
     st.markdown("<br>", unsafe_allow_html=True)
     col1, col_login, col2 = st.columns(3)
     with col_login:
-        if os.path.exists("logo.png"):
-    col_space1, col_img, col_space2 = st.columns([1, 2, 1])
-    with col_img:
-        st.image("logo.png", width=220)
+               if os.path.exists("logo.png"):
+            st.image("logo.png", width=220)
+
 
         else:
             st.markdown(
