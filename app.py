@@ -382,7 +382,7 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-      # --- PAGINA 5: CLAN RESULTS (GRAFICO CON SCRITTE ESTERNE GIGANTI REATTIVO) ---
+          # --- PAGINA 5: CLAN RESULTS (GRAFICO CON SCRITTE ESTERNE GIGANTI REATTIVO) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -427,7 +427,7 @@ else:
                     elif "Epic Monsters" in r_text: val_mostri = r_val
                     elif "TOTAL CLAN CHESTS" in r_text: val_totale = r_val
                     
-                    for item in微 dettagli_forzieri:
+                    for item in dettagli_forzieri:
                         if item["Chest Name"].lower() in r_text.lower():
                             item["Total Chests"] = r_val
             except Exception:
@@ -444,7 +444,7 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 4. GENERAZIONE DEL GRAFICO COMPATIBILE CON MOBILE
+        # 4. GENERAZIONE DEL GRAFICO REATTIVO PER COMPUTER E CELLULARE
         import plotly.express as px
         
         torta_nomi = []
@@ -469,15 +469,15 @@ else:
                 hole=0.35
             )
             
-            # Scritte grandi su PC, leggibili ovunque
+            # Scritte esterne nitide e grandi al punto giusto
             fig.update_traces(
                 textposition='outside', 
                 textinfo='label+percent',
-                textfont=dict(color='#f0e6d2', size=15, family='Inter', weight='bold'),
+                textfont=dict(color='#f0e6d2', size=14, family='Inter', weight='bold'),
                 marker=dict(line=dict(color='#14120e', width=2))
             )
             
-            # Margini intelligenti per non far schiacciare il grafico sui telefoni
+            # Margini fluidi che non comprimono la torta su mobile
             fig.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)', 
                 plot_bgcolor='rgba(0,0,0,0)',
