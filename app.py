@@ -450,9 +450,9 @@ else:
                 pass
 
         c1, c2, c3 = st.columns(3)
-        c1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>🏰 CRYPTS</h3><p style="font-size:28px;color:#4a86e8;font-weight:bold;">{val_cripte}</p></div>', unsafe_allow_html=True)
-        c2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>👹 MONSTERS</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{val_mostri}</p></div>', unsafe_allow_html=True)
-        c3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>🏆 TOTAL</h3><p style="font-size:32px;color:#d4b373;font-weight:bold;">{val_totale}</p></div>', unsafe_allow_html=True)
+                c1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("res_box_crypts", "🏰 CRYPTS")}</h3><p style="font-size:28px;color:#4a86e8;font-weight:bold;">{val_cripte}</p></div>', unsafe_allow_html=True)
+        c2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>{ctx.get("res_box_monsters", "👹 MONSTERS")}</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{val_mostri}</p></div>', unsafe_allow_html=True)
+        c3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>{ctx.get("res_box_total", "🏆 TOTAL")}</h3><p style="font-size:32px;color:#d4b373;font-weight:bold;">{val_totale}</p></div>', unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
 
