@@ -413,44 +413,7 @@ else:
             "https://kaikaiju.com",
             use_container_width=True,
         )
-         # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
-    elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
-        apply_custom_style("bg_info.jpg")
-
-        st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
-        st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        # 1. Valori iniziali pronti per essere sovrascritti
-        val_cripte = "0"
-        val_mostri = "0"
-        val_totale = "0"
-
-        # Lista fissa con i nomi scritti ESATTAMENTE come compaiono sul tuo foglio Google
-        dettagli_forzieri = [
-            {"Chest Name": "Rare Crypt 30", "Total Chests": "0"},
-            {"Chest Name": "Epic Crypt 30", "Total Chests": "0"},
-            {"Chest Name": "Epic Crypt 35", "Total Chests": "0"},
-            {"Chest Name": "Arachne's Swarm", "Total Chests": "0"},
-            {"Chest Name": "Epic Undead Squad", "Total Chests": "0"},
-            {"Chest Name": "Shadow City", "Total Chests": "0"},
-            {"Chest Name": "Armageddon", "Total Chests": "0"},
-            {"Chest Name": "Hellforge", "Total Chests": "0"},
-            {"Chest Name": "Epic Fenrir Squad", "Total Chests": "0"},
-            {"Chest Name": "Jormungandr Squad", "Total Chests": "0"},
-            {"Chest Name": "Epic Chimera Squad", "Total Chests": "0"},
-            {"Chest Name": "Epic Basilisk Squad", "Total Chests": "0"},
-            {"Chest Name": "Epic Briareus Squad", "Total Chests": "0"},
-            {"Chest Name": "Sands of Eternity", "Total Chests": "0"},
-            {"Chest Name": "Arcanomancer squad", "Total Chests": "0"},
-            {"Chest Name": "Yokai", "Total Chests": "0"}
-        ]
-
-        # Link di esportazione CSV diretto per la scheda Dashboard con ID corretto
-        CSV_URL_DASHBOARD = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/export?format=csv&gid=432024066"
-        results_data_dashboard = load_clan_results(CSV_URL_DASHBOARD)
-
-                # 2. LETTURA FLUIDA CON RICERCA PARZIALE DELLE PAROLE CHIAVE
+              # 2. LETTURA FLUIDA CON RICERCA PARZIALE DELLE PAROLE CHIAVE
         if results_data_dashboard is not None:
             try:
                 df_clean = results_data_dashboard.reset_index(drop=True)
@@ -480,7 +443,6 @@ else:
                             item["Total Chests"] = r_val
             except Exception:
                 pass
-
 
         # 3. COMPILAZIONE GRAFICA DEI TRE BOX IN CIMA
         col_cripte, col_mostri, col_totale = st.columns(3)
