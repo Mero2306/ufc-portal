@@ -154,15 +154,17 @@ else:
     )
 
 
-    # Mappatura dei file esterni caricati sul tuo GitHub
+        # Mappatura dei file esterni caricati sul tuo GitHub (Aggiornata con le bandiere)
     lang_files = {
-        "Italiano": "it.json",
-        "Français": "fr.json",
-        "Español": "es.json",
-        "Deutsch": "de.json",
-        "Русский": "ru.json",
-        "Türkçe": "tr.json",
+        "🇬🇧 English": "en.json",
+        "🇮🇹 Italiano": "it.json",
+        "🇫🇷 Français": "fr.json",
+        "🇪🇸 Español": "es.json",
+        "🇩🇪 Deutsch": "de.json",
+        "🇷🇺 Русский": "ru.json",
+        "🇹🇷 Türkçe": "tr.json",
     }
+
 
     # Caricamento dinamico dei testi per la barra laterale
     ctx = {}
