@@ -371,7 +371,7 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-             # --- PAGINA 5: CLAN RESULTS (GRAFICO MAXI CON TUTTI I FORZIERI VIVI) ---
+               # --- PAGINA 5: CLAN RESULTS (GRAFICO CON ETICHETTE ESTERNE E LINEE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
         st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
@@ -431,7 +431,7 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 4. GENERAZIONE DEL GRAFICO A TORTA MAXI XL
+        # 4. GENERAZIONE DEL GRAFICO CON LINEE DI COLLEGAMENTO ESTERNE
         import plotly.express as px
         
         torta_nomi = []
@@ -447,7 +447,6 @@ else:
                 pass
 
         if len(torta_valori) > 0:
-            # Scala cromatica medievale estesa (oro, bronzo, rosso scuro, grigio acciaio, ambra)
             colori_guerra = ['#bd9b53', '#9e1b1b', '#d4b373', '#7c1515', '#a67c32', '#591010', '#e0c068', '#400a0a', '#8c7446', '#b83232', '#f3cb7a', '#c29243']
             
             fig = px.pie(
@@ -456,23 +455,21 @@ else:
                 color_discrete_sequence=colori_guerra, 
                 hole=0.35
             )
+            
+            # SPOSTAMENTO ETICHETTE ALL'ESTERNO CON ATTIVAZIONE LINEE
             fig.update_traces(
-                textposition='inside', 
-                textinfo='percent+label',
-                textfont=dict(color='#f0e6d2', size=13, family='Inter'),
+                textposition='outside', 
+                textinfo='label+percent',
+                textfont=dict(color='#f0e6d2', size=12, family='Inter'),
                 marker=dict(line=dict(color='#14120e', width=2))
             )
+            
             fig.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                showlegend=True,
-                legend=dict(
-                    orientation="h",       # Legenda orizzontale in basso per dare spazio alla torta
-                    yanchor="top", y=-0.1, 
-                    xanchor="center", x=0.5,
-                    font=dict(color='#f0e6d2', size=12, family='Inter')
-                ),
-                margin=dict(t=10, b=50, l=10, r=10), 
-                height=550                 # Altezza maggiorata a 550 pixel (MAXI RESIZE)
+                paper_bgcolor='rgba(0,0,0,0)', 
+                plot_bgcolor='rgba(0,0,0,0)',
+                showlegend=False, # Nascondiamo la legenda superflua per allargare il grafico
+                margin=dict(t=30, b=30, l=150, r=150), # Spazio laterale maggiorato per ospitare le parole fuori
+                height=550
             )
             st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         else:
