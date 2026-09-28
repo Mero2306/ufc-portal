@@ -310,7 +310,7 @@ else:
             unsafe_allow_html=True,
         )
 
-        # --- PAGINA 2: EVENT MINIMUMS ---
+           # --- PAGINA 2: EVENT MINIMUMS ---
     elif page in ["📊 Event Minimums", ctx.get("menu_min")]:
         apply_custom_style("bg_min.jpg")
 
