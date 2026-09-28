@@ -173,14 +173,15 @@ else:
             ctx = {}
 
     # Menu laterale che cambia lingua prendendo i dati dai tuoi JSON
-    options = [
-    ctx.get("menu_home", "🏠 Home Dashboard"),
-    ctx.get("menu_info", "📋 Clan Info & Chats"),
-    ctx.get("menu_min", "📊 Event Minimums"),
-    ctx.get("menu_disc", "🌐 Discord Server"),
-    ctx.get("menu_calc", "⚔️ Troops Calculator"),
-    ctx.get("menu_res", "🏆 Clan Results")
-]
+       options = [
+        ctx.get("menu_home", "🏠 Home Dashboard"),
+        ctx.get("menu_info", "📋 Clan Info & Chats"),
+        ctx.get("menu_min", "📊 Event Minimums"),
+        ctx.get("menu_disc", "🌐 Discord Server"),
+        ctx.get("menu_calc", "⚔️ Troops Calculator"),
+        ctx.get("menu_res", "🏆 Clan Results")
+    ]
+
 
     ]
     page = st.sidebar.radio("NAVIGATION:", options)
