@@ -389,7 +389,7 @@ else:
         st.write(
             ctx.get(
                 "calc_write",
-                "Access the most efficient stack and army simulator used by elite Total Battle players.",
+                "Access the army and stack simulator used by most of the Total Battle clans."
             )
         )
         st.markdown("<br>", unsafe_allow_html=True)
