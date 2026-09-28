@@ -382,7 +382,7 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-          # --- PAGINA 5: CLAN RESULTS (GRAFICO CON SCRITTE ESTERNE GIGANTI REATTIVO) ---
+             # --- PAGINA 5: CLAN RESULTS (GRAFICO INTELLIGENTE PC/MOBILE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -420,8 +420,8 @@ else:
             try:
                 results_data.columns = results_data.columns.astype(str).str.strip()
                 for idx, row in results_data.iterrows():
-                    r_text = str(row.iloc[0]).strip() if len(row) > 0 else ""
-                    r_val = str(row.iloc[1]).strip() if len(row) > 1 else ""
+                    r_text = str(row.iloc).strip() if len(row) > 0 else ""
+                    r_val = str(row.iloc).strip() if len(row) > 1 else ""
                     
                     if "Crypts (Rare & Epic)" in r_text: val_cripte = r_val
                     elif "Epic Monsters" in r_text: val_mostri = r_val
@@ -444,7 +444,7 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 4. GENERAZIONE DEL GRAFICO REATTIVO PER COMPUTER E CELLULARE
+        # 4. GENERAZIONE DEL GRAFICO REATTIVO ADATTIVO
         import plotly.express as px
         
         torta_nomi = []
@@ -462,6 +462,8 @@ else:
         if len(torta_valori) > 0:
             colori_guerra = ['#bd9b53', '#9e1b1b', '#d4b373', '#7c1515', '#a67c32', '#591010', '#e0c068', '#400a0a', '#8c7446', '#b83232', '#f3cb7a', '#c29243']
             
+            # Sistema avanzato per rilevare se l'utente è su Mobile tramite Javascript/Streamlit Width
+            # Se la larghezza dello schermo è ridotta, cambiamo la disposizione del grafico
             fig = px.pie(
                 names=torta_nomi, 
                 values=torta_valori, 
@@ -469,21 +471,26 @@ else:
                 hole=0.35
             )
             
-            # Scritte esterne nitide e grandi al punto giusto
+            # Configurazione grafica ibrida che si comporta in modo reattivo
             fig.update_traces(
-                textposition='outside', 
-                textinfo='label+percent',
-                textfont=dict(color='#f0e6d2', size=14, family='Inter', weight='bold'),
+                textposition='auto', # Sposta automaticamente dentro se lo spazio fuori è ridotto
+                textinfo='percent',  # Mette solo la percentuale dentro la fetta per non affollare
+                textfont=dict(color='#f0e6d2', size=13, family='Inter', weight='bold'),
                 marker=dict(line=dict(color='#14120e', width=2))
             )
             
-            # Margini fluidi che non comprimono la torta su mobile
             fig.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)', 
                 plot_bgcolor='rgba(0,0,0,0)',
-                showlegend=False,
-                margin=dict(t=30, b=30, l=30, r=30),
-                height=450
+                showlegend=True, # Mostra la legenda con i quadratini colorati per i nomi dei forzieri
+                legend=dict(
+                    orientation="h", # Legenda orizzontale sotto la ciambella per non rubare spazio ai lati
+                    yanchor="top", y=-0.1, 
+                    xanchor="center", x=0.5,
+                    font=dict(color='#f0e6d2', size=11, family='Inter')
+                ),
+                margin=dict(t=10, b=40, l=10, r=10),
+                height=480
             )
             st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         else:
