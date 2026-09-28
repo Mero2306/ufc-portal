@@ -349,7 +349,7 @@ else:
         )
 
 
-    # --- PAGINA 3: DISCORD SERVER ---
+        # --- PAGINA 3: DISCORD SERVER ---
     elif page in ["🌐 Discord Server", ctx.get("menu_disc")]:
         apply_custom_style("bg_disc.jpg")
 
@@ -357,12 +357,20 @@ else:
             f"<h1>{ctx.get('disc_h1', '🌐 Official Raiders of Chaos Discord Server')}</h1>",
             unsafe_allow_html=True,
         )
-        st.info(
-            ctx.get(
-                "disc_info",
-                "💡 The button below will be activated soon with the official invite code.",
-            )
+        
+        # NUOVO BOX AZZURRO AD ALTA LEGGIBILITÀ
+        text_disc_info = ctx.get("disc_info", "💡 The button below will be activated soon with the official invite code.")
+        st.markdown(
+            f"""
+            <div style="background-color: rgba(28, 142, 230, 0.1); border-left: 5px solid rgb(28, 142, 230); padding: 16px 20px; border-radius: 4px; margin-bottom: 15px;">
+                <p style="color: #f0e6d2; margin: 0; font-size: 16px; font-weight: 500; line-height: 1.6; letter-spacing: 0.3px;">
+                    {text_disc_info}
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
+        
         st.link_button(
             ctx.get("disc_btn", "🔮 DISCORD BUTTON - COMING SOON 🔮"),
             "https://discord.com",
