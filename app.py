@@ -371,7 +371,7 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-               # --- PAGINA 5: CLAN RESULTS (GRAFICO CON ETICHETTE ESTERNE E LINEE) ---
+                 # --- PAGINA 5: CLAN RESULTS (GRAFICO CON SCRITTE ESTERNE GIGANTI) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
         st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
@@ -431,7 +431,7 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 4. GENERAZIONE DEL GRAFICO CON LINEE DI COLLEGAMENTO ESTERNE
+        # 4. GENERAZIONE DEL GRAFICO CON LOGHI ESTERNI XL E SCRITTE GIGANTI
         import plotly.express as px
         
         torta_nomi = []
@@ -456,20 +456,20 @@ else:
                 hole=0.35
             )
             
-            # SPOSTAMENTO ETICHETTE ALL'ESTERNO CON ATTIVAZIONE LINEE
+            # INGRANDIMENTO DEL TESTO ESTERNO A 16px IN GRASSETTO
             fig.update_traces(
                 textposition='outside', 
                 textinfo='label+percent',
-                textfont=dict(color='#f0e6d2', size=12, family='Inter'),
+                textfont=dict(color='#f0e6d2', size=16, family='Inter', weight='bold'),
                 marker=dict(line=dict(color='#14120e', width=2))
             )
             
             fig.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)', 
                 plot_bgcolor='rgba(0,0,0,0)',
-                showlegend=False, # Nascondiamo la legenda superflua per allargare il grafico
-                margin=dict(t=30, b=30, l=150, r=150), # Spazio laterale maggiorato per ospitare le parole fuori
-                height=550
+                showlegend=False,
+                margin=dict(t=40, b=40, l=160, r=160), # Margini allargati per accogliere le scritte grandi
+                height=600 # Alzato a 600px per dare ampio respiro visivo
             )
             st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         else:
