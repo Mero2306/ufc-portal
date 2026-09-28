@@ -139,8 +139,8 @@ else:
     )
     st.sidebar.markdown("---")
 
-    # SELETTORE DELLA LINGUA RICHIESTO (COLLEGATO AI TUOI FILE JSON)
-        lang_choice = st.sidebar.selectbox(
+       # SELETTORE DELLA LINGUA CON BANDIERE
+    lang_choice = st.sidebar.selectbox(
         "🌐 SELECT LANGUAGE:",
         [
             "🇬🇧 English",
@@ -153,8 +153,7 @@ else:
         ],
     )
 
-
-        # Mappatura dei file esterni caricati sul tuo GitHub (Aggiornata con le bandiere)
+    # Mappatura dei file esterni caricati sul tuo GitHub (Aggiornata con le bandiere)
     lang_files = {
         "🇬🇧 English": "en.json",
         "🇮🇹 Italiano": "it.json",
@@ -164,6 +163,7 @@ else:
         "🇷🇺 Русский": "ru.json",
         "🇹🇷 Türkçe": "tr.json",
     }
+
 
 
     # Caricamento dinamico dei testi per la barra laterale
