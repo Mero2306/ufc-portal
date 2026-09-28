@@ -371,21 +371,18 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-           # --- PAGINA 5: CLAN RESULTS (MANTENIMENTO COMPLETO DEI DATI + GRAFICO) ---
+              # --- PAGINA 5: CLAN RESULTS (GRAFICO A TORTA CON TUTTI I FORZIERI VIVI) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
         st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 1. Dati di ripiego reali del reset
+        # 1. Dati di ripiego reali del reset per i Box
         val_cripte = "1,577"
         val_mostri = "5,987"
         val_totale = "7,564"
 
-        num_cripte = 1577
-        num_mostri = 5987
-
-        # Lista fissa totale di tutti i forzieri per non perdere nessuna descrizione
+        # Lista fissa totale di tutti i 16 forzieri
         dettagli_forzieri = [
             {"Chest Name": "Rare Crypt 30", "Total Chests": "129"},
             {"Chest Name": "Epic Crypt 30", "Total Chests": "104"},
@@ -405,7 +402,7 @@ else:
             {"Chest Name": "Yokai", "Total Chests": "0"}
         ]
 
-        # 2. Lettura dinamica dal foglio Google senza alterare la struttura della lista
+        # 2. Lettura dinamica dal foglio Google
         if results_data is not None:
             try:
                 results_data.columns = results_data.columns.astype(str).str.strip()
@@ -413,23 +410,17 @@ else:
                     r_text = str(row.iloc[0]).strip() if len(row) > 0 else ""
                     r_val = str(row.iloc[1]).strip() if len(row) > 1 else ""
                     
-                    if "Crypts (Rare & Epic)" in r_text:
-                        val_cripte = r_val
-                        num_cripte = int(r_val.replace(",", "").replace(".", ""))
-                    elif "Epic Monsters" in r_text:
-                        val_mostri = r_val
-                        num_mostri = int(r_val.replace(",", "").replace(".", ""))
-                    elif "TOTAL CLAN CHESTS" in r_text:
-                        val_totale = r_val
+                    if "Crypts (Rare & Epic)" in r_text: val_cripte = r_val
+                    elif "Epic Monsters" in r_text: val_mostri = r_val
+                    elif "TOTAL CLAN CHESTS" in r_text: val_totale = r_val
                     
-                    # Aggiorna il valore numerico dentro la lista fissa se c'è corrispondenza
                     for item in dettagli_forzieri:
                         if item["Chest Name"].lower() in r_text.lower():
                             item["Total Chests"] = r_val
             except Exception:
                 pass
 
-        # 3. GRAFICA DEI TRE BOX IN CIMA
+        # 3. COMPILAZIONE GRAFICA DEI TRE BOX IN CIMA
         col_cripte, col_mostri, col_totale = st.columns(3)
         with col_cripte:
             st.markdown(f'<div class="chat-box" style="text-align: center;"><h3 style="margin:0; font-size:16px;">🏰 CRYPTS TOTAL</h3><p style="font-size: 28px; font-weight: bold; color: #bd9b53; margin: 10px 0 0 0;">{val_cripte}</p></div>', unsafe_allow_html=True)
@@ -440,29 +431,52 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 4. INSERIMENTO DEL GRAFICO A TORTA INTERATTIVO
+        # 4. GENERAZIONE DEL GRAFICO A TORTA CON TUTTI I VALORI MAGGIORI DI ZERO
         import plotly.express as px
-        labels = ['Crypts (Rare & Epic)', 'Epic Monsters']
-        values = [num_cripte, num_mostri]
-        colors = ['#bd9b53', '#9e1b1b']
         
-        fig = px.pie(names=labels, values=values, color_discrete_sequence=colors, hole=0.4)
-        fig.update_traces(
-            textposition='inside', 
-            textinfo='percent+label',
-            textfont=dict(color='#f0e6d2', size=14, family='Inter'),
-            marker=dict(line=dict(color='#14120e', width=2))
-        )
-        fig.update_layout(
-            paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-            showlegend=False, margin=dict(t=10, b=10, l=10, r=10), height=300
-        )
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        torta_nomi = []
+        torta_valori = []
+        
+        for item in dettagli_forzieri:
+            try:
+                # Puliamo il numero da virgole o punti per farlo leggere correttamente al grafico
+                num_pulito = int(item["Total Chests"].replace(",", "").replace(".", ""))
+                if num_pulito > 0:
+                    torta_nomi.append(item["Chest Name"])
+                    torta_valori.append(num_pulito)
+            except Exception:
+                pass
+
+        if len(torta_valori) > 0:
+            # Scala cromatica epica (sfumature d'oro, bronzo, rosso scuro e metallo)
+            colori_guerra = ['#bd9b53', '#9e1b1b', '#d4b373', '#7c1515', '#a67c32', '#591010', '#e0c068', '#400a0a']
+            
+            fig = px.pie(
+                names=torta_nomi, 
+                values=torta_valori, 
+                color_discrete_sequence=colori_guerra, 
+                hole=0.4
+            )
+            fig.update_traces(
+                textposition='inside', 
+                textinfo='percent+label',
+                textfont=dict(color='#f0e6d2', size=12, family='Inter'),
+                marker=dict(line=dict(color='#14120e', width=2))
+            )
+            fig.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                showlegend=True, # Attiviamo la legenda laterale per leggere bene tutti i nomi
+                legend=dict(font=dict(color='#f0e6d2', size=11, family='Inter')),
+                margin=dict(t=10, b=10, l=10, r=10), height=350
+            )
+            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        else:
+            st.warning("⚠️ No active data available for the chart summary.")
 
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("### 📊 Detailed Chest Summary")
 
-        # 5. STAMPA COMPLETA DI TUTTI I FILI DEI FORZIERI CON DISPOSIZIONE CORRETTA
+        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI
         for item in dettagli_forzieri:
             st.markdown(
                 f"""
