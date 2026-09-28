@@ -214,7 +214,9 @@ else:
         st.write(
             ctx.get(
                 "home_write",
-                "Check the official chest leaderboard updated in real-time by alliance OCR.",
+                "Check the official chest leaderboard updated in real-time.",
+
+
             )
         )
         st.info(
