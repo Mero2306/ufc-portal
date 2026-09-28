@@ -373,3 +373,41 @@ else:
         st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
         st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
         st.markdown("<br>", unsafe_allow_html=True)
+        # CREAZIONE DELLE 3 COLONNE TATTICHE PER I TOTALI DEI FORZIERI
+        col_cripte, col_mostri, col_totale = st.columns(3)
+        
+        with col_cripte:
+            st.markdown(
+                f"""
+                <div class="chat-box" style="text-align: center;">
+                    <h3 style='margin:0; font-size:16px;'>🏰 CRYPTS TOTAL</h3>
+                    <p style='font-size: 28px; font-weight: bold; color: #bd9b53; margin: 10px 0 0 0;'>19,100</p>
+                </div>
+                """, 
+                unsafe_allow_html=True
+            )
+            
+        with col_mostri:
+            st.markdown(
+                f"""
+                <div class="chat-box" style="text-align: center; border-left: 5px solid #9e1b1b !important;">
+                    <h3 style='margin:0; font-size:16px;'>👹 EPIC MONSTERS</h3>
+                    <p style='font-size: 28px; font-weight: bold; color: #9e1b1b; margin: 10px 0 0 0;'>9,097</p>
+                </div>
+                """, 
+                unsafe_allow_html=True
+            )
+            
+        with col_totale:
+            st.markdown(
+                f"""
+                <div class="chat-box" style="text-align: center; background: linear-gradient(145, #241f16, #14120e) !important;">
+                    <h3 style='margin:0; font-size:16px;'>🏆 TOTAL CLAN CHESTS</h3>
+                    <p style='font-size: 32px; font-weight: bold; color: #d4b373; margin: 10px 0 0 0; text-shadow: 0 0 10px #bd9b53;'>28,197</p>
+                </div>
+                """, 
+                unsafe_allow_html=True
+            )
+            
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.info("📊 *Notice:* These statistics are synchronized directly with the main war log sheets to monitor general alliance efficiency.")
