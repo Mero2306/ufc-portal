@@ -493,4 +493,5 @@ else:
             )
             
         st.markdown("<br>", unsafe_allow_html=True)
-        st.info("📊 *Notice:* These statistics are synchronized directly with the main war log sheets to monitor general alliance efficiency.")
+        st.info(ctx.get("res_info", "📊 *Notice:* These statistics are synchronized directly with the main war log sheets to monitor general alliance efficiency."))
+
