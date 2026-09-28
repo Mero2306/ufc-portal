@@ -1,4 +1,3 @@
-
 {
   "menu_home": "🏠 Dashboard Principale",
   "menu_info": "📋 Info Clan & Chat",
@@ -7,9 +6,9 @@
   "menu_calc": "⚔️ Calcolatore Truppe",
   "menu_res": "🏆 Risultati Clan",
   
-  "home_h1": "🏠 UFC Raiders of Caos - Stato dell Alleanza",
+  "home_h1": "🏠 UFC Raiders of Chaos - Stato dell Alleanza",
   "home_write": "Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale.",
-  "home_info": "💡 **Nota:** Cliccando sul pulsante sotto, la classifica si aprirà in modalità protetta di Sola Lettura.",
+  "home_info": "💡 **Nota:** Cliccando sul poshante sotto, la classifica si aprirà in modalità protetta di Sola Lettura.",
   "home_btn": "⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️",
   
   "info_h1": "📋 Informazioni Clan & Canali Ufficiali",
@@ -39,7 +38,7 @@
   
   "calc_h1": "⚔️ Calcolatore Ufficiale per attacchi a mostri epici.",
   "calc_write": "Accedi al simulatore di marce e formazioni più efficiente utilizzato dalla maggior parte dei clan.",
-  "calc_info": "💡 **Direttiva Tattica:** Questo pulsante ti reindirizza al Kaiculator . Calcola dinamicamente i bonus di Capitani e moltiplicatori per attacchi efficienti.",
+  "calc_info": "💡 **Direttiva Tattica:** Questo pulsante ti reindirizza al Kaiculator. Calcola dinamicamente i bonus di Capitani e moltiplicatori per attacchi efficienti.",
   "calc_btn": "🛡️ APRI IL SIMULATORE DI MARCIA AVANZATO 🛡️",
 
   "res_h1": "🏆 Risultati Clan",
