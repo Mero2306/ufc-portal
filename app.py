@@ -174,7 +174,6 @@ else:
 
     # Menu laterale che cambia lingua prendendo i dati dai tuoi JSON
     options = [
-        options = [
     ctx.get("menu_home", "🏠 Home Dashboard"),
     ctx.get("menu_info", "📋 Clan Info & Chats"),
     ctx.get("menu_min", "📊 Event Minimums"),
