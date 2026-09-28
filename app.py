@@ -318,7 +318,7 @@ else:
             )
         )
         st.write(ctx.get("min_w2", "- **Armageddon:** 50 chests"))
-        st.write(ctx.get("min_w3", "- **Ragnaroc:** 500m"))
+        st.write(ctx.get("min_w3", "- **Ragnarok:** 500 M"))
         st.write(ctx.get("min_w4", "- **Olympus:** 570,000"))
         st.write(
             ctx.get(
@@ -352,7 +352,7 @@ else:
         apply_custom_style("bg_calc.jpg")
 
         st.markdown(
-            f"<h1>{ctx.get('calc_h1', '⚔️ Official Alliance March Calculator')}</h1>",
+            "calc_h1", "⚔️ Official Calculator for attacks on epic monsters."
             unsafe_allow_html=True,
         )
         st.write(
