@@ -1,12 +1,14 @@
+
 {
   "menu_home": "🏠 Dashboard Principale",
   "menu_info": "📋 Info Clan & Chat",
   "menu_min": "📊 Minimi Richiesti",
   "menu_disc": "🌐 Server Discord",
   "menu_calc": "⚔️ Calcolatore Truppe",
+  "menu_res": "🏆 Risultati Clan",
   
   "home_h1": "🏠 UFC Command Center - Stato dell Alleanza",
-  "home_write": "Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale dall OCR.",
+  "home_write": "Consulta la classifica ufficiale dei forzieri aggiornata in tempo reale.",
   "home_info": "💡 **Nota per i membri UFC:** Cliccando sul pulsante sotto, la classifica si aprirà in modalità protetta di Sola Lettura.",
   "home_btn": "⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️",
   
@@ -37,6 +39,9 @@
   
   "calc_h1": "⚔️ Calcolatore Ufficiale Marce di Alleanza",
   "calc_write": "Accedi al simulatore di marce e formazioni più efficiente utilizzato dai clan d elite mondiali.",
-  "calc_info": "💡 **Direttiva Tattica:** Questo pulsante ti reindirizza in sicurezza al Kaiculator ufficiale. Calcola dinamicamente i bonus di Capitani, Draghi e moltiplicatori del server per attacchi a perdite zero.",
-  "calc_btn": "🛡️ APRI IL SIMULATORE DI MARCIA AVANZATO 🛡️"
+  "calc_info": "💡 **Direttiva Tattica:** Questo pompante ti reindirizza in sicurezza al Kaiculator ufficiale. Calcola dinamicamente i bonus di Capitani, Draghi e moltiplicatori del server per attacchi a perdite zero.",
+  "calc_btn": "🛡️ APRI IL SIMULATORE DI MARCIA AVANZATO 🛡️",
+
+  "res_h1": "🏆 Risultati Clan",
+  "res_write": "Statistiche in tempo reale e contatori dei forzieri estratti direttamente dal registro di guerra dell alleanza."
 }
