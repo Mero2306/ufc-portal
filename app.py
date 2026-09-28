@@ -352,8 +352,7 @@ else:
         apply_custom_style("bg_calc.jpg")
 
         st.markdown(
-            "calc_h1", "⚔️ Official Calculator for attacks on epic monsters."
-            unsafe_allow_html=True,
+                        f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>",
         )
         st.write(
             ctx.get(
