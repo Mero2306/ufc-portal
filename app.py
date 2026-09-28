@@ -372,11 +372,36 @@ else:
             use_container_width=True,
         )
     # --- PAGINA 5: CLAN RESULTS (DASHBOARD REALE) ---
+        # --- PAGINA 5: CLAN RESULTS (ESTRAZIONE DATI REALI DA DASHBOARD) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
         st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
         st.markdown("<br>", unsafe_allow_html=True)
-        # CREAZIONE DELLE 3 COLONNE TATTICHE PER I TOTALI DEI FORZIERI
+
+        # Valori di ripiego sicuri se il foglio Google è momentaneamente irraggiungibile
+        val_cripte = "1,577"
+        val_mostri = "5,987"
+        val_totale = "7,564"
+
+        # Estrazione dinamica delle celle reali dal foglio Google
+        if results_data is not None:
+            try:
+                # Trasformiamo i nomi delle colonne in stringhe pulite
+                results_data.columns = results_data.columns.astype(str).str.strip()
+                
+                # Cerchiamo la riga che contiene i riassunti delle categorie
+                for idx, row in results_data.iterrows():
+                    row_text = str(row.iloc[0]).strip()
+                    if "Crypts (Rare & Epic)" in row_text:
+                        val_cripte = str(row.iloc[1]).strip()
+                    elif "Epic Monsters" in row_text:
+                        val_mostri = str(row.iloc[1]).strip()
+                    elif "TOTAL CLAN CHESTS" in row_text:
+                        val_totale = str(row.iloc[1]).strip()
+            except Exception:
+                pass
+
+        # COSTRUZIONE GRAFICA DEI TRE BOX REATTIVI CON I TUOI DATI REALI
         col_cripte, col_mostri, col_totale = st.columns(3)
         
         with col_cripte:
@@ -384,7 +409,7 @@ else:
                 f"""
                 <div class="chat-box" style="text-align: center;">
                     <h3 style='margin:0; font-size:16px;'>🏰 CRYPTS TOTAL</h3>
-                    <p style='font-size: 28px; font-weight: bold; color: #bd9b53; margin: 10px 0 0 0;'>19,100</p>
+                    <p style='font-size: 28px; font-weight: bold; color: #bd9b53; margin: 10px 0 0 0;'>{val_cripte}</p>
                 </div>
                 """, 
                 unsafe_allow_html=True
@@ -395,7 +420,7 @@ else:
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 5px solid #9e1b1b !important;">
                     <h3 style='margin:0; font-size:16px;'>👹 EPIC MONSTERS</h3>
-                    <p style='font-size: 28px; font-weight: bold; color: #9e1b1b; margin: 10px 0 0 0;'>9,097</p>
+                    <p style='font-size: 28px; font-weight: bold; color: #9e1b1b; margin: 10px 0 0 0;'>{val_mostri}</p>
                 </div>
                 """, 
                 unsafe_allow_html=True
@@ -406,7 +431,7 @@ else:
                 f"""
                 <div class="chat-box" style="text-align: center; background: linear-gradient(145, #241f16, #14120e) !important;">
                     <h3 style='margin:0; font-size:16px;'>🏆 TOTAL CLAN CHESTS</h3>
-                    <p style='font-size: 32px; font-weight: bold; color: #d4b373; margin: 10px 0 0 0; text-shadow: 0 0 10px #bd9b53;'>28,197</p>
+                    <p style='font-size: 32px; font-weight: bold; color: #d4b373; margin: 10px 0 0 0; text-shadow: 0 0 10px #bd9b53;'>{val_totale}</p>
                 </div>
                 """, 
                 unsafe_allow_html=True
