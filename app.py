@@ -435,26 +435,21 @@ else:
         with col_totale:
             st.markdown(f'<div class="chat-box" style="text-align: center; background: linear-gradient(145, #241f16, #14120e) !important;"><h3 style="margin:0; font-size:16px;">🏆 TOTAL CLAN CHESTS</h3><p style="font-size: 32px; font-weight: bold; color: #d4b373; margin: 10px 0 0 0; text-shadow: 0 0 10px #bd9b53;">{val_totale}</p></div>', unsafe_allow_html=True)
             
-        st.markdown("<br>", unsafe_allow_html=True)
+               st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("### 📊 Detailed Chest Summary")
 
-        # 4. GENERAZIONE DELLA TABELLA DETTAGLIATA STILIZZATA IN STILE GUERRA MEDIEVALE
-        html_table = """
-        <table style="width:100%; border-collapse: collapse; background: #14120e; border: 1px solid #bd9b53; font-family: 'Inter', sans-serif;">
-            <tr style="background: linear-gradient(135, #1e1a13, #14120e); border-bottom: 2px solid #bd9b53;">
-                <th style="padding: 12px; text-align: left; color: #d4b373; font-family: 'Cinzel', serif;">Chest Name</th>
-                <th style="padding: 12px; text-align: right; color: #d4b373; font-family: 'Cinzel', serif;">Total Chests</th>
-            </tr>
-        """
+        # GENERAZIONE DELLA TABELLA PULITA ED ESENTE DA BUG GRAFICI
         for item in dettagli_forzieri:
-            html_table += f"""
-            <tr style="border-bottom: 1px solid rgba(189, 155, 83, 0.2); transition: background 0.2s;">
-                <td style="padding: 10px; text-align: left; color: #f0e6d2;">{item['Chest Name']}</td>
-                <td style="padding: 10px; text-align: right; color: #bd9b53; font-weight: bold;">{item['Total Chests']}</td>
-            </tr>
-            """
-        html_table += "</table>"
-        
-        st.markdown(html_table, unsafe_allow_html=True)
+            st.markdown(
+                f"""
+                <div class="chat-box" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px !important; margin-bottom: 8px !important;">
+                    <span style="color: #f0e6d2; font-weight: 500;">{item['Chest Name']}</span>
+                    <span style="color: #bd9b53; font-weight: bold; font-family: 'Cinzel', serif; font-size: 18px;">{item['Total Chests']}</span>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            
         st.markdown("<br>", unsafe_allow_html=True)
         st.info("📊 *Notice:* These statistics are synchronized directly with the main war log sheets to monitor general alliance efficiency.")
+
