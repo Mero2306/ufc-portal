@@ -532,7 +532,7 @@ else:
             except Exception:
                 pass
 
-        # 3. COMPILAZIONE GRAFICA DEI TRE BOX IN CIMA
+                # 3. COMPILAZIONE GRAFICA DEI TRE BOX IN CIMA
         col_cripte, col_mostri, col_totale = st.columns(3)
         with col_cripte:
             st.markdown(f'<div class="chat-box" style="text-align: center;"><h3 style="margin:0; font-size:16px;">🏰 CRYPTS TOTAL</h3><p style="font-size: 28px; font-weight: bold; color: #4a86e8; margin: 10px 0 0 0;">{val_cripte}</p></div>', unsafe_allow_html=True)
