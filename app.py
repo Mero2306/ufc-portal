@@ -310,7 +310,7 @@ else:
             unsafe_allow_html=True,
         )
 
-    # --- PAGINA 2: EVENT MINIMUMS ---
+        # --- PAGINA 2: EVENT MINIMUMS ---
     elif page in ["📊 Event Minimums", ctx.get("menu_min")]:
         apply_custom_style("bg_min.jpg")
 
@@ -318,12 +318,20 @@ else:
             f"<h1>{ctx.get('min_h1', '📊 Official Event Minimums and Targets')}</h1>",
             unsafe_allow_html=True,
         )
-        st.info(
-            ctx.get(
-                "min_info",
-                "⚠️ Participation required for events Ancients, Armageddon, Ragnarok, Olympus, and Dark Omens.",
-            )
+        
+        # NUOVO BOX AZZURRO AD ALTA LEGGIBILITÀ
+        text_min_info = ctx.get("min_info", "⚠️ Participation required for events Ancients, Armageddon, Ragnarok, Olympus, and Dark Omens.")
+        st.markdown(
+            f"""
+            <div style="background-color: rgba(28, 142, 230, 0.1); border-left: 5px solid rgb(28, 142, 230); padding: 16px 20px; border-radius: 4px; margin-bottom: 15px;">
+                <p style="color: #f0e6d2; margin: 0; font-size: 16px; font-weight: 500; line-height: 1.6; letter-spacing: 0.3px;">
+                    {text_min_info}
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
+        
         st.markdown(ctx.get("min_h3", "### 📋 Monthly Minimums"))
         st.write(
             ctx.get(
@@ -339,6 +347,7 @@ else:
                 "- **Dark Omens:** 100 clan chests, max oil deployed and fair share of defense",
             )
         )
+
 
     # --- PAGINA 3: DISCORD SERVER ---
     elif page in ["🌐 Discord Server", ctx.get("menu_disc")]:
