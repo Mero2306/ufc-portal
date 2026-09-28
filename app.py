@@ -448,8 +448,10 @@ else:
             try:
                 results_data.columns = results_data.columns.astype(str).str.strip()
                 for idx, row in results_data.iterrows():
+                    # Parentesi quadre inserite correttamente per leggere Colonna A (0) e Colonna B (1)
                     r_text = str(row.iloc[0]).strip() if len(row) > 0 else ""
                     r_val = str(row.iloc[1]).strip() if len(row) > 1 else ""
+                    
                     if "Crypts (Rare & Epic)" in r_text: val_cripte = r_val
                     elif "Epic Monsters" in r_text: val_mostri = r_val
                     elif "TOTAL CLAN CHESTS" in r_text: val_totale = r_val
@@ -475,7 +477,6 @@ else:
         torta_nomi = []
         torta_valori = []
         
-        # Mappatura blindata definitiva con i tuoi colori scelti
         mappa_colori_clan = {
             "Rare Crypt 30": "#4a86e8",
             "Epic Crypt 30": "#9900ff",
