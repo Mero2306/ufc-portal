@@ -202,7 +202,7 @@ else:
         import pandas as pd
         try:
             # Legge il foglio in background senza mostrare link esterni
-            df = pd.read_csv(url)
+            df = pd.read_csv(url, header=None)
             return df
         except Exception:
             return None
