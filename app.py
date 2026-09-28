@@ -509,7 +509,7 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("### 📊 Detailed Chest Summary")
 
-       # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI
+      # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI
         for item in dettagli_forzieri:
             st.markdown(
                 f"""
@@ -526,11 +526,12 @@ else:
         text_res_info = ctx.get("res_info", "📊 *Notice:* These statistics are synchronized directly with the main war log sheets to monitor general alliance efficiency.")
         st.markdown(
             f"""
-            <div class="chat-box" style="background: linear-gradient(145, #1c1914, #14120e) !important; padding: 14px 18px !important;">
-                <p style="color: #f0e6d2; margin: 0; font-size: 14px; font-style: italic; line-height: 1.5;">{text_res_info}</p>
+            <div class="chat-box" style="background: linear-gradient(145, #1c1914, #14120e) !important; padding: 16px 20px !important;">
+                <p style="color: #f0e6d2; margin: 0; font-size: 16px; font-weight: 500; font-style: italic; line-height: 1.6; letter-spacing: 0.3px;">
+                    {text_res_info}
+                </p>
             </div>
             """,
             unsafe_allow_html=True
         )
-
 
