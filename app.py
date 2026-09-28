@@ -447,7 +447,8 @@ else:
         ]
 
         # Forziamo la lettura della scheda specifica "Dashboard" cambiando l'esportazione CSV
-        CSV_URL_DASHBOARD = GOOGLE_SHEET_LINK.replace("/edit?usp=sharing", "/export?format=csv&sheet=Dashboard")
+                CSV_URL_DASHBOARD = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/edit?gid=432024066#gid=432024066"
+
         results_data_dashboard = load_clan_results(CSV_URL_DASHBOARD)
 
         # 2. LETTURA RIGIDA DI OGNI SINGOLA RIGA E COLONNA DEL FOGLIO GOOGLE
