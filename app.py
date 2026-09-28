@@ -447,7 +447,7 @@ else:
         ]
 
         # Forziamo la lettura della scheda specifica "Dashboard" cambiando l'esportazione CSV
-                CSV_URL_DASHBOARD = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/edit?gid=432024066#gid=432024066"
+                CSV_URL_DASHBOARD = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/export?format=csv&gid=432024066"
 
         results_data_dashboard = load_clan_results(CSV_URL_DASHBOARD)
 
