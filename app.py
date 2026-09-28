@@ -368,3 +368,8 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
+    # --- PAGINA 5: CLAN RESULTS (DASHBOARD REALE) ---
+    elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
+        st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
+        st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
+        st.markdown("<br>", unsafe_allow_html=True)
