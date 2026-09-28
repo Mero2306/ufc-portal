@@ -413,7 +413,7 @@ else:
             "https://kaikaiju.com",
             use_container_width=True,
         )
-         # --- PAGINA 5: CLAN RESULTS (MOTORE DI SEARCH DIRETTO ED ENERGETICO) ---
+       # --- PAGINA 5: CLAN RESULTS (LETTURA DIRETTA NOMINALE DEI DATI VIVI) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -421,11 +421,12 @@ else:
         st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 1. Inizializzazione pulita a stringhe
+        # 1. Valori di ripiego
         val_cripte = "0"
         val_mostri = "0"
         val_totale = "0"
 
+        # Lista fissa dei 16 forzieri con i loro nomi ufficiali
         dettagli_forzieri = [
             {"Chest Name": "Rare Crypt 30", "Total Chests": "0"},
             {"Chest Name": "Epic Crypt 30", "Total Chests": "0"},
@@ -445,33 +446,32 @@ else:
             {"Chest Name": "Yokai", "Total Chests": "0"}
         ]
 
-        # 2. MOTORE DI SCANSIONE TOTALE (Cerca il testo in qualsiasi cella e prende la cella di destra)
+        # 2. LETTURA DINAMICA BASATA SULLE STRINGHE CONTENUTE (Evita sfasamenti di colonne)
         if results_data is not None:
             try:
-                # Convertiamo l'intero foglio in stringhe pulite senza indici rigidi
-                df_clean = results_data.fillna("0").astype(str)
+                # Pulizia colonne e rimozione spazi vuoti
+                df_clean = results_data.copy()
+                df_clean.columns = df_clean.columns.astype(str).str.strip()
                 
-                for r_idx in range(len(df_clean)):
-                    for c_idx in range(len(df_clean.columns)):
-                        cella_testo = df_clean.iloc[r_idx, c_idx].strip()
-                        cella_testo_lower = cella_testo.lower()
-                        
-                        # Se la cella contiene un nome cercato, prendiamo il valore della cella subito a destra
-                        if c_idx + 1 < len(df_clean.columns):
-                            valore_destra = df_clean.iloc[r_idx, c_idx + 1].strip()
-                            if valore_destra == "" or valore_destra.lower() == "nan":
-                                valore_destra = "0"
-                                
-                            if "crypts (rare & epic)" in cella_testo_lower or "crypts total" in cella_testo_lower:
-                                val_cripte = valore_destra
-                            elif "epic monsters" in cella_testo_lower:
-                                val_mostri = valore_destra
-                            elif "total clan chests" in cella_testo_lower:
-                                val_totale = valore_destra
-                            
-                            for item in dettagli_forzieri:
-                                if item["Chest Name"].lower() in cella_testo_lower:
-                                    item["Total Chests"] = valore_destra
+                # Iterazione flessibile sulle righe del foglio
+                for idx, row in df_clean.iterrows():
+                    # Uniamo la riga in un testo unico per cercare la parola chiave ovunque sia posizionata
+                    r_text = " ".join(row.astype(str)).strip()
+                    
+                    # Estraiamo l'ultimo valore utile della riga (il numero del contatore)
+                    valori_riga = [str(x).strip() for x in row if str(x).strip() != "" and str(x).lower() != "nan"]
+                    r_val = valori_riga[-1] if len(valori_riga) > 1 else "0"
+                    
+                    if "Crypts (Rare & Epic)" in r_text or "CRYPTS TOTAL" in r_text: 
+                        val_cripte = r_val
+                    elif "Epic Monsters" in r_text: 
+                        val_mostri = r_val
+                    elif "TOTAL CLAN CHESTS" in r_text: 
+                        val_totale = r_val
+                    
+                    for item in dettagli_forzieri:
+                        if item["Chest Name"].lower() in r_text.lower():
+                            item["Total Chests"] = r_val
             except Exception:
                 pass
 
@@ -486,7 +486,7 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 4. GENERAZIONE DEL GRAFICO CON I TUOI COLORI STRATEGICI
+        # 4. GENERAZIONE DEL GRAFICO CON I TUOI COLORI SPECIFICI
         import plotly.express as px
         
         torta_nomi = []
@@ -503,7 +503,6 @@ else:
         
         for item in dettagli_forzieri:
             try:
-                # Pulizia totale delle stringhe per estrarre numeri puri puliti da virgole e punti
                 val_stringa = item["Total Chests"].replace(",", "").replace(".", "").strip()
                 num_pulito = int(val_stringa)
                 if num_pulito > 0:
@@ -540,7 +539,7 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("### 📊 Detailed Chest Summary")
 
-        # 5. LISTA DEI 16 FORZIERI COMPLETA
+        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI CON VALORI REALI
         for item in dettagli_forzieri:
             st.markdown(
                 f"""
