@@ -382,7 +382,7 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-        # --- PAGINA 5: CLAN RESULTS (GRAFICO INTELLIGENTE PC/MOBILE) ---
+            # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI STRATEGICI REATTIVI) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -444,11 +444,32 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 4. GENERAZIONE DEL GRAFICO REATTIVO ADATTIVO
+        # 4. GENERAZIONE DEL GRAFICO CON LA TUA MAPPATURA COLORI PERSONALIZZATA
         import plotly.express as px
         
         torta_nomi = []
         torta_valori = []
+        torta_colori_mappa = []
+        
+        # Dizionario rigido dei colori scelti da te riga per riga
+        mappa_colori_clan = {
+            "Rare Crypt 30": "#3498db",       # Azzurro
+            "Epic Crypt 30": "#9b59b6",       # Viola 1
+            "Epic Crypt 35": "#8e44ad",       # Viola 2
+            "Arachne's Swarm": "#e74c3c",     # Rosso (Arcane)
+            "Epic Undead Squad": "#1abc9c",   # Turchese
+            "Shadow City": "#2ecc71",         # Verde Smeraldo
+            "Armageddon": "#2c3e50",          # Blu Notte Opaco
+            "Hellforge": "#7f8c8d",           # Grigio Acciaio
+            "Epic Fenrir Squad": "#2980b9",   # Sfumatura Blu 1
+            "Jormungandr Squad": "#00d2d3",   # Sfumatura Blu 2
+            "Epic Chimera Squad": "#f1c40f",  # Sfumatura Giallo 1
+            "Epic Basilisk Squad": "#d35400", # Sfumatura Giallo 2 (Ocra)
+            "Epic Briareus Squad": "#f39c12", # Sfumatura Giallo 3 (Ambra)
+            "Sands of Eternity": "#e67e22",   # Arancione
+            "Arcanomancer squad": "#16a085",  # Verde Petrolio
+            "Yokai": "#34495e"                # Antracite
+        }
         
         for item in dettagli_forzieri:
             try:
@@ -456,25 +477,22 @@ else:
                 if num_pulito > 0:
                     torta_nomi.append(item["Chest Name"])
                     torta_valori.append(num_pulito)
+                    # Recupera il colore associato o usa un ripiego grigio se non trovato
+                    torta_colori_mappa.append(mappa_colori_clan.get(item["Chest Name"], "#7f8c8d"))
             except Exception:
                 pass
 
         if len(torta_valori) > 0:
-            colori_guerra = ['#bd9b53', '#9e1b1b', '#d4b373', '#7c1515', '#a67c32', '#591010', '#e0c068', '#400a0a', '#8c7446', '#b83232', '#f3cb7a', '#c29243']
-            
-            # Sistema avanzato per rilevare se l'utente è su Mobile tramite Javascript/Streamlit Width
-            # Se la larghezza dello schermo è ridotta, cambiamo la disposizione del grafico
             fig = px.pie(
                 names=torta_nomi, 
                 values=torta_valori, 
-                color_discrete_sequence=colori_guerra, 
+                color_discrete_sequence=torta_colori_mappa, 
                 hole=0.35
             )
             
-            # Configurazione grafica ibrida che si comporta in modo reattivo
             fig.update_traces(
-                textposition='auto', # Sposta automaticamente dentro se lo spazio fuori è ridotto
-                textinfo='percent',  # Mette solo la percentuale dentro la fetta per non affollare
+                textposition='auto',
+                textinfo='percent',
                 textfont=dict(color='#f0e6d2', size=13, family='Inter', weight='bold'),
                 marker=dict(line=dict(color='#14120e', width=2))
             )
@@ -482,9 +500,9 @@ else:
             fig.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)', 
                 plot_bgcolor='rgba(0,0,0,0)',
-                showlegend=True, # Mostra la legenda con i quadratini colorati per i nomi dei forzieri
+                showlegend=True,
                 legend=dict(
-                    orientation="h", # Legenda orizzontale sotto la ciambella per non rubare spazio ai lati
+                    orientation="h",
                     yanchor="top", y=-0.1, 
                     xanchor="center", x=0.5,
                     font=dict(color='#f0e6d2', size=11, family='Inter')
