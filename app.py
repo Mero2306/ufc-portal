@@ -99,7 +99,9 @@ if not st.session_state["authenticated"]:
     col1, col_login, col2 = st.columns(3)
     with col_login:
         if os.path.exists("logo.png"):
-            st.image("logo.png", width=220)
+            log_c1, log_c2, log_c3 = st.columns([1, 2, 1])
+            with log_c2:
+                st.image("logo.png", width=220)
         else:
             st.markdown(
                 '<h1 style="text-align: center; font-size: 45px; margin: 0px;">🛡️</h1>',
@@ -124,6 +126,7 @@ if not st.session_state["authenticated"]:
             else:
                 st.error("❌ Incorrect password!")
 else:
+
 
                # 3. PORTAL INTERFACE (LOGO MAXI CENTRATO E SICURO)
     if os.path.exists("logo.png"):
