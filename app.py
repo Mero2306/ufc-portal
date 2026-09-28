@@ -413,7 +413,7 @@ else:
             "https://kaikaiju.com",
             use_container_width=True,
         )
-       # --- PAGINA 5: CLAN RESULTS (LETTURA DIRETTA NOMINALE DEI DATI VIVI) ---
+      # --- PAGINA 5: CLAN RESULTS (MOTORE INTELLIGENTE A TOLLERANZA TOTALE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -421,57 +421,58 @@ else:
         st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 1. Valori di ripiego
+        # 1. Inizializzazione pulita
         val_cripte = "0"
         val_mostri = "0"
         val_totale = "0"
 
-        # Lista fissa dei 16 forzieri con i loro nomi ufficiali
         dettagli_forzieri = [
-            {"Chest Name": "Rare Crypt 30", "Total Chests": "0"},
-            {"Chest Name": "Epic Crypt 30", "Total Chests": "0"},
-            {"Chest Name": "Epic Crypt 35", "Total Chests": "0"},
-            {"Chest Name": "Arachne's Swarm", "Total Chests": "0"},
-            {"Chest Name": "Epic Undead Squad", "Total Chests": "0"},
-            {"Chest Name": "Shadow City", "Total Chests": "0"},
-            {"Chest Name": "Armageddon", "Total Chests": "0"},
-            {"Chest Name": "Hellforge", "Total Chests": "0"},
-            {"Chest Name": "Epic Fenrir Squad", "Total Chests": "0"},
-            {"Chest Name": "Jormungandr Squad", "Total Chests": "0"},
-            {"Chest Name": "Epic Chimera Squad", "Total Chests": "0"},
-            {"Chest Name": "Epic Basilisk Squad", "Total Chests": "0"},
-            {"Chest Name": "Epic Briareus Squad", "Total Chests": "0"},
-            {"Chest Name": "Sands of Eternity", "Total Chests": "0"},
-            {"Chest Name": "Arcanomancer squad", "Total Chests": "0"},
-            {"Chest Name": "Yokai", "Total Chests": "0"}
+            {"Chest Name": "Rare Crypt 30", "Search": "rare crypt", "Total Chests": "0"},
+            {"Chest Name": "Epic Crypt 30", "Search": "epic crypt 30", "Total Chests": "0"},
+            {"Chest Name": "Epic Crypt 35", "Search": "epic crypt 35", "Total Chests": "0"},
+            {"Chest Name": "Arachne's Swarm", "Search": "arachne", "Total Chests": "0"},
+            {"Chest Name": "Epic Undead Squad", "Search": "undead", "Total Chests": "0"},
+            {"Chest Name": "Shadow City", "Search": "shadow", "Total Chests": "0"},
+            {"Chest Name": "Armageddon", "Search": "armageddon", "Total Chests": "0"},
+            {"Chest Name": "Hellforge", "Search": "hellforge", "Total Chests": "0"},
+            {"Chest Name": "Epic Fenrir Squad", "Search": "fenrir", "Total Chests": "0"},
+            {"Chest Name": "Jormungandr Squad", "Search": "jormungandr", "Total Chests": "0"},
+            {"Chest Name": "Epic Chimera Squad", "Search": "chimera", "Total Chests": "0"},
+            {"Chest Name": "Epic Basilisk Squad", "Search": "basilisk", "Total Chests": "0"},
+            {"Chest Name": "Epic Briareus Squad", "Search": "briareus", "Total Chests": "0"},
+            {"Chest Name": "Sands of Eternity", "Search": "sands", "Total Chests": "0"},
+            {"Chest Name": "Arcanomancer squad", "Search": "arcanomancer", "Total Chests": "0"},
+            {"Chest Name": "Yokai", "Search": "yokai", "Total Chests": "0"}
         ]
 
-        # 2. LETTURA DINAMICA BASATA SULLE STRINGHE CONTENUTE (Evita sfasamenti di colonne)
+        # 2. MOTORE ADATTIVO: Cerca frazioni di testo ed estrae l'ultimo numero della riga
         if results_data is not None:
             try:
-                # Pulizia colonne e rimozione spazi vuoti
-                df_clean = results_data.copy()
-                df_clean.columns = df_clean.columns.astype(str).str.strip()
-                
-                # Iterazione flessibile sulle righe del foglio
-                for idx, row in df_clean.iterrows():
-                    # Uniamo la riga in un testo unico per cercare la parola chiave ovunque sia posizionata
-                    r_text = " ".join(row.astype(str)).strip()
+                for idx, row in results_data.iterrows():
+                    # Uniamo tutta la riga in un testo pulito per l'analisi
+                    riga_completa = " ".join(row.astype(str)).lower().strip()
                     
-                    # Estraiamo l'ultimo valore utile della riga (il numero del contatore)
-                    valori_riga = [str(x).strip() for x in row if str(x).strip() != "" and str(x).lower() != "nan"]
-                    r_val = valori_riga[-1] if len(valori_riga) > 1 else "0"
+                    # Estraiamo tutti i numeri validi presenti in questa riga
+                    numeri_riga = []
+                    for cella in row:
+                        c_str = str(cella).strip().replace(",", "").replace(".", "")
+                        if c_str.isdigit():
+                            numeri_riga.append(str(cella).strip())
                     
-                    if "Crypts (Rare & Epic)" in r_text or "CRYPTS TOTAL" in r_text: 
-                        val_cripte = r_val
-                    elif "Epic Monsters" in r_text: 
-                        val_mostri = r_val
-                    elif "TOTAL CLAN CHESTS" in r_text: 
-                        val_totale = r_val
-                    
-                    for item in dettagli_forzieri:
-                        if item["Chest Name"].lower() in r_text.lower():
-                            item["Total Chests"] = r_val
+                    # Se c'è almeno un numero, l'ultimo è il nostro contatore
+                    if numeri_riga:
+                        ultimo_numero = numeri_riga[-1]
+                        
+                        if "crypts" in riga_completa or "cripte" in riga_completa:
+                            val_cripte = ultimo_numero
+                        elif "monster" in riga_completa or "mostri" in riga_completa:
+                            val_mostri = ultimo_numero
+                        elif "total" in riga_completa:
+                            val_totale = ultimo_numero
+                        
+                        for item in dettagli_forzieri:
+                            if item["Search"] in riga_completa:
+                                item["Total Chests"] = ultimo_numero
             except Exception:
                 pass
 
@@ -539,7 +540,7 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("### 📊 Detailed Chest Summary")
 
-        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI CON VALORI REALI
+        # 5. STAMPA DELLA LISTA COMPLETA
         for item in dettagli_forzieri:
             st.markdown(
                 f"""
