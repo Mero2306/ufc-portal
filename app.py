@@ -413,7 +413,7 @@ else:
             "https://kaikaiju.com",
             use_container_width=True,
         )
-        # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
+         # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -426,7 +426,7 @@ else:
         val_mostri = "0"
         val_totale = "0"
 
-        # Lista fissa totale di tutti i 16 forzieri
+        # Lista fissa con i nomi scritti ESATTAMENTE come compaiono sul tuo foglio Google
         dettagli_forzieri = [
             {"Chest Name": "Rare Crypt 30", "Total Chests": "0"},
             {"Chest Name": "Epic Crypt 30", "Total Chests": "0"},
@@ -446,11 +446,11 @@ else:
             {"Chest Name": "Yokai", "Total Chests": "0"}
         ]
 
-        # Forziamo la lettura della scheda specifica "Dashboard" cambiando l'esportazione CSV con GID corretto
+        # Link di esportazione CSV diretto per la scheda Dashboard con ID corretto
         CSV_URL_DASHBOARD = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/export?format=csv&gid=432024066"
         results_data_dashboard = load_clan_results(CSV_URL_DASHBOARD)
 
-        # 2. LETTURA DI OGNI SINGOLA RIGA E COLONNA DEL FOGLIO GOOGLE (COLONNA A E B)
+        # 2. LETTURA RIGIDA DI OGNI SINGOLA RIGA E COLONNA DEL FOGLIO GOOGLE
         if results_data_dashboard is not None:
             try:
                 df_clean = results_data_dashboard.reset_index(drop=True)
@@ -469,7 +469,7 @@ else:
                         val_totale = r_val
                     
                     for item in dettagli_forzieri:
-                        if item["Chest Name"].lower() in r_text.lower():
+                        if item["Chest Name"].lower() == r_text.lower():
                             item["Total Chests"] = r_val
             except Exception:
                 pass
@@ -485,9 +485,8 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 4. GENERAZIONE DEL GRAFICO CON PULIZIA AVANZATA DEI VALORI NUMERICI
+        # 4. GENERAZIONE DEL GRAFICO CON I COLORI PERSONALIZZATI DEL FOGLIO GOOGLE
         import plotly.express as px
-        import re
         
         torta_nomi = []
         torta_valori = []
@@ -503,9 +502,7 @@ else:
         
         for item in dettagli_forzieri:
             try:
-                # Il filtro Regex estrae solo i numeri puri eliminando qualsiasi spazio o carattere di testo
-                stringa_pulita = re.sub(r'\D', '', item["Total Chests"])
-                num_pulito = int(stringa_pulita) if stringa_pulita else 0
+                num_pulito = int(item["Total Chests"].replace(",", "").replace(".", ""))
                 if num_pulito > 0:
                     torta_nomi.append(item["Chest Name"])
                     torta_valori.append(num_pulito)
@@ -540,7 +537,7 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("### 📊 Detailed Chest Summary")
 
-        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI CON VALORI AGGIORNATI
+        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI CON VALORI REALI
         for item in dettagli_forzieri:
             st.markdown(
                 f"""
