@@ -382,7 +382,7 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-                 # --- PAGINA 5: CLAN RESULTS (GRAFICO CON SCRITTE ESTERNE GIGANTI) ---
+      # --- PAGINA 5: CLAN RESULTS (GRAFICO CON SCRITTE ESTERNE GIGANTI REATTIVO) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -427,7 +427,7 @@ else:
                     elif "Epic Monsters" in r_text: val_mostri = r_val
                     elif "TOTAL CLAN CHESTS" in r_text: val_totale = r_val
                     
-                    for item in dettagli_forzieri:
+                    for item in微 dettagli_forzieri:
                         if item["Chest Name"].lower() in r_text.lower():
                             item["Total Chests"] = r_val
             except Exception:
@@ -444,7 +444,7 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 4. GENERAZIONE DEL GRAFICO CON LOGHI ESTERNI XL E SCRITTE GIGANTI
+        # 4. GENERAZIONE DEL GRAFICO COMPATIBILE CON MOBILE
         import plotly.express as px
         
         torta_nomi = []
@@ -469,20 +469,21 @@ else:
                 hole=0.35
             )
             
-            # INGRANDIMENTO DEL TESTO ESTERNO A 16px IN GRASSETTO
+            # Scritte grandi su PC, leggibili ovunque
             fig.update_traces(
                 textposition='outside', 
                 textinfo='label+percent',
-                textfont=dict(color='#f0e6d2', size=16, family='Inter', weight='bold'),
+                textfont=dict(color='#f0e6d2', size=15, family='Inter', weight='bold'),
                 marker=dict(line=dict(color='#14120e', width=2))
             )
             
+            # Margini intelligenti per non far schiacciare il grafico sui telefoni
             fig.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)', 
                 plot_bgcolor='rgba(0,0,0,0)',
                 showlegend=False,
-                margin=dict(t=40, b=40, l=160, r=160), # Margini allargati per accogliere le scritte grandi
-                height=600 # Alzato a 600px per dare ampio respiro visivo
+                margin=dict(t=30, b=30, l=30, r=30),
+                height=450
             )
             st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         else:
@@ -505,4 +506,3 @@ else:
             
         st.markdown("<br>", unsafe_allow_html=True)
         st.info(ctx.get("res_info", "📊 *Notice:* These statistics are synchronized directly with the main war log sheets to monitor general alliance efficiency."))
-
