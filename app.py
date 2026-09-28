@@ -382,7 +382,7 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-                # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
+               # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -417,8 +417,8 @@ else:
             try:
                 results_data.columns = results_data.columns.astype(str).str.strip()
                 for idx, row in results_data.iterrows():
-                    r_text = str(row.iloc[0]).strip() if len(row) > 0 else ""
-                    r_val = str(row.iloc[1]).strip() if len(row) > 1 else ""
+                    r_text = str(row.iloc).strip() if len(row) > 0 else ""
+                    r_val = str(row.iloc).strip() if len(row) > 1 else ""
                     if "Crypts (Rare & Epic)" in r_text: val_cripte = r_val
                     elif "Epic Monsters" in r_text: val_mostri = r_val
                     elif "TOTAL CLAN CHESTS" in r_text: val_totale = r_val
@@ -444,24 +444,24 @@ else:
         torta_nomi = []
         torta_valori = []
         
-        # Mappatura aggiornata con i codici colore estratti dal tuo foglio Google
+        # Mappatura definitiva con i 3 gialli e i 2 azzurri distinti richiesti
         mappa_colori_clan = {
-            "Rare Crypt 30": "#4a86e8",       # Blu classico
-            "Epic Crypt 30": "#9900ff",       # Viola Cripta
-            "Epic Crypt 35": "#674ea7",       # Viola Scuro Cripta 35
-            "Arachne's Swarm": "#cc0000",     # Rosso Scuro
-            "Epic Undead Squad": "#e6b8af",   # Rosa Antico
-            "Shadow City": "#f4cccc",         # Rosa Chiaro
-            "Armageddon": "#fce5cd",          # Arancione Pastello
-            "Hellforge": "#fff2cc",           # Giallo Pastello
-            "Epic Fenrir Squad": "#d9ead3",   # Verde Pastello
-            "Jormungandr Squad": "#d0e0e3",   # Acqua Pastello
-            "Epic Chimera Squad": "#c9daf8",  # Carta da Zucchero
-            "Epic Basilisk Squad": "#cfe2f3", # Sfumatura Azzurro
-            "Epic Briareus Squad": "#d9d2e9", # Lilla Pastello
-            "Sands of Eternity": "#f1c232",   # Oro / Sabbia
-            "Arcanomancer squad": "#bf9000",  # Ocra / Bronzo
-            "Yokai": "#38761d"                # Verde Scuro
+            "Rare Crypt 30": "#4a86e8",
+            "Epic Crypt 30": "#9900ff",
+            "Epic Crypt 35": "#674ea7",
+            "Arachne's Swarm": "#cc0000",
+            "Epic Undead Squad": "#e6b8af",
+            "Shadow City": "#f4cccc",
+            "Armageddon": "#fce5cd",
+            "Hellforge": "#eaeaea",
+            "Epic Fenrir Squad": "#00bfff",   # Azzurro Cielo Vivido
+            "Jormungandr Squad": "#4682b4",   # Azzurro Acciaio Scuro
+            "Epic Chimera Squad": "#ffd700",  # Giallo Oro
+            "Epic Basilisk Squad": "#ffaa00", # Giallo Ocra / Ambra
+            "Epic Briareus Squad": "#fff2cc", # Giallo Crema Pastello
+            "Sands of Eternity": "#cc0000",
+            "Arcanomancer squad": "#e60000",
+            "Yokai": "#38761d"
         }
         
         for item in dettagli_forzieri:
