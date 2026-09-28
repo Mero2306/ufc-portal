@@ -125,27 +125,17 @@ if not st.session_state["authenticated"]:
                 st.error("❌ Incorrect password!")
 else:
 
-           # 3. PORTAL INTERFACE (LOGO MAXI E CENTRATO AL 100%)
+               # 3. PORTAL INTERFACE (LOGO MAXI CENTRATO E SICURO)
     if os.path.exists("logo.png"):
-        st.sidebar.markdown(
-            """
-            <div style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 10px 0;">
-                <img src="https://githubusercontent.com" style="width: 170px; max-width: 85%; height: auto; object-fit: contain;">
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        side_c1, side_c2, side_c3 = st.sidebar.columns([1, 4, 1])
+        with side_c2:
+            st.image("logo.png", width=160)
     else:
-        st.sidebar.markdown(
-            "<div style='text-align: center;'><h1 style='font-size: 45px; margin-bottom: 0px;'>🛡️</h1></div>",
-            unsafe_allow_html=True,
-        )
+        st.sidebar.markdown("<div style='text-align: center;'><h1 style='font-size: 45px; margin-bottom: 0px;'>🛡️</h1></div>", unsafe_allow_html=True)
 
-    st.sidebar.markdown(
-        "<h2 style='font-size: 20px; text-align: center; margin-top: 10px; margin-bottom: 15px;'>UFC Portal</h2>",
-        unsafe_allow_html=True,
-    )
+    st.sidebar.markdown("<h2 style='font-size: 20px; text-align: center; margin-top: 10px; margin-bottom: 15px;'>UFC Portal</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
+
 
 
 
