@@ -125,12 +125,9 @@ if not st.session_state["authenticated"]:
                 st.error("❌ Incorrect password!")
 else:
 
-    # 3. PORTAL INTERFACE
+        # 3. PORTAL INTERFACE
     if os.path.exists("logo.png"):
-    col_side1, col_side_img, col_side2 = st.sidebar.columns([1, 3, 1])
-    with col_side_img:
         st.sidebar.image("logo.png", width=120)
-
     else:
         st.sidebar.markdown(
             "<h1 style='font-size: 38px; text-align: center; margin-bottom: 0px;'>🛡️</h1>",
@@ -142,6 +139,7 @@ else:
         unsafe_allow_html=True,
     )
     st.sidebar.markdown("---")
+
 
        # SELETTORE DELLA LINGUA CON BANDIERE
     lang_choice = st.sidebar.selectbox(
