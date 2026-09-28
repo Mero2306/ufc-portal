@@ -470,7 +470,7 @@ else:
             except Exception: 
                 pass
 
-        if len(t_valori) > 0:
+                if len(t_valori) > 0:
             fig = px.pie(names=t_nomi, values=t_valori, color=t_nomi, color_discrete_map=colori, hole=0.35)
             fig.update_traces(textposition='auto', textinfo='percent', textfont=dict(color='#f0e6d2', size=13, weight='bold'), marker=dict(line=dict(color='#14120e', width=2)))
             fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', showlegend=True, legend=dict(orientation="h", yanchor="top", y=-0.1, xanchor="center", x=0.5, font=dict(color='#f0e6d2', size=11)), margin=dict(t=10,b=40,l=10,r=10), height=450)
@@ -478,7 +478,10 @@ else:
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
-            st.markdown(f"<br>### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
-
+        # Il titolo ora è fuori dall'else, allineato a sinistra e legge la traduzione
+        st.markdown(f"<br>### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
+        
+        # Stampa dei 16 forzieri con i nomi tradotti dinamicamente
         for item in dettagli_forzieri:
-            st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{item["Chest Name"]}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
+            nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
+            st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
