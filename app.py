@@ -444,23 +444,23 @@ else:
         torta_nomi = []
         torta_valori = []
         
-        # Mappatura definitiva con i 3 gialli e i 2 azzurri distinti richiesti
+        # Mappatura blindata definitiva con 3 gialli, 2 azzurri e 3 rossi ben distinti
         mappa_colori_clan = {
             "Rare Crypt 30": "#4a86e8",
             "Epic Crypt 30": "#9900ff",
             "Epic Crypt 35": "#674ea7",
-            "Arachne's Swarm": "#cc0000",
+            "Arachne's Swarm": "#990000",     # Rosso Cremisi Scuro
             "Epic Undead Squad": "#e6b8af",
             "Shadow City": "#f4cccc",
             "Armageddon": "#fce5cd",
             "Hellforge": "#eaeaea",
-            "Epic Fenrir Squad": "#00bfff",   # Azzurro Cielo Vivido
-            "Jormungandr Squad": "#4682b4",   # Azzurro Acciaio Scuro
-            "Epic Chimera Squad": "#ffd700",  # Giallo Oro
-            "Epic Basilisk Squad": "#ffaa00", # Giallo Ocra / Ambra
-            "Epic Briareus Squad": "#fff2cc", # Giallo Crema Pastello
-            "Sands of Eternity": "#cc0000",
-            "Arcanomancer squad": "#e60000",
+            "Epic Fenrir Squad": "#00bfff",
+            "Jormungandr Squad": "#4682b4",
+            "Epic Chimera Squad": "#ffd700",
+            "Epic Basilisk Squad": "#ffaa00",
+            "Epic Briareus Squad": "#fff2cc",
+            "Sands of Eternity": "#ff4500",   # Rosso Aranciato / Mattone
+            "Arcanomancer squad": "#e60000",  # Rosso Fuoco Acceso
             "Yokai": "#38761d"
         }
         
