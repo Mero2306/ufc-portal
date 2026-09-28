@@ -382,7 +382,7 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-             # --- PAGINA 5: CLAN RESULTS (GRAFICO INTELLIGENTE PC/MOBILE) ---
+        # --- PAGINA 5: CLAN RESULTS (GRAFICO INTELLIGENTE PC/MOBILE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
