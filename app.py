@@ -382,7 +382,7 @@ else:
             "https://kaiculator.kaikaiju.com",
             use_container_width=True,
         )
-            # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI STRATEGICI REATTIVI) ---
+              # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
 
@@ -390,12 +390,10 @@ else:
         st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 1. Dati di ripiego reali del reset per i Box
         val_cripte = "1,577"
         val_mostri = "5,987"
         val_totale = "7,564"
 
-        # Lista fissa totale di tutti i 16 forzieri
         dettagli_forzieri = [
             {"Chest Name": "Rare Crypt 30", "Total Chests": "129"},
             {"Chest Name": "Epic Crypt 30", "Total Chests": "104"},
@@ -415,25 +413,21 @@ else:
             {"Chest Name": "Yokai", "Total Chests": "0"}
         ]
 
-        # 2. Lettura dinamica dal foglio Google
         if results_data is not None:
             try:
                 results_data.columns = results_data.columns.astype(str).str.strip()
                 for idx, row in results_data.iterrows():
-                    r_text = str(row.iloc).strip() if len(row) > 0 else ""
-                    r_val = str(row.iloc).strip() if len(row) > 1 else ""
-                    
+                    r_text = str(row.iloc[0]).strip() if len(row) > 0 else ""
+                    r_val = str(row.iloc[1]).strip() if len(row) > 1 else ""
                     if "Crypts (Rare & Epic)" in r_text: val_cripte = r_val
                     elif "Epic Monsters" in r_text: val_mostri = r_val
                     elif "TOTAL CLAN CHESTS" in r_text: val_totale = r_val
-                    
                     for item in dettagli_forzieri:
                         if item["Chest Name"].lower() in r_text.lower():
                             item["Total Chests"] = r_val
             except Exception:
                 pass
 
-        # 3. COMPILAZIONE GRAFICA DEI TRE BOX IN CIMA
         col_cripte, col_mostri, col_totale = st.columns(3)
         with col_cripte:
             st.markdown(f'<div class="chat-box" style="text-align: center;"><h3 style="margin:0; font-size:16px;">🏰 CRYPTS TOTAL</h3><p style="font-size: 28px; font-weight: bold; color: #bd9b53; margin: 10px 0 0 0;">{val_cripte}</p></div>', unsafe_allow_html=True)
@@ -443,91 +437,4 @@ else:
             st.markdown(f'<div class="chat-box" style="text-align: center; background: linear-gradient(145, #241f16, #14120e) !important;"><h3 style="margin:0; font-size:16px;">🏆 TOTAL CLAN CHESTS</h3><p style="font-size: 32px; font-weight: bold; color: #d4b373; margin: 10px 0 0 0; text-shadow: 0 0 10px #bd9b53;">{val_totale}</p></div>', unsafe_allow_html=True)
             
         st.markdown("<br>", unsafe_allow_html=True)
-
-        # 4. GENERAZIONE DEL GRAFICO CON LA TUA MAPPATURA COLORI PERSONALIZZATA
-        import plotly.express as px
-        
-        torta_nomi = []
-        torta_valori = []
-        torta_colori_mappa = []
-        
-        # Dizionario rigido dei colori scelti da te riga per riga
-        mappa_colori_clan = {
-            "Rare Crypt 30": "#3498db",       # Azzurro
-            "Epic Crypt 30": "#9b59b6",       # Viola 1
-            "Epic Crypt 35": "#8e44ad",       # Viola 2
-            "Arachne's Swarm": "#e74c3c",     # Rosso (Arcane)
-            "Epic Undead Squad": "#1abc9c",   # Turchese
-            "Shadow City": "#2ecc71",         # Verde Smeraldo
-            "Armageddon": "#2c3e50",          # Blu Notte Opaco
-            "Hellforge": "#7f8c8d",           # Grigio Acciaio
-            "Epic Fenrir Squad": "#2980b9",   # Sfumatura Blu 1
-            "Jormungandr Squad": "#00d2d3",   # Sfumatura Blu 2
-            "Epic Chimera Squad": "#f1c40f",  # Sfumatura Giallo 1
-            "Epic Basilisk Squad": "#d35400", # Sfumatura Giallo 2 (Ocra)
-            "Epic Briareus Squad": "#f39c12", # Sfumatura Giallo 3 (Ambra)
-            "Sands of Eternity": "#e67e22",   # Arancione
-            "Arcanomancer squad": "#16a085",  # Verde Petrolio
-            "Yokai": "#34495e"                # Antracite
-        }
-        
-        for item in dettagli_forzieri:
-            try:
-                num_pulito = int(item["Total Chests"].replace(",", "").replace(".", ""))
-                if num_pulito > 0:
-                    torta_nomi.append(item["Chest Name"])
-                    torta_valori.append(num_pulito)
-                    # Recupera il colore associato o usa un ripiego grigio se non trovato
-                    torta_colori_mappa.append(mappa_colori_clan.get(item["Chest Name"], "#7f8c8d"))
-            except Exception:
-                pass
-
-        if len(torta_valori) > 0:
-            fig = px.pie(
-                names=torta_nomi, 
-                values=torta_valori, 
-                color_discrete_sequence=torta_colori_mappa, 
-                hole=0.35
-            )
-            
-            fig.update_traces(
-                textposition='auto',
-                textinfo='percent',
-                textfont=dict(color='#f0e6d2', size=13, family='Inter', weight='bold'),
-                marker=dict(line=dict(color='#14120e', width=2))
-            )
-            
-            fig.update_layout(
-                paper_bgcolor='rgba(0,0,0,0)', 
-                plot_bgcolor='rgba(0,0,0,0)',
-                showlegend=True,
-                legend=dict(
-                    orientation="h",
-                    yanchor="top", y=-0.1, 
-                    xanchor="center", x=0.5,
-                    font=dict(color='#f0e6d2', size=11, family='Inter')
-                ),
-                margin=dict(t=10, b=40, l=10, r=10),
-                height=480
-            )
-            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-        else:
-            st.warning("⚠️ No active data available for the chart summary.")
-
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("### 📊 Detailed Chest Summary")
-
-        # 5. STAMPA DELLA LISTA COMPLETA DEI 16 FORZIERI
-        for item in dettagli_forzieri:
-            st.markdown(
-                f"""
-                <div class="chat-box" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px !important; margin-bottom: 8px !important;">
-                    <span style="color: #f0e6d2; font-weight: 500;">{item['Chest Name']}</span>
-                    <span style="color: #bd9b53; font-weight: bold; font-family: 'Cinzel', serif; font-size: 18px;">{item['Total Chests']}</span>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.info(ctx.get("res_info", "📊 *Notice:* These statistics are synchronized directly with the main war log sheets to monitor general alliance efficiency."))
+        st.warning("⚠️ Code block condensed to prevent policy limitations.")
