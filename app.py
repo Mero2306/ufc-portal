@@ -501,33 +501,70 @@ else:
             "https://kaikaiju.com",
             use_container_width=True,
         )
-              # 2. LETTURA FLUIDA CON RICERCA PARZIALE DELLE PAROLE CHIAVE
+              # --- PAGINA 5: CLAN RESULTS (GRAFICO CON COLORI GEMELLI DEL FOGLIO GOOGLE) ---
+    elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
+        apply_custom_style("bg_info.jpg")
+
+        st.markdown(f"<h1>{ctx.get('res_h1', '🏆 UFC Alliance Real-Time Results')}</h1>", unsafe_allow_html=True)
+        st.write(ctx.get("res_write", "Live statistics and chest counters directly from the alliance war log."))
+        
+        col_titolo, col_refresh = st.columns()
+        with col_refresh:
+            if st.button("🔄 Rinfresca Dati", use_container_width=True):
+                st.cache_data.clear()
+                st.rerun()
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # 1. Valori iniziali pronti per essere sovrascritti
+        val_cripte = "0"
+        val_mostri = "0"
+        val_totale = "0"
+
+        # Lista fissa con i nomi scritti ESATTAMENTE come compaiono sul tuo foglio Google
+        dettagli_forzieri = [
+            {"Chest Name": "Rare Crypt 30", "Total Chests": "0"},
+            {"Chest Name": "Epic Crypt 30", "Total Chests": "0"},
+            {"Chest Name": "Epic Crypt 35", "Total Chests": "0"},
+            {"Chest Name": "Arachne's Swarm", "Total Chests": "0"},
+            {"Chest Name": "Epic Undead Squad", "Total Chests": "0"},
+            {"Chest Name": "Shadow City", "Total Chests": "0"},
+            {"Chest Name": "Armageddon", "Total Chests": "0"},
+            {"Chest Name": "Hellforge", "Total Chests": "0"},
+            {"Chest Name": "Epic Fenrir Squad", "Total Chests": "0"},
+            {"Chest Name": "Jormungandr Squad", "Total Chests": "0"},
+            {"Chest Name": "Epic Chimera Squad", "Total Chests": "0"},
+            {"Chest Name": "Epic Basilisk Squad", "Total Chests": "0"},
+            {"Chest Name": "Epic Briareus Squad", "Total Chests": "0"},
+            {"Chest Name": "Sands of Eternity", "Total Chests": "0"},
+            {"Chest Name": "Arcanomancer squad", "Total Chests": "0"},
+            {"Chest Name": "Yokai", "Total Chests": "0"}
+        ]
+
+        # Link di esportazione CSV diretto per la scheda Dashboard con ID corretto
+        CSV_URL_DASHBOARD = "https://google.com"
+        results_data_dashboard = load_clan_results(CSV_URL_DASHBOARD)
+
+        # 2. LETTURA SICURA CON CONFRONTO ESATTO PER EVITARE ACCAVALLAMENTI
         if results_data_dashboard is not None:
             try:
-                df_clean = results_data_dashboard.reset_index(drop=True)
-                for idx in range(len(df_clean)):
-                    # Leggiamo e puliamo il testo, convertendolo tutto in minuscolo
-                    r_text_lower = str(df_clean.iat[idx, 0]).lower().strip()
-                    r_val = str(df_clean.iat[idx, 1]).strip()
+                for idx in range(len(results_data_dashboard)):
+                    r_text_clean = str(results_data_dashboard.iloc[idx, 0]).strip()
+                    r_text_lower = r_text_clean.lower()
+                    r_val = str(results_data_dashboard.iloc[idx, 1]).strip()
                     
                     if r_val.lower() == "nan" or r_val == "":
                         r_val = "0"
                     
-                    # Controlli flessibili per i tre box grandi in alto
-                    if "crypt" in r_text_lower: 
+                    if r_text_lower == "crypts (rare & epic)": 
                         val_cripte = r_val
-                    elif "monster" in r_text_lower: 
+                    elif r_text_lower == "epic monsters": 
                         val_mostri = r_val
-                    elif "total clan" in r_text_lower or "total chest" in r_text_lower: 
+                    elif r_text_lower == "total clan chests": 
                         val_totale = r_val
                     
-                    # Controlli flessibili per i 16 forzieri (cerca se un pezzo del nome è contenuto nella cella)
                     for item in dettagli_forzieri:
-                        nome_forziere_lower = item["Chest Name"].lower()
-                        # Taglia il nome prendendo la parola principale (es. 'rare', 'arachne', 'arcanomancer')
-                        parola_chiave = nome_forziere_lower.split()[0].replace("'s", "")
-                        
-                        if parola_chiave in r_text_lower:
+                        if item["Chest Name"].lower() == r_text_lower:
                             item["Total Chests"] = r_val
             except Exception:
                 pass
