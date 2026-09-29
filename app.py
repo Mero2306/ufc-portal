@@ -142,8 +142,7 @@ else:
 
 
 
-       # SELETTORE DELLA LINGUA CON BANDIERE
-    lang_choice = st.sidebar.selectbox(
+      lang_choice = st.sidebar.selectbox(
         "🌐 SELECT LANGUAGE:",
         [
             "🇬🇧 English",
@@ -153,6 +152,12 @@ else:
             "🇩🇪 Deutsch",
             "🇷🇺 Русский",
             "🇹🇷 Türkçe",
+            "🇵🇹 Português",
+            "🇧🇷 Brasileiro",
+            "🇵🇱 Polski",
+            "🇨🇳 简体中文",
+            "🇺🇦 Українська",
+            "🇯🇵 日本語",
         ],
     )
 
@@ -165,8 +170,13 @@ else:
         "🇩🇪 Deutsch": "de.json",
         "🇷🇺 Русский": "ru.json",
         "🇹🇷 Türkçe": "tr.json",
+        "🇵🇹 Português": "pt.json",
+        "🇧🇷 Brasileiro": "br.json",
+        "🇵🇱 Polski": "pl.json",
+        "🇨🇳 简体中文": "zh.json",
+        "🇺🇦 Українська": "uk.json",
+        "🇯🇵 日本語": "ja.json",
     }
-
 
 
     # Caricamento dinamico dei testi per la barra laterale
