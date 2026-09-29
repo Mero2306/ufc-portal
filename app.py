@@ -420,7 +420,7 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.link_button(
             ctx.get("calc_btn", "🛡️ OPEN OFFICIAL KAICULATOR 🛡️"),
-            "https://kaikaiju.com",
+            "https://kaiculator.kaikaiju.com/",
             width='stretch',
         )
 
