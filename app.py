@@ -142,7 +142,7 @@ else:
 
 
 
-      lang_choice = st.sidebar.selectbox(
+    lang_choice = st.sidebar.selectbox(
         "🌐 SELECT LANGUAGE:",
         [
             "🇬🇧 English",
