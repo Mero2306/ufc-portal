@@ -410,9 +410,10 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.link_button(
             ctx.get("calc_btn", "🛡️ OPEN OFFICIAL KAICULATOR 🛡️"),
-            "https://kaiculator.kaikaiju.com/",
-            use_container_width=True,
+            "https://kaikaiju.com",
+            width='stretch',
         )
+
          # --- PAGINA 5: CLAN RESULTS (VERSIONE COMPLETA E OTTIMIZZATA) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
