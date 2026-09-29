@@ -119,7 +119,7 @@ if not st.session_state["authenticated"]:
         password_entered = st.text_input(
             "CLAN PASSWORD:", type="password", placeholder="Enter access code..."
         )
-        if st.button("ACCESS PORTAL", use_container_width=True):
+        if st.button("ACCESS PORTAL", width='stretch'):
             if password_entered == "UFC_Raiders_2026":
                 st.session_state["authenticated"] = True
                 st.rerun()
