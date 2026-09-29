@@ -238,12 +238,12 @@ else:
         )
         
         st.markdown("<br>", unsafe_allow_html=True)
-        st.link_button(
+                st.link_button(
             ctx.get(
                 "home_btn", "⚔️ CLICK HERE TO OPEN UFC CHESTS LEADERBOARD ⚔️"
             ),
             GOOGLE_SHEET_LINK,
-            use_container_width=True,
+            width='stretch',
         )
 
 
