@@ -263,7 +263,7 @@ else:
         dati_freschi_home = None
         try:
             # INCOLLA A MANO IL TUO LINK CON GID=0 DENTRO LE VIRGOLETTE QUI SOTTO
-            url_prima_scheda_gviz = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=432024066"
+            url_prima_scheda_gviz = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/export?format=csv&gid=432024066"
             dati_freschi_home = pd.read_csv(url_prima_scheda_gviz, header=None)
         except Exception:
             dati_freschi_home = None
