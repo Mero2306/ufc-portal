@@ -498,7 +498,7 @@ else:
             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
 
-    # --- INTEGRAZIONE HOME: STATISTICHE GIOCATORI DI MAURIZIO (PARTE 1) ---
+    # --- INTEGRAZIONE HOME: STATISTICHE GIOCATORI DI MAURIZIO (BLOCCO COMPLETO) ---
     if page in ["🏠 Home Dashboard", ctx.get("menu_home")]:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
@@ -515,8 +515,9 @@ else:
                         lista_giocatori
                     )
                     
-                    # Troviamo l'indice effettivo della riga del giocatore selezionato
-                    idx_riga_player = df_players[df_players == player_scelto].index[0]
+                    # Troviamo la riga esatta del giocatore
+                    nome_selezionato = str(player_scelto)
+                    riga_trovata = results_data[results_data.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                     
                     # Elenco esatto delle 17 colonne indicate da Maurizio
                     colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
@@ -526,7 +527,7 @@ else:
                         if len(let) == 1:
                             return ord(let) - ord('A')
                         elif len(let) == 2:
-                            return (ord(let[0]) - ord('A') + 1) * 26 + (ord(let[1]) - ord('A'))
+                            return (ord(let) - ord('A') + 1) * 26 + (ord(let) - ord('A'))
                         return 0
 
                     dettagli_forzieri_player = []
@@ -534,9 +535,8 @@ else:
                     for let in colonne_lettere:
                         col_idx = converti_lettera_indice(let)
                         
-                        if col_idx < len(results_data.columns):
-                            # Lettura del valore della cella incrociando la riga del player e la colonna mappata
-                            val_cella = str(results_data.iloc[idx_riga_player, col_idx]).strip().replace(",", "").replace(".", "")
+                        if col_idx < len(results_data.columns) and not riga_trovata.empty:
+                            val_cella = str(riga_trovata.iloc[0, col_idx]).strip().replace(",", "").replace(".", "")
                             quantita = int(val_cella) if val_cella.isdigit() else 0
                             
                             nome_cat = str(results_data.iloc[0, col_idx]).strip()
@@ -551,17 +551,19 @@ else:
                                 "Chest Name": nome_completo_forziere,
                                 "Count": quantita
                             })
-                st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
-                
-                # Stampiamo la lista completa di tutti i 17 forzieri (inclusi quelli a zero)
-                if dettagli_forzieri_player:
-                    for item in dettagli_forzieri_player:
-                        nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
-                        st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Count"]}</span></div>', unsafe_allow_html=True)
+                    
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
+                    
+                    # Stampiamo la lista completa di tutti i 17 forzieri (inclusi quelli a zero)
+                    if dettagli_forzieri_player:
+                        for item in dettagli_forzieri_player:
+                            nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
+                            st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Count"]}</span></div>', unsafe_allow_html=True)
+                    else:
+                        st.info("No chests recorded for this player in the current log.")
                 else:
-                    st.info("No chests recorded for this player in the current log.")
-            else:
-                st.warning("No players found in the data column.")
-        except Exception as e:
-            st.error(f"Error processing player statistics: {e}")
+                    st.warning("No players found in the data column.")
+            except Exception as e:
+                st.error(f"Error processing player statistics: {e}")
+  
