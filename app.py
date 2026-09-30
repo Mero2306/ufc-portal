@@ -309,25 +309,12 @@ else:
                 lista_giocatori_reali = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
                 if lista_giocatori_reali:
-                    etichetta_placeholder = ctx.get("select_name_placeholder", "-- Select Name --")
-
+                    etichetta_placeholder = "-- Select Name --"
                     lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reali
                     
                     player_scelto = st.selectbox(
                         ctx.get("select_player_lbl", "Select your name to check your chests:"),
                         lista_con_placeholder
-                    )
-                    
-                if lista_giocatori_reali:
-                    # 1. TRADUZIONE DINAMICA DEL PLACEHOLDER INIZIALE
-                    etichetta_placeholder = ctx.get("select_name_placeholder", "-- Select Name --")
-                    lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reali
-                    
-                    # 2. UNICA CASELLA DI SELEZIONE UFFICIALE (CON KEY UNICA ANTI-CONFLITTO)
-                    player_scelto = st.selectbox(
-                        ctx.get("select_player_lbl", "Select your name to check your chests:"),
-                        lista_con_placeholder,
-                        key="home_player_selector_official"
                     )
                     
                     # MOSTRA I DATI SOLO SE VIENE SELEZIONATO UN GIOCATORE VERO
@@ -367,9 +354,11 @@ else:
                         tot_points, tot_armageddon, tot_dark_omens = 0, 0, 0
                         
                         if not riga_giocatore.empty:
+                            # FUNZIONE INTERNA PER ESTRARRE I TOTALI CON ILOC SICURO E COMPATTO
                             def estrai_valore_colonna(lettera_col):
                                 idx = converti_lettera_indice(lettera_col)
                                 if idx < len(dati_freschi_home.columns):
+                                    # CORREZIONE FILTRO: iloc[0, idx] garantisce l'estrazione della cella singola
                                     val = str(riga_giocatore.iloc[0, idx]).strip().replace(",", "")
                                     if val.endswith(".0"):
                                         val = val[:-2]
@@ -382,10 +371,12 @@ else:
                             tot_armageddon = estrai_valore_colonna("I")
                             tot_dark_omens = estrai_valore_colonna("J")
 
+                            # SCANSIONE DEI 17 FORZIERI DETTAGLIATI CON ILOC SICURO
                             for item_forziere in mappatura_forzieri:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
+                                    # CORREZIONE FILTRO: iloc[0, col_idx] evita l'errore out of bounds
                                     val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "")
                                     if val_cella.endswith(".0"):
                                         val_cella = val_cella[:-2]
@@ -424,7 +415,6 @@ else:
                         else:
                             st.info("No chests recorded for this player.")
                     else:
-                        # BOX INFORMATIVO AGGANCIO GRAFICO PERFETTO
                         st.markdown("<br>", unsafe_allow_html=True)
                         text_select_info = ctx.get("select_info_lbl", "💡 **Notice:** Please select your nickname from the dropdown menu above to display your personal chest statistics.")
                         st.markdown(
@@ -443,6 +433,7 @@ else:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+
 
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
