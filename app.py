@@ -323,6 +323,13 @@ else:
                         dati_limitati = dati_freschi_home.iloc[3:106, :]
                         riga_giocatore = dati_limitati[dati_limitati.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                         
+                        def converti_lettera_indice(let):
+                            let = let.upper().strip()
+                            index = 0
+                            for char in let:
+                                index = index * 26 + (ord(char) - ord('A') + 1)
+                            return index - 1
+
                         mappatura_forzieri = [
                             {"lettera": "AG", "name": "Rare Crypt 30"},
                             {"lettera": "AK", "name": "Epic Crypt 30"},
@@ -342,25 +349,31 @@ else:
                             {"lettera": "CQ", "name": "Yokai"},
                             {"lettera": "CR", "name": "Union of Triumph"}
                         ]
-                        
-                        def converti_lettera_indice(let):
-                            let = let.upper().strip()
-                            index = 0
-                            for char in let:
-                                index = index * 26 + (ord(char) - ord('A') + 1)
-                            return index - 1
 
                         dettagli_forzieri_player = []
                         tot_points, tot_armageddon, tot_dark_omens = 0, 0, 0
                         
                         if not riga_giocatore.empty:
+                            # ESTRAZIONE DEI TOTALI (E, I, J) RICHIESTI DA MAURIZIO
+                            def estrai_valore_colonna(lettera_col):
+                                idx = converti_lettera_indice(lettera_col)
+                                if idx < len(dati_freschi_home.columns):
+                                    val = str(riga_giocatore.values[idx]).strip().replace(",", "")
+                                    if "." in val:
+                                        val = val.split(".")[0]
+                                    return int(val) if val.isdigit() else 0
+                                return 0
+
+                            tot_points = estrai_valore_colonna("E")
+                            tot_armageddon = estrai_valore_colonna("I")
+                            tot_dark_omens = estrai_valore_colonna("J")
+
+                            # SCANSIONE DEI 17 FORZIERI DETTAGLIATI SOTTOSTANTI
                             for item_forziere in mappatura_forzieri:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
-                                    # CORREZIONE CHIRURGICA INDICE: values[0][col_idx] isola la singola cella orizzontale
-                                    val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "")
-                                    
+                                    val_cella = str(riga_giocatore.values[col_idx]).strip().replace(",", "")
                                     if "." in val_cella:
                                         val_cella = val_cella.split(".")[0]
                                         
@@ -370,33 +383,8 @@ else:
                                         "Chest Name": item_forziere["name"],
                                         "Count": quantita
                                     })
-                            
-                            # FUNZIONE INTERNA PER ESTRARRE I TOTALI RICHIESTI DA MAURIZIO (E, I, J)
-                            def estrai_valore_colonna(lettera_col):
-                                idx = converti_lettera_indice(lettera_col)
-                                if idx < len(dati_freschi_home.columns):
-                                    # CORREZIONE INDICE ANCHE SUI TOTALI
-                                    val = str(riga_giocatore.values[0][idx]).strip().replace(",", "")
-                                    if "." in val:
-                                        val = val.split(".")[0]
-                                    return int(val) if val.isdigit() else 0
-                                return 0
-
-                            tot_points = estrai_valore_colonna("E")
-                            tot_armageddon = estrai_valore_colonna("I")
-                            tot_dark_omens = estrai_valore_colonna("J")
                         
-                        st.markdown("<br>", unsafe_allow_html=True)
-                        st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
-                        
-                        if dettagli_forzieri_player:
-                            for item in dettagli_forzieri_player:
-                                nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
-                                st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Count"]}</span></div>', unsafe_allow_html=True)
-                        else:
-                            st.info("No chests recorded for this player.")
-
-                        # SEZIONE VISIVA IN REALI TRE COLONNE FORMATTATE CON I PUNTI DELLE MIGLIAIA
+                        # --- NUOVA POSIZIONE IN ALTO: STAMPA DEI REQUISITI TOTALI COMPLESSIVI ---
                         st.markdown("<br><hr>", unsafe_allow_html=True)
                         st.markdown(f"### 🏆 {ctx.get('player_totals_title', 'Personal Player Totals')}", unsafe_allow_html=True)
                         
@@ -410,6 +398,16 @@ else:
                         tc2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>{ctx.get("arma_chests_lbl", "Armageddon chests")}</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{arma_formattati}</p></div>', unsafe_allow_html=True)
                         tc3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>{ctx.get("dark_omens_lbl", "Dark Omens")}</h3><p style="font-size:32px;color:#d4b373;font-weight:bold;">{dark_formattati}</p></div>', unsafe_allow_html=True)
                         
+                        # --- DETTAGLIO COMPLETO DEI FORZIERI POSIZIONATO SOTTO ---
+                        st.markdown("<br><hr>", unsafe_allow_html=True)
+                        st.markdown(f"### {ctx.get('Detailed Chest Summary', 'Detailed Chest Summary')}", unsafe_allow_html=True)
+                        
+                        if dettagli_forzieri_player:
+                            for item in dettagli_forzieri_player:
+                                nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
+                                st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Count"]}</span></div>', unsafe_allow_html=True)
+                        else:
+                            st.info("No chests recorded for this player.")
                     else:
                         # BOX INFORMATIVO AGGANCIO GRAFICO PERFETTO ALLO STILE AVVISO PRINCIPALE
                         st.markdown("<br>", unsafe_allow_html=True)
