@@ -277,7 +277,7 @@ else:
                 if lista_giocatori_reali:
                     # AGGIUNGIAMO IL SEGNAPOSTO IN INGLESE COME PRIMO ELEMENTO DELLA LISTA
                     etichetta_placeholder = "-- Select Name --"
-                    lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reales
+                    lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reali
                     
                     player_scelto = st.selectbox(
                         ctx.get("select_player_lbl", "Select your name to check your chests:"),
@@ -327,7 +327,7 @@ else:
                                 
                                 if col_idx < len(dati_freschi_home.columns):
                                     # Estrazione pulita del singolo valore in formato stringa
-                                    val_cella = str(riga_giocatore.values[col_idx]).strip().replace(",", "")
+                                    val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "")
                                     
                                     # Gestione e pulizia dei decimali se interpretati come float (es: 3.0 -> 3)
                                     if "." in val_cella:
@@ -352,13 +352,15 @@ else:
                             st.info("No chests recorded for this player.")
                     else:
                         # Messaggio informativo neutro visualizzato quando lo schermo è in attesa della scelta del nome
+                        st.markdown("<br>", unsafe_allow_html=True)
                         st.info("💡 Please select your nickname from the dropdown menu above to display your personal chest statistics.")
                 else:
-                    st.warning("No players found in the data column D.")
+                    st.warning("No players found in the data column DB.")
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+
 
 
  
