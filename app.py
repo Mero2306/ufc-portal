@@ -259,20 +259,20 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # UTILIZZIAMO LO STESSO IDENTICO URL E MOTORE CHE FUNZIONA NEI RISULTATI GENERALI
+        # CONNESSIONE SICURA ALLA PRIMA PAGINA PRINCIPALE DEL CLAN (GID=0) CON MOTORE GVIZ CORRETTO DA MAURIZIO
         import pandas as pd
         dati_freschi_home = None
         try:
-            url_dashboard_certificato = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=0"
-            dati_freschi_home = pd.read_csv(url_dashboard_certificato, header=None)
+            url_prima_pagina_clan = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=0"
+            dati_freschi_home = pd.read_csv(url_prima_pagina_clan, header=None)
         except Exception:
             dati_freschi_home = None
 
         if dati_freschi_home is not None:
             try:
-                # CORREZIONE: In questa scheda specifica i nomi dei giocatori sono nella COLONNA A (indice 0)
-                df_players = dati_freschi_home.iloc[3:, 0].dropna().astype(str).str.strip()
-                lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph", "rare crypt 30", "epic crypt 30", "epic crypt 35"]]
+                # CORREZIONE: Estraiamo i giocatori dalla COLONNA D (indice 3), partendo dalla riga 4 (indice 3) in poi
+                df_players = dati_freschi_home.iloc[3:, 3].dropna().astype(str).str.strip()
+                lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
                 if lista_giocatori:
                     player_scelto = st.selectbox(
@@ -280,11 +280,11 @@ else:
                         lista_giocatori
                     )
                     
-                    # Filtriamo la riga del giocatore selezionato sulla Colonna A (indice 0)
+                    # Filtriamo la riga esatta del giocatore selezionato sulla Colonna D (indice 3)
                     nome_selezionato = str(player_scelto).strip()
-                    riga_giocatore = dati_freschi_home[dati_freschi_home.iloc[:, 0].astype(str).str.strip() == nome_selezionato]
+                    riga_giocatore = dati_freschi_home[dati_freschi_home.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                     
-                    # Elenco esatto delle 17 colonne fornite da Maurizio
+                    # Elenco esatto delle 17 colonne dinamiche fornite da Maurizio
                     colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
                     
                     def converti_lettera_indice(let):
@@ -301,11 +301,11 @@ else:
                             col_idx = converti_lettera_indice(let)
                             
                             if col_idx < len(dati_freschi_home.columns):
-                                # CORREZIONE: Estraiamo il singolo numero isolato usando .iloc per evitare fusioni di cifre
-                                val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "").replace(".", "")
+                                # CORREZIONE: Estraiamo il singolo numero isolato entrando dentro la riga della matrice .values
+                                val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
-                                # Recuperiamo le intestazioni del forziere dalla riga 0 e riga 1 del foglio
+                                # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio originale
                                 nome_cat = str(dati_freschi_home.iloc[0, col_idx]).strip()
                                 nome_sub = str(dati_freschi_home.iloc[1, col_idx]).strip()
                                 
@@ -322,7 +322,7 @@ else:
                     st.markdown("<br>", unsafe_allow_html=True)
                     st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
                     
-                    # Stampiamo la lista completa di tutti i 17 forzieri (inclusi quelli a zero)
+                    # Stampiamo l'elenco pulito con i nomi staccati a sinistra e i numeri singoli esatti a destra
                     if dettagli_forzieri_player:
                         for item in dettagli_forzieri_player:
                             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
@@ -330,7 +330,7 @@ else:
                     else:
                         st.info("No chests recorded for this player.")
                 else:
-                    st.warning("No players found in the data column.")
+                    st.warning("No players found in the data column D.")
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
