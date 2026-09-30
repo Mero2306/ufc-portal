@@ -259,7 +259,7 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # CONNESSIONE SICURA ALLA PRIMA PAGINA PRINCIPALE DEL CLAN (GID=0) CON MOTORE GVIZ CORRETTO DA MAURIZIO
+        # CONNESSIONE SICURA ALLA PRIMA PAGINA PRINCIPALE DEL CLAN (GID=0) CON MOTORE GVIZ
         import pandas as pd
         dati_freschi_home = None
         try:
@@ -270,8 +270,8 @@ else:
 
         if dati_freschi_home is not None:
             try:
-                # CORREZIONE: Estraiamo i giocatori dalla COLONNA D (indice 3), partendo dalla riga 4 (indice 3) in poi
-                df_players = dati_freschi_home.iloc[3:, 3].dropna().astype(str).str.strip()
+                # CORREZIONE RIGHE: Limitiamo la scansione dalla riga 4 (indice 3) fino alla riga 106 (indice 106 escluso) sulla colonna D (indice 3)
+                df_players = dati_freschi_home.iloc[3:106, 3].dropna().astype(str).str.strip()
                 lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
                 if lista_giocatori:
@@ -280,9 +280,10 @@ else:
                         lista_giocatori
                     )
                     
-                    # Filtriamo la riga esatta del giocatore selezionato sulla Colonna D (indice 3)
+                    # Filtriamo la riga esatta del giocatore selezionato limitando la ricerca alla riga 106
                     nome_selezionato = str(player_scelto).strip()
-                    riga_giocatore = dati_freschi_home[dati_freschi_home.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
+                    dati_limitati = dati_freschi_home.iloc[3:106, :]
+                    riga_giocatore = dati_limitati[dati_limitati.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                     
                     # Elenco esatto delle 17 colonne dinamiche fornite da Maurizio
                     colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
@@ -301,7 +302,7 @@ else:
                             col_idx = converti_lettera_indice(let)
                             
                             if col_idx < len(dati_freschi_home.columns):
-                                # CORREZIONE: Estraiamo il singolo numero isolato entrando dentro la riga della matrice .values
+                                # CORREZIONE ASSOLUTA NUMERI SINGOLI: values[0][col_idx] isola la singola cella ed evita fusioni di cifre
                                 val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
