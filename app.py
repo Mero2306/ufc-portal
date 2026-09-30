@@ -259,10 +259,13 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        if results_data is not None:
+        # FORZIAMO IL CARICAMENTO DEI DATI DAL FOGLIO GOOGLE (Esattamente come fatto nella Dashboard)
+        dati_freschi = load_data()
+        
+        if dati_freschi is not None:
             try:
                 # Estraiamo i giocatori dalla colonna D (indice 3), partendo dalla riga 4 (indice 3) in poi
-                df_players = results_data.iloc[3:, 3].dropna().astype(str).str.strip()
+                df_players = dati_freschi.iloc[3:, 3].dropna().astype(str).str.strip()
                 lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
                 if lista_giocatori:
@@ -273,7 +276,7 @@ else:
                     
                     # Troviamo la riga esatta del giocatore pulendo gli spazi
                     nome_selezionato = str(player_scelto).strip()
-                    riga_trovata = results_data[results_data.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
+                    riga_trovata = dati_freschi[dati_freschi.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                     
                     # Elenco esatto delle 17 colonne indicate da Maurizio
                     colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
@@ -293,14 +296,14 @@ else:
                         for let in colonne_lettere:
                             col_idx = converti_lettera_indice(let)
                             
-                            if col_idx < len(results_data.columns):
+                            if col_idx < len(dati_freschi.columns):
                                 # Estraiamo il valore reale dalla riga filtrata del giocatore usando la matrice pura .values
                                 val_cella = str(riga_trovata.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
                                 # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio
-                                nome_cat = str(results_data.iloc[0, col_idx]).strip()
-                                nome_sub = str(results_data.iloc[1, col_idx]).strip()
+                                nome_cat = str(dati_freschi.iloc[0, col_idx]).strip()
+                                nome_sub = str(dati_freschi.iloc[1, col_idx]).strip()
                                 
                                 if nome_sub and nome_sub.lower() not in ["nan", ""]:
                                     nome_completo_forziere = f"{nome_cat} {nome_sub}"
@@ -326,7 +329,9 @@ else:
                     st.warning("No players found in the data column.")
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
-
+        else:
+            st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+       
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
         apply_custom_style("bg_info.jpg")
