@@ -143,7 +143,7 @@ else:
 
 
     lang_choice = st.sidebar.selectbox(
-        "🌐 SELECT LANGUAGE:",
+        ctx.get("sidebar_lang_lbl", "🌐 SELECT LANGUAGE:"),
         [
             "🇬🇧 English",
             "🇮🇹 Italiano",
