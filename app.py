@@ -263,7 +263,7 @@ else:
         import pandas as pd
         dati_freschi_home = None
         try:
-            url_dashboard_certificato = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=432024066"
+            url_dashboard_certificato = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=0"
             dati_freschi_home = pd.read_csv(url_dashboard_certificato, header=None)
         except Exception:
             dati_freschi_home = None
