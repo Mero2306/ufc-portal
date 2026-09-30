@@ -498,7 +498,7 @@ else:
             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
 
-    # --- INTEGRAZIONE HOME: STATISTICHE GIOCATORI DI MAURIZIO (BLOCCO COMPLETO) ---
+    # --- INTEGRAZIONE HOME: STATISTICHE GIOCATORI DI MAURIZIO (BLOCCO COMPLETO RIPARATO) ---
     if page in ["🏠 Home Dashboard", ctx.get("menu_home")]:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
@@ -536,7 +536,8 @@ else:
                         col_idx = converti_lettera_indice(let)
                         
                         if col_idx < len(results_data.columns) and not riga_trovata.empty:
-                            val_cella = str(riga_trovata.iloc[0, col_idx]).strip().replace(",", "").replace(".", "")
+                            # CORREZIONE: Estraiamo il valore reale dai valori interni del giocatore
+                            val_cella = str(riga_trovata.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                             quantita = int(val_cella) if val_cella.isdigit() else 0
                             
                             nome_cat = str(results_data.iloc[0, col_idx]).strip()
