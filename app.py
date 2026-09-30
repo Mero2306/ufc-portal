@@ -317,16 +317,6 @@ else:
                         lista_con_placeholder
                     )
                     
-                if lista_giocatori_reali:
-                    # AGGANCIO DINAMICO ALLA TRADUZIONE PER IL SELEZIONA NOME
-                    etichetta_placeholder = ctx.get("select_name_placeholder", "-- Select Name --")
-                    lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reali
-                    
-                    player_scelto = st.selectbox(
-                        ctx.get("select_player_lbl", "Select your name to check your chests:"),
-                        lista_con_placeholder
-                    )
-                    
                     # MOSTRA I DATI SOLO SE VIENE SELEZIONATO UN GIOCATORE VERO
                     if player_scelto != etichetta_placeholder:
                         nome_selezionato = str(player_scelto).strip()
@@ -368,6 +358,7 @@ else:
                             def estrai_valore_colonna(lettera_col):
                                 idx = converti_lettera_indice(lettera_col)
                                 if idx < len(dati_freschi_home.columns):
+                                    # CORREZIONE FILTRO: iloc[0, idx] garantisce l'estrazione della cella singola
                                     val = str(riga_giocatore.iloc[0, idx]).strip().replace(",", "")
                                     if val.endswith(".0"):
                                         val = val[:-2]
@@ -385,6 +376,7 @@ else:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
+                                    # CORREZIONE FILTRO: iloc[0, col_idx] evita l'errore out of bounds
                                     val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "")
                                     if val_cella.endswith(".0"):
                                         val_cella = val_cella[:-2]
@@ -438,6 +430,9 @@ else:
                 else:
                     st.warning("No players found in the data column DB.")
             except Exception as e:
+                st.error(f"Error processing player statistics: {e}")
+        else:
+            st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
 
     # --- PAGINA 1: CLAN INFO & CHATS ---
