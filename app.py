@@ -259,22 +259,42 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # STILIZZAZIONE DELLA BARRA DI SELEZIONE IN WAR STYLE (Effetto Glow Dorato e Sfondo Scuro)
+        # STILIZZAZIONE DELLA BARRA DI SELEZIONE IN RED WAR STYLE (Stesso stile dei pulsanti del sito)
         st.markdown(
             """
             <style>
             div[data-testid="stSelectbox"] > div {
-                background: linear-gradient(145, #1e1a13, #14120e) !important;
-                border: 1px solid #bd9b53 !important;
+                background: linear-gradient(135, #8c1d1d 0%, #591010 100%) !important;
+                border: 2px solid #bd9b53 !important;
                 border-radius: 4px !important;
-                color: #f0e6d2 !important;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
+                transition: all 0.3s ease !important;
+            }
+            div[data-testid="stSelectbox"] > div:hover {
+                background: linear-gradient(135, #b32424 0%, #7c1515 100%) !important;
+                box-shadow: 0 0 15px #bd9b53 !important;
             }
             div[data-testid="stSelectbox"] label p {
                 color: #d4b373 !important;
-                font-weight: 600 !important;
+                font-family: 'Cinzel', serif !important;
+                font-weight: 700 !important;
+                letter-spacing: 1px !important;
             }
             div[data-testid="stSelectbox"] div[data-baseweb="select"] {
                 color: #f0e6d2 !important;
+                font-family: 'Cinzel', serif !important;
+                font-weight: 700 !important;
+            }
+            /* Stile per la lista dei nomi che appare dentro il menu a comparsa */
+            ul[data-testid="stSelectboxOptions"] {
+                background-color: #14120e !important;
+                border: 1px solid #bd9b53 !important;
+            }
+            ul[data-testid="stSelectboxOptions"] li {
+                color: #f0e6d2 !important;
+            }
+            ul[data-testid="stSelectboxOptions"] li:hover {
+                background-color: #8c1d1d !important;
             }
             </style>
             """,
@@ -348,7 +368,7 @@ else:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
-                                    # CORREZIONE CHIRURGICA: values[0][col_idx] centra la cella singola orizzontale
+                                    # CORREZIONE CHIRURGICA INDICE:values[0][col_idx] centra la cella orizzontale esatta
                                     val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "")
                                     
                                     # Gestione e pulizia dei decimali se interpretati come float (es: 3.0 -> 3)
@@ -383,10 +403,6 @@ else:
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
-
-
-
- 
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
         apply_custom_style("bg_info.jpg")
