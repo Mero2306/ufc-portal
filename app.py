@@ -354,11 +354,11 @@ else:
                         tot_points, tot_armageddon, tot_dark_omens = 0, 0, 0
                         
                         if not riga_giocatore.empty:
-                            # ESTRAZIONE DEI TOTALI (E, I, J) RICHIESTI DA MAURIZIO
+                            # ESTRAZIONE DEI TOTALI (E, I, J) CON ILOC SICURO
                             def estrai_valore_colonna(lettera_col):
                                 idx = converti_lettera_indice(lettera_col)
                                 if idx < len(dati_freschi_home.columns):
-                                    val = str(riga_giocatore.values[idx]).strip().replace(",", "")
+                                    val = str(riga_giocatore.iloc[0, idx]).strip().replace(",", "")
                                     if "." in val:
                                         val = val.split(".")[0]
                                     return int(val) if val.isdigit() else 0
@@ -368,12 +368,12 @@ else:
                             tot_armageddon = estrai_valore_colonna("I")
                             tot_dark_omens = estrai_valore_colonna("J")
 
-                            # SCANSIONE DEI 17 FORZIERI DETTAGLIATI SOTTOSTANTI
+                            # SCANSIONE DEI 17 FORZIERI DETTAGLIATI
                             for item_forziere in mappatura_forzieri:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
-                                    val_cella = str(riga_giocatore.values[col_idx]).strip().replace(",", "")
+                                    val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "")
                                     if "." in val_cella:
                                         val_cella = val_cella.split(".")[0]
                                         
@@ -384,11 +384,10 @@ else:
                                         "Count": quantita
                                     })
                         
-                        # --- NUOVA POSIZIONE IN ALTO: STAMPA DEI REQUISITI TOTALI COMPLESSIVI ---
+                        # STAMPA DEI TRE TOTALI IN ALTO
                         st.markdown("<br><hr>", unsafe_allow_html=True)
                         st.markdown(f"### 🏆 {ctx.get('player_totals_title', 'Personal Player Totals')}", unsafe_allow_html=True)
                         
-                        # Formattiamo i numeri inserendo il punto come separatore delle migliaia europeo
                         punti_formattati = f"{tot_points:,}".replace(",", ".")
                         arma_formattati = f"{tot_armageddon:,}".replace(",", ".")
                         dark_formattati = f"{tot_dark_omens:,}".replace(",", ".")
@@ -398,7 +397,7 @@ else:
                         tc2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>{ctx.get("arma_chests_lbl", "Armageddon chests")}</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{arma_formattati}</p></div>', unsafe_allow_html=True)
                         tc3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>{ctx.get("dark_omens_lbl", "Dark Omens")}</h3><p style="font-size:32px;color:#d4b373;font-weight:bold;">{dark_formattati}</p></div>', unsafe_allow_html=True)
                         
-                        # --- DETTAGLIO COMPLETO DEI FORZIERI POSIZIONATO SOTTO ---
+                        # LISTA DETTAGLIATA SOTTO
                         st.markdown("<br><hr>", unsafe_allow_html=True)
                         st.markdown(f"### {ctx.get('Detailed Chest Summary', 'Detailed Chest Summary')}", unsafe_allow_html=True)
                         
@@ -409,7 +408,6 @@ else:
                         else:
                             st.info("No chests recorded for this player.")
                     else:
-                        # BOX INFORMATIVO AGGANCIO GRAFICO PERFETTO ALLO STILE AVVISO PRINCIPALE
                         st.markdown("<br>", unsafe_allow_html=True)
                         text_select_info = ctx.get("select_info_lbl", "💡 **Notice:** Please select your nickname from the dropdown menu above to display your personal chest statistics.")
                         st.markdown(
@@ -428,6 +426,7 @@ else:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+
 
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
