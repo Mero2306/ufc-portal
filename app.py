@@ -318,15 +318,15 @@ else:
                     )
                     
                 if lista_giocatori_reali:
-                    # CORREZIONE ASSOLUTA: Creiamo il placeholder traducibile prima di riempire il menu
+                    # 1. TRADUZIONE DINAMICA DEL PLACEHOLDER INIZIALE
                     etichetta_placeholder = ctx.get("select_name_placeholder", "-- Select Name --")
                     lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reali
                     
-                    # INSERITA CHIAVE UNICA (key) PER EVITARE IL DUPLICATO DI ID NEL SERVER
+                    # 2. UNICA CASELLA DI SELEZIONE UFFICIALE (CON KEY UNICA ANTI-CONFLITTO)
                     player_scelto = st.selectbox(
                         ctx.get("select_player_lbl", "Select your name to check your chests:"),
                         lista_con_placeholder,
-                        key="home_player_selector_unique"
+                        key="home_player_selector_official"
                     )
                     
                     # MOSTRA I DATI SOLO SE VIENE SELEZIONATO UN GIOCATORE VERO
@@ -366,7 +366,6 @@ else:
                         tot_points, tot_armageddon, tot_dark_omens = 0, 0, 0
                         
                         if not riga_giocatore.empty:
-                            # FUNZIONE INTERNA PER ESTRARRE I TOTALI CON ILOC SICURO E COMPATTO
                             def estrai_valore_colonna(lettera_col):
                                 idx = converti_lettera_indice(lettera_col)
                                 if idx < len(dati_freschi_home.columns):
@@ -382,7 +381,6 @@ else:
                             tot_armageddon = estrai_valore_colonna("I")
                             tot_dark_omens = estrai_valore_colonna("J")
 
-                            # SCANSIONE DEI 17 FORZIERI DETTAGLIATI CON ILOC SICURO
                             for item_forziere in mappatura_forzieri:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
@@ -425,6 +423,7 @@ else:
                         else:
                             st.info("No chests recorded for this player.")
                     else:
+                        # BOX INFORMATIVO AGGANCIO GRAFICO PERFETTO
                         st.markdown("<br>", unsafe_allow_html=True)
                         text_select_info = ctx.get("select_info_lbl", "💡 **Notice:** Please select your nickname from the dropdown menu above to display your personal chest statistics.")
                         st.markdown(
@@ -443,8 +442,6 @@ else:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
-
-
 
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
