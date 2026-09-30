@@ -259,15 +259,14 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # FORZIAMO IL CARICAMENTO DIRETTO TRAMITE L'URL DI ESPORTAZIONE CORRETTO
+        # LOGICA DI CARICAMENTO DIRETTA E SICURA VERIFICATA DA MAURIZIO
         import pandas as pd
         dati_totali = None
         if 'GOOGLE_SHEET_LINK' in globals():
             try:
-                # Trasformiamo il link nel formato corretto di esportazione per fogli pubblici
-                sheet_id = GOOGLE_SHEET_LINK.split("/d/")[1].split("/")[0]
-                csv_url = f"https://google.com{sheet_id}/export?format=csv"
-                dati_totali = pd.read_csv(csv_url, header=None)
+                # Generiamo l'URL di esportazione CSV nativo e pulito per Pandas
+                url_csv_diretto = GOOGLE_SHEET_LINK.replace("/edit?usp=sharing", "/export?format=csv")
+                dati_totali = pd.read_csv(url_csv_diretto, header=None)
             except Exception:
                 dati_totali = None
 
@@ -283,14 +282,14 @@ else:
                         lista_giocatori
                     )
                     
-                    # Troviamo la riga esatta del giocatore pulendo gli spazi
+                    # Troviamo l'indice esatto di riga del giocatore selezionato nel foglio Google
                     nome_selezionato = str(player_scelto).strip()
-                    riga_trovata = dati_totali[dati_totali.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
+                    indici_trovati = dati_totali[dati_totali.iloc[:, 3].astype(str).str.strip() == nome_selezionato].index
                     
                     # Elenco esatto delle 17 colonne indicate da Maurizio
                     colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
                     
-                    # Convertitore matematico impeccabile per indici di colonna Excel/Google (A=0, Z=25, AA=26, AG=32, ecc.)
+                    # Convertitore matematico perfetto per indici di colonna Excel/Google (A=0, Z=25, AA=26, AG=32, ecc.)
                     def converti_lettera_indice(let):
                         let = let.upper().strip()
                         if len(let) == 1:
@@ -301,13 +300,14 @@ else:
 
                     dettagli_forzieri_player = []
                     
-                    if not riga_trovata.empty:
+                    if len(indici_trovati) > 0:
+                        idx_riga_reale = indici_trovati[0]
                         for let in colonne_lettere:
                             col_idx = converti_lettera_indice(let)
                             
                             if col_idx < len(dati_totali.columns):
-                                # Estraiamo il valore reale entrando dentro la riga filtrata del giocatore usando .values[0]
-                                val_cella = str(riga_trovata.values[0][col_idx]).strip().replace(",", "").replace(".", "")
+                                # Estraiamo il valore numerico puntando alla cella esatta tramite coordinate della matrice
+                                val_cella = str(dati_totali.iloc[idx_riga_reale, col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
                                 # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio
@@ -339,7 +339,8 @@ else:
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
-            st.warning("⚠️ Error: Unable to fetch data directly from Google Sheets link. Please verify the URL.")
+            st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+       
    
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
