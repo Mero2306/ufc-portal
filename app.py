@@ -275,29 +275,30 @@ else:
                         lista_giocatori
                     )
                     
-                    nomi_forzieri = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai"]
+                    # Elenco esatto delle 17 colonne indicate da Maurizio
+                    colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
+                    
+                    # CORREZIONE MATEMATICA: Convertitore infallibile per colonne a 1 o 2 lettere (es. A=0, Z=25, AA=26, AG=32...)
+                    def converti_lettera_indice(let):
+                        let = let.upper().strip()
+                        index = 0
+                        for char in let:
+                            index = index * 26 + (ord(char) - ord('A') + 1)
+                        return index - 1
+                    
                     dettagli_forzieri_player = []
-                    
-                    # Filtriamo la riga esatta del giocatore
                     nome_selezionato = str(player_scelto).strip().lower()
-                    riga_giocatore = dati_dashboard[dati_dashboard.iloc[:, 3].astype(str).str.strip().str.lower() == nome_selezionato]
                     
-                    if not riga_giocatore.empty:
-                        # Mappiamo le 17 colonne con le lettere fornite da Maurizio
-                        colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
-                        
-                        def converti_lettera_indice(let):
-                            let = let.upper().strip()
-                            if len(let) == 1:
-                                return ord(let) - ord('A')
-                            elif len(let) == 2:
-                                return (ord(let) - ord('A') + 1) * 26 + (ord(let) - ord('A'))
-                            return 0
-                        
+                    # Troviamo gli indici di tutte le righe corrispondenti al giocatore scelto
+                    indici_player = dati_dashboard[dati_dashboard.iloc[:, 3].astype(str).str.strip().str.lower() == nome_selezionato].index
+                    
+                    if len(indici_player) > 0:
+                        idx_riga_reale = indici_player[0]
                         for let in colonne_lettere:
                             col_idx = converti_lettera_indice(let)
                             if col_idx < len(dati_dashboard.columns):
-                                val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "").replace(".", "")
+                                # Estraiamo il valore puro della cella incrociando riga e colonna
+                                val_cella = str(dati_dashboard.iloc[idx_riga_reale, col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
                                 nome_cat = str(dati_dashboard.iloc[0, col_idx]).strip()
