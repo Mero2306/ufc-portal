@@ -259,21 +259,14 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # LOGICA DI CARICAMENTO DIRETTA E SICURA VERIFICATA DA MAURIZIO
-        import pandas as pd
-        dati_totali = None
-        if 'GOOGLE_SHEET_LINK' in globals():
+        # UTILIZZIAMO LO STESSO IDENTICO MOTORE E URL DI PAGINA 5
+        CSV_URL_DASHBOARD = "https://google.com"
+        dati_dashboard = load_clan_results(CSV_URL_DASHBOARD)
+        
+        if dati_dashboard is not None:
             try:
-                # Generiamo l'URL di esportazione CSV nativo e pulito per Pandas
-                url_csv_diretto = GOOGLE_SHEET_LINK.replace("/edit?usp=sharing", "/export?format=csv")
-                dati_totali = pd.read_csv(url_csv_diretto, header=None)
-            except Exception:
-                dati_totali = None
-
-        if dati_totali is not None:
-            try:
-                # Estraiamo i giocatori dalla colonna D (indice 3), partendo dalla riga 4 (indice 3) in poi
-                df_players = dati_totali.iloc[3:, 3].dropna().astype(str).str.strip()
+                # Estraiamo la lista dei giocatori dal foglio (Colonna D)
+                df_players = dati_dashboard.iloc[3:, 3].dropna().astype(str).str.strip()
                 lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
                 if lista_giocatori:
@@ -282,37 +275,33 @@ else:
                         lista_giocatori
                     )
                     
-                    # Troviamo l'indice esatto di riga del giocatore selezionato nel foglio Google
-                    nome_selezionato = str(player_scelto).strip()
-                    indici_trovati = dati_totali[dati_totali.iloc[:, 3].astype(str).str.strip() == nome_selezionato].index
-                    
-                    # Elenco esatto delle 17 colonne indicate da Maurizio
-                    colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
-                    
-                    # Convertitore matematico perfetto per indici di colonna Excel/Google (A=0, Z=25, AA=26, AG=32, ecc.)
-                    def converti_lettera_indice(let):
-                        let = let.upper().strip()
-                        if len(let) == 1:
-                            return ord(let) - ord('A')
-                        elif len(let) == 2:
-                            return (ord(let[0]) - ord('A') + 1) * 26 + (ord(let[1]) - ord('A'))
-                        return 0
-
+                    nomi_forzieri = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai"]
                     dettagli_forzieri_player = []
                     
-                    if len(indici_trovati) > 0:
-                        idx_riga_reale = indici_trovati[0]
+                    # Filtriamo la riga esatta del giocatore
+                    nome_selezionato = str(player_scelto).strip().lower()
+                    riga_giocatore = dati_dashboard[dati_dashboard.iloc[:, 3].astype(str).str.strip().str.lower() == nome_selezionato]
+                    
+                    if not riga_giocatore.empty:
+                        # Mappiamo le 17 colonne con le lettere fornite da Maurizio
+                        colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
+                        
+                        def converti_lettera_indice(let):
+                            let = let.upper().strip()
+                            if len(let) == 1:
+                                return ord(let) - ord('A')
+                            elif len(let) == 2:
+                                return (ord(let) - ord('A') + 1) * 26 + (ord(let) - ord('A'))
+                            return 0
+                        
                         for let in colonne_lettere:
                             col_idx = converti_lettera_indice(let)
-                            
-                            if col_idx < len(dati_totali.columns):
-                                # Estraiamo il valore numerico puntando alla cella esatta tramite coordinate della matrice
-                                val_cella = str(dati_totali.iloc[idx_riga_reale, col_idx]).strip().replace(",", "").replace(".", "")
+                            if col_idx < len(dati_dashboard.columns):
+                                val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
-                                # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio
-                                nome_cat = str(dati_totali.iloc[0, col_idx]).strip()
-                                nome_sub = str(dati_totali.iloc[1, col_idx]).strip()
+                                nome_cat = str(dati_dashboard.iloc[0, col_idx]).strip()
+                                nome_sub = str(dati_dashboard.iloc[1, col_idx]).strip()
                                 
                                 if nome_sub and nome_sub.lower() not in ["nan", ""]:
                                     nome_completo_forziere = f"{nome_cat} {nome_sub}"
@@ -327,20 +316,19 @@ else:
                     st.markdown("<br>", unsafe_allow_html=True)
                     st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
                     
-                    # Stampiamo la lista completa di tutti i 17 forzieri (inclusi quelli a zero)
                     if dettagli_forzieri_player:
                         for item in dettagli_forzieri_player:
                             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
                             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Count"]}</span></div>', unsafe_allow_html=True)
                     else:
-                        st.info("No chests recorded for this player in the current log.")
+                        st.info("No chests recorded for this player.")
                 else:
                     st.warning("No players found in the data column.")
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
-       
+
    
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
