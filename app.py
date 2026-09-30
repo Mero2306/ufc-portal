@@ -435,6 +435,7 @@ else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
 
+
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
         apply_custom_style("bg_info.jpg")
