@@ -498,7 +498,7 @@ else:
             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
 # --- INTEGRAZIONE HOME: STATISTICHE GIOCATORI (IN FONDO AL FILE) ---
-if page in ["🏠 Home Dashboard", ctx.get("menu_home")]:
+if lang_choice in lang_files:
     st.markdown("<br><hr><br>", unsafe_allow_html=True)
     st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
     
