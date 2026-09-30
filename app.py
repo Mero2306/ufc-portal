@@ -259,18 +259,21 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # SCARICHIAMO I DATI IN TEMPO REALE DALLA STESSA SORGENTE DI PAGINA 5
-        dati_freschi = None
-        if 'CSV_URL' in globals():
-            dati_freschi = load_clan_results(CSV_URL)
-        elif 'GOOGLE_SHEET_LINK' in globals():
-            url_diretto = GOOGLE_SHEET_LINK.replace("/edit?usp=sharing", "/export?format=csv")
-            dati_freschi = load_clan_results(url_diretto)
+        # MOTORE DI SCARICAMENTO AUTONOMO E DIRETTO DELLA PRIMA SCHEDA DEL FOGLIO GOOGLE
+        import pandas as pd
+        dati_freschi_home = None
+        if 'GOOGLE_SHEET_LINK' in globals():
+            try:
+                url_esportazione_csv = GOOGLE_SHEET_LINK.replace("/edit?usp=sharing", "/export?format=csv")
+                # Pandas scarica direttamente la prima scheda del foglio dal web in millisecondi
+                dati_freschi_home = pd.read_csv(url_esportazione_csv, header=None)
+            except Exception:
+                dati_freschi_home = None
 
-        if dati_freschi is not None:
+        if dati_freschi_home is not None:
             try:
                 # Estraiamo i giocatori dalla colonna D (indice 3), partendo dalla riga 4 (indice 3) in poi
-                df_players = dati_freschi.iloc[3:, 3].dropna().astype(str).str.strip()
+                df_players = dati_freschi_home.iloc[3:, 3].dropna().astype(str).str.strip()
                 lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
                 if lista_giocatori:
@@ -279,9 +282,9 @@ else:
                         lista_giocatori
                     )
                     
-                    # Filtriamo la sotto-tabella del giocatore scelto pulendo gli spazi
+                    # Filtriamo la riga esatta del giocatore scelto pulendo gli spazi
                     nome_selezionato = str(player_scelto).strip()
-                    riga_giocatore = dati_freschi[dati_freschi.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
+                    riga_giocatore = dati_freschi_home[dati_freschi_home.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                     
                     # Elenco esatto delle 17 colonne dinamiche fornite da Maurizio
                     colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
@@ -300,14 +303,14 @@ else:
                         for let in colonne_lettere:
                             col_idx = converti_lettera_indice(let)
                             
-                            if col_idx < len(dati_freschi.columns):
-                                # CORREZIONE: Estraiamo solo il singolo valore isolato di quel giocatore
-                                val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "").replace(".", "")
+                            if col_idx < len(dati_freschi_home.columns):
+                                # CORREZIONE DEFINITIVA: Estraiamo solo il singolo valore isolato (riga 0, colonna col_idx) della riga filtrata
+                                val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
-                                # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio in modo dinamico
-                                nome_cat = str(dati_freschi.iloc[0, col_idx]).strip()
-                                nome_sub = str(dati_freschi.iloc[1, col_idx]).strip()
+                                # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio originale
+                                nome_cat = str(dati_freschi_home.iloc[0, col_idx]).strip()
+                                nome_sub = str(dati_freschi_home.iloc[1, col_idx]).strip()
                                 
                                 if nome_sub and nome_sub.lower() not in ["nan", ""]:
                                     nome_completo_forziere = f"{nome_cat} {nome_sub}"
@@ -322,7 +325,7 @@ else:
                     st.markdown("<br>", unsafe_allow_html=True)
                     st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
                     
-                    # Stampiamo la lista completa dei 17 forzieri (inclusi quelli a zero)
+                    # Stampiamo la lista completa di tutti i 17 forzieri (inclusi quelli a zero)
                     if dettagli_forzieri_player:
                         for item in dettagli_forzieri_player:
                             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
@@ -334,8 +337,8 @@ else:
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
-            st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
-
+            st.warning("⚠️ Error: Unable to connect and fetch data directly from the main Google Sheets tab.")
+ 
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
         apply_custom_style("bg_info.jpg")
