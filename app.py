@@ -259,21 +259,20 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # COLLEGAMENTO AL FOGLIO TRAMITE ESPORTAZIONE CSV NATIVA DELLA PRIMA PAGINA
+        # UTILIZZIAMO LO STESSO IDENTICO URL E MOTORE CHE FUNZIONA NEI RISULTATI GENERALI
         import pandas as pd
         dati_freschi_home = None
         try:
-            # Sostituiamo i parametri per forzare il download del CSV puro senza filtri grafici
-            url_csv_nativo = GOOGLE_SHEET_LINK.replace("/edit?usp=sharing", "/export?format=csv&gid=0")
-            dati_freschi_home = pd.read_csv(url_csv_nativo, header=None)
+            url_dashboard_certificato = "https://google.com"
+            dati_freschi_home = pd.read_csv(url_dashboard_certificato, header=None)
         except Exception:
             dati_freschi_home = None
 
         if dati_freschi_home is not None:
             try:
-                # Estraiamo i giocatori dalla colonna D (indice 3), partendo dalla riga 4 (indice 3) in poi
-                df_players = dati_freschi_home.iloc[3:, 3].dropna().astype(str).str.strip()
-                lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
+                # CORREZIONE: In questa scheda specifica i nomi dei giocatori sono nella COLONNA A (indice 0)
+                df_players = dati_freschi_home.iloc[3:, 0].dropna().astype(str).str.strip()
+                lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph", "rare crypt 30", "epic crypt 30", "epic crypt 35"]]
                 
                 if lista_giocatori:
                     player_scelto = st.selectbox(
@@ -281,9 +280,9 @@ else:
                         lista_giocatori
                     )
                     
-                    # Filtriamo la riga esatta del giocatore pulendo gli spazi sulla colonna D (indice 3)
+                    # Filtriamo la riga del giocatore selezionato sulla Colonna A (indice 0)
                     nome_selezionato = str(player_scelto).strip()
-                    riga_giocatore = dati_freschi_home[dati_freschi_home.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
+                    riga_giocatore = dati_freschi_home[dati_freschi_home.iloc[:, 0].astype(str).str.strip() == nome_selezionato]
                     
                     # Elenco esatto delle 17 colonne fornite da Maurizio
                     colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
@@ -302,11 +301,11 @@ else:
                             col_idx = converti_lettera_indice(let)
                             
                             if col_idx < len(dati_freschi_home.columns):
-                                # CORREZIONE ASSOLUTA: Estraiamo il singolo numero isolato di quel giocatore (.iloc[0])
+                                # CORREZIONE: Estraiamo il singolo numero isolato usando .iloc per evitare fusioni di cifre
                                 val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
-                                # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio originale
+                                # Recuperiamo le intestazioni del forziere dalla riga 0 e riga 1 del foglio
                                 nome_cat = str(dati_freschi_home.iloc[0, col_idx]).strip()
                                 nome_sub = str(dati_freschi_home.iloc[1, col_idx]).strip()
                                 
@@ -331,7 +330,7 @@ else:
                     else:
                         st.info("No chests recorded for this player.")
                 else:
-                    st.warning("No players found in the data column D.")
+                    st.warning("No players found in the data column.")
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
