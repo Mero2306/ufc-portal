@@ -278,7 +278,6 @@ else:
                     # Elenco esatto delle 17 colonne indicate da Maurizio
                     colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
                     
-                    # CORREZIONE MATEMATICA: Convertitore infallibile per colonne a 1 o 2 lettere (es. A=0, Z=25, AA=26, AG=32...)
                     def converti_lettera_indice(let):
                         let = let.upper().strip()
                         index = 0
@@ -289,18 +288,18 @@ else:
                     dettagli_forzieri_player = []
                     nome_selezionato = str(player_scelto).strip().lower()
                     
-                    # Troviamo gli indici di tutte le righe corrispondenti al giocatore scelto
-                    indici_player = dati_dashboard[dati_dashboard.iloc[:, 3].astype(str).str.strip().str.lower() == nome_selezionato].index
+                    # Filtriamo la sotto-tabella contenente solo la riga del giocatore scelto
+                    riga_giocatore = dati_dashboard[dati_dashboard.iloc[:, 3].astype(str).str.strip().str.lower() == nome_selezionato]
                     
-                    if len(indici_player) > 0:
-                        idx_riga_reale = indici_player[0]
+                    if not riga_giocatore.empty:
                         for let in colonne_lettere:
                             col_idx = converti_lettera_indice(let)
                             if col_idx < len(dati_dashboard.columns):
-                                # Estraiamo il valore puro della cella incrociando riga e colonna
-                                val_cella = str(dati_dashboard.iloc[idx_riga_reale, col_idx]).strip().replace(",", "").replace(".", "")
+                                # CORREZIONE: Estraiamo solo il singolo valore del giocatore (riga 0 della tabella filtrata)
+                                val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
+                                # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio
                                 nome_cat = str(dati_dashboard.iloc[0, col_idx]).strip()
                                 nome_sub = str(dati_dashboard.iloc[1, col_idx]).strip()
                                 
@@ -330,7 +329,6 @@ else:
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
-   
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
         apply_custom_style("bg_info.jpg")
