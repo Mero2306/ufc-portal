@@ -262,18 +262,16 @@ else:
         import pandas as pd
         dati_freschi_home = None
         try:
-            # INCOLLA A MANO IL TUO LINK CON GID=0 DENTRO LE VIRGOLETTE QUI SOTTO
-            url_prima_scheda_gviz = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/export?format=csv&gid=432024066"
+            url_prima_scheda_gviz = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=432024066"
             dati_freschi_home = pd.read_csv(url_prima_scheda_gviz, header=None)
         except Exception:
             dati_freschi_home = None
 
         if dati_freschi_home is not None:
             try:
-                # CORREZIONE CHIRURGICA: Cerchiamo dinamicamente la colonna dei giocatori eliminando le righe vuote
-                # Scansioniamo la riga 3 (indice 3) per trovare dove iniziano i player attivi
-                df_colonna_nomi = dati_freschi_home.iloc[3:, 3].dropna().astype(str).str.strip()
-                lista_giocatori = [nome for nome in df_colonna_nomi.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph", "player", "giocatore", "name"]]
+                # Estraiamo i giocatori solo ed esclusivamente dalla COLONNA D (indice 3), partendo dalla riga 4 (indice 3) in poi
+                df_players = dati_freschi_home.iloc[3:, 3].dropna().astype(str).str.strip()
+                lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
                 if lista_giocatori:
                     player_scelto = st.selectbox(
@@ -281,7 +279,7 @@ else:
                         lista_giocatori
                     )
                     
-                    # Filtriamo la riga esatta del giocatore pulendo gli spazi
+                    # Filtriamo la riga esatta del giocatore pulendo gli spazi sulla Colonna D (indice 3)
                     nome_selezionato = str(player_scelto).strip()
                     riga_giocatore = dati_freschi_home[dati_freschi_home.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                     
@@ -302,10 +300,11 @@ else:
                             col_idx = converti_lettera_indice(let)
                             
                             if col_idx < len(dati_freschi_home.columns):
-                                # Estraiamo solo il singolo valore isolato del giocatore filtrato (.values[0])
+                                # CORREZIONE DEFINITIVA: Estraiamo la singola cella isolata puntando all'indice [0] della matrice
                                 val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
+                                # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 della prima pagina del foglio
                                 nome_cat = str(dati_freschi_home.iloc[0, col_idx]).strip()
                                 nome_sub = str(dati_freschi_home.iloc[1, col_idx]).strip()
                                 
@@ -322,6 +321,7 @@ else:
                     st.markdown("<br>", unsafe_allow_html=True)
                     st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
                     
+                    # Stampiamo la lista completa di tutti i 17 forzieri (inclusi quelli a zero)
                     if dettagli_forzieri_player:
                         for item in dettagli_forzieri_player:
                             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
@@ -329,7 +329,7 @@ else:
                     else:
                         st.info("No chests recorded for this player.")
                 else:
-                    st.warning("No players found in the data column. Please verify if column D contains the names.")
+                    st.warning("No players found in the data column D.")
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
