@@ -21,13 +21,13 @@
   "info_c7": "<b>🔥 ROC TORCH</b><br>- dedicata a garantire che l'artefatto torcia di tutti sia a 5 stelle",
   "info_sub": "<b>🛡️ [SUB-CLAN] ((76 RoE))</b><br>- Dettagli K76 RoE",
   "min_h1": "📊 Minimi Ufficiali, Eventi ed Obiettivi",
-  "min_info": "⚠️ Partecipazione richiesta per gli events Ancients, Armageddon, Ragnarok, Olympus e Presagi Oscuri.",
+  "min_info": "⚠️ Partecipazione richiesta per gli eventi Ancients, Armageddon, Ragnarok, Olympus e Dark Omens.",
   "min_h3": "### 📋 Minimi Mensili",
   "min_w1": "- **Punteggio Minimo Mensile:** 1.000.000 di punti totali.",
   "min_w2": "- **Armageddon:** 50 forzieri",
   "min_w3": "- **Ragnarok:** 500 M",
   "min_w4": "- **Olympus:** 570.000",
-  "min_w5": "- **Presagi Oscuri:** 100 forzieri, massimo petrolio versato e giusta quota di difesa",
+  "min_w5": "- **Dark Omens:** 100 forzieri, massimo petrolio versato e giusta quota di difesa",
   "disc_h1": "🌐 Server Discord Ufficiale Raiders of Chaos",
   "disc_info": "💡 Il pulsante qui sotto sarà attivato presto con il codice di invito ufficiale.",
   "disc_btn": "🔮 PULSANTE DISCORD - IN ARRIVO 🔮",
@@ -67,5 +67,6 @@
   "Arcanomancer squad": "Squadra Arcanomanti",
   "Yokai": "Yokai",
   "Union of Triumph": "Unione del Trionfo",
-  "select_name_placeholder": "-- Seleziona Nome --"
+  "select_name_placeholder": "-- Seleziona Nome --",
+  "sidebar_lang_lbl": "🌐 SELEZIONA LINGUA:"
 }
