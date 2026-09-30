@@ -358,10 +358,10 @@ else:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
-                                    val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "")
+                                    val_cella = str(riga_giocatore.values[col_idx]).strip().replace(",", "")
                                     
                                     if "." in val_cella:
-                                        val_cella = val_cella.split(".")[0]
+                                        val_cella = val_cella.split(".")
                                         
                                     quantita = int(val_cella) if val_cella.isdigit() else 0
                                     
@@ -374,9 +374,9 @@ else:
                             def estrai_valore_colonna(lettera_col):
                                 idx = converti_lettera_indice(lettera_col)
                                 if idx < len(dati_freschi_home.columns):
-                                    val = str(riga_giocatore.values[0][idx]).strip().replace(",", "")
+                                    val = str(riga_giocatore.values[idx]).strip().replace(",", "")
                                     if "." in val:
-                                        val = val.split(".")[0]
+                                        val = val.split(".")
                                     return int(val) if val.isdigit() else 0
                                 return 0
 
@@ -394,14 +394,19 @@ else:
                         else:
                             st.info("No chests recorded for this player.")
 
-                        # SEZIONE VISIVA IN REALI TRE COLONNE (STILE PAGINA 5 CLAN RESULTS)
+                        # SEZIONE VISIVA IN REALI TRE COLONNE FORMATTATE CON I PUNTI DELLE MIGLIAIA
                         st.markdown("<br><hr>", unsafe_allow_html=True)
                         st.markdown(f"### 🏆 {ctx.get('player_totals_title', 'Personal Player Totals')}", unsafe_allow_html=True)
                         
+                        # Formattiamo i numeri inserendo il punto come separatore delle migliaia europeo
+                        punti_formattati = f"{tot_points:,}".replace(",", ".")
+                        arma_formattati = f"{tot_armageddon:,}".replace(",", ".")
+                        dark_formattati = f"{tot_dark_omens:,}".replace(",", ".")
+
                         tc1, tc2, tc3 = st.columns(3)
-                        tc1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("total_points_lbl", "Total points")}</h3><p style="font-size:28px;color:#4a86e8;font-weight:bold;">{tot_points}</p></div>', unsafe_allow_html=True)
-                        tc2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>{ctx.get("arma_chests_lbl", "Armageddon chests")}</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{tot_armageddon}</p></div>', unsafe_allow_html=True)
-                        tc3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>{ctx.get("dark_omens_lbl", "Dark Omens")}</h3><p style="font-size:32px;color:#d4b373;font-weight:bold;">{tot_dark_omens}</p></div>', unsafe_allow_html=True)
+                        tc1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("total_points_lbl", "Total points")}</h3><p style="font-size:28px;color:#4a86e8;font-weight:bold;">{punti_formattati}</p></div>', unsafe_allow_html=True)
+                        tc2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>{ctx.get('arma_chests_lbl', 'Armageddon chests')}</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{arma_formattati}</p></div>', unsafe_allow_html=True)
+                        tc3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>{ctx.get("dark_omens_lbl", "Dark Omens")}</h3><p style="font-size:32px;color:#d4b373;font-weight:bold;">{dark_formattati}</p></div>', unsafe_allow_html=True)
                         
                     else:
                         # BOX INFORMATIVO AGGANCIO GRAFICO PERFETTO ALLO STILE AVVISO PRINCIPALE
@@ -423,6 +428,7 @@ else:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+
 
 
 
