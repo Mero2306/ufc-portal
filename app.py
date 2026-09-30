@@ -259,42 +259,34 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # STILIZZAZIONE DELLA BARRA DI SELEZIONE IN RED WAR STYLE (Stesso stile dei pulsanti del sito)
+        # STILIZZAZIONE DELLA BARRA DI SELEZIONE IN LINEA CON IL RESTO DEL SITO (SENZA BORDI DORATI)
         st.markdown(
             """
             <style>
             div[data-testid="stSelectbox"] > div {
-                background: linear-gradient(135, #8c1d1d 0%, #591010 100%) !important;
-                border: 2px solid #bd9b53 !important;
+                background-color: rgba(255, 255, 255, 0.04) !important;
+                border: 1px solid rgba(240, 230, 210, 0.2) !important;
                 border-radius: 4px !important;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
-                transition: all 0.3s ease !important;
-            }
-            div[data-testid="stSelectbox"] > div:hover {
-                background: linear-gradient(135, #b32424 0%, #7c1515 100%) !important;
-                box-shadow: 0 0 15px #bd9b53 !important;
+                color: #f0e6d2 !important;
             }
             div[data-testid="stSelectbox"] label p {
                 color: #d4b373 !important;
-                font-family: 'Cinzel', serif !important;
-                font-weight: 700 !important;
-                letter-spacing: 1px !important;
+                font-family: 'Inter', sans-serif !important;
+                font-weight: 600 !important;
             }
             div[data-testid="stSelectbox"] div[data-baseweb="select"] {
                 color: #f0e6d2 !important;
-                font-family: 'Cinzel', serif !important;
-                font-weight: 700 !important;
+                font-family: 'Inter', sans-serif !important;
             }
-            /* Stile per la lista dei nomi che appare dentro il menu a comparsa */
             ul[data-testid="stSelectboxOptions"] {
                 background-color: #14120e !important;
-                border: 1px solid #bd9b53 !important;
+                border: 1px solid rgba(240, 230, 210, 0.2) !important;
             }
             ul[data-testid="stSelectboxOptions"] li {
                 color: #f0e6d2 !important;
             }
             ul[data-testid="stSelectboxOptions"] li:hover {
-                background-color: #8c1d1d !important;
+                background-color: rgba(255, 255, 255, 0.1) !important;
             }
             </style>
             """,
@@ -317,7 +309,6 @@ else:
                 lista_giocatori_reali = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
                 if lista_giocatori_reali:
-                    # AGGIUNGIAMO IL SEGNAPOSTO IN INGLESE COME PRIMO ELEMENTO DELLA LISTA
                     etichetta_placeholder = "-- Select Name --"
                     lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reali
                     
@@ -328,12 +319,10 @@ else:
                     
                     # MOSTRA I DATI SOLO SE VIENE SELEZIONATO UN GIOCATORE VERO
                     if player_scelto != etichetta_placeholder:
-                        # Filtriamo la riga esatta del giocatore limitando la ricerca alla riga 106
                         nome_selezionato = str(player_scelto).strip()
                         dati_limitati = dati_freschi_home.iloc[3:106, :]
                         riga_giocatore = dati_limitati[dati_limitati.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                         
-                        # Mappatura fissa dei 17 forzieri associati (Allineata alle colonne esatte)
                         mappatura_forzieri = [
                             {"lettera": "AG", "name": "Rare Crypt 30"},
                             {"lettera": "AK", "name": "Epic Crypt 30"},
@@ -368,10 +357,9 @@ else:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
-                                    # CORREZIONE CHIRURGICA INDICE:values[0][col_idx] centra la cella orizzontale esatta
+                                    # CORREZIONE CHIRURGICA INDICE: values[0][col_idx] isola la singola riga evitando errori out of bounds
                                     val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "")
                                     
-                                    # Gestione e pulizia dei decimali se interpretati come float (es: 3.0 -> 3)
                                     if "." in val_cella:
                                         val_cella = val_cella.split(".")[0]
                                         
@@ -385,7 +373,6 @@ else:
                         st.markdown("<br>", unsafe_allow_html=True)
                         st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
                         
-                        # Stampiamo l'elenco pulito con i nomi staccati a sinistra e i numeri singoli a destra
                         if dettagli_forzieri_player:
                             for item in dettagli_forzieri_player:
                                 nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
@@ -393,15 +380,26 @@ else:
                         else:
                             st.info("No chests recorded for this player.")
                     else:
-                        # Messaggio informativo neutro visualizzato quando lo schermo è in attesa della scelta del nome
+                        # NUOVO BOX INFORMATIVO AGGANCIO GRAFICO PERFETTO ALLO STILE AVVISO PRINCIPALE (SENZA BORDI DORATI)
                         st.markdown("<br>", unsafe_allow_html=True)
-                        st.info("💡 Please select your nickname from the dropdown menu above to display your personal chest statistics.")
+                        text_select_info = ctx.get("select_info_lbl", "💡 **Notice:** Please select your nickname from the dropdown menu above to display your personal chest statistics.")
+                        st.markdown(
+                            f"""
+                            <div style="background-color: rgba(28, 142, 230, 0.1); border-left: 5px solid rgb(28, 142, 230); padding: 16px 20px; border-radius: 4px; margin-bottom: 15px;">
+                                <p style="color: #f0e6d2; margin: 0; font-size: 16px; font-weight: 500; line-height: 1.6; letter-spacing: 0.3px;">
+                                    {text_select_info}
+                                </p>
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
                 else:
                     st.warning("No players found in the data column DB.")
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+
 
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
