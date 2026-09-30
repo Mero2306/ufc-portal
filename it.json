@@ -40,7 +40,7 @@
   "res_box_crypts": "🏰 TOTALE CRIPTE",
   "res_box_monsters": "👹 MOSTRI EPICI",
   "res_box_total": "🏆 TOTALE FORZIERI",
-  "res_warning": "⚠️ In attesa dei dati attivi del conteggio... Fai clic su un'altra pagina del menu e torna qui.",
+  "res_warning": "⚠️ In attesa dei dati active del conteggio... Fai clic su un'altra pagina del menu e torna qui.",
   "player_section_h2": "👤 Riepilogo Personale Giocatore",
   "select_player_lbl": "Seleziona il tuo nome per controllare i tuoi forzieri:",
   "📊 Detailed Chest Summary": "📊 Riepilogo Dettagliato Forzieri",
@@ -66,5 +66,6 @@
   "Sands of Eternity": "Sabbie dell'Eternità",
   "Arcanomancer squad": "Squadra Arcanomanti",
   "Yokai": "Yokai",
-  "Union of Triumph": "Unione del Trionfo"
+  "Union of Triumph": "Unione del Trionfo",
+  "select_name_placeholder": "-- Seleziona Nome --"
 }
