@@ -259,6 +259,28 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
+        # STILIZZAZIONE DELLA BARRA DI SELEZIONE IN WAR STYLE (Effetto Glow Dorato e Sfondo Scuro)
+        st.markdown(
+            """
+            <style>
+            div[data-testid="stSelectbox"] > div {
+                background: linear-gradient(145, #1e1a13, #14120e) !important;
+                border: 1px solid #bd9b53 !important;
+                border-radius: 4px !important;
+                color: #f0e6d2 !important;
+            }
+            div[data-testid="stSelectbox"] label p {
+                color: #d4b373 !important;
+                font-weight: 600 !important;
+            }
+            div[data-testid="stSelectbox"] div[data-baseweb="select"] {
+                color: #f0e6d2 !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+        
         # CONNESSIONE SICURA ALLA PRIMA PAGINA PRINCIPALE DEL CLAN (GID=0) CON MOTORE GVIZ
         import pandas as pd
         dati_freschi_home = None
@@ -291,7 +313,7 @@ else:
                         dati_limitati = dati_freschi_home.iloc[3:106, :]
                         riga_giocatore = dati_limitati[dati_limitati.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                         
-                        # Mappatura fissa dei 17 forzieri associati alle rispettive colonne
+                        # Mappatura fissa dei 17 forzieri associati (INVERSIONE INSERITA SU CQ E CR)
                         mappatura_forzieri = [
                             {"lettera": "AG", "name": "Rare Crypt 30"},
                             {"lettera": "AK", "name": "Epic Crypt 30"},
@@ -308,8 +330,8 @@ else:
                             {"lettera": "BB", "name": "Epic Briareus Squad"},
                             {"lettera": "CO", "name": "Sands of Eternity"},
                             {"lettera": "CP", "name": "Arcanomancer squad"},
-                            {"lettera": "CR", "name": "Yokai"},
-                            {"lettera": "CQ", "name": "Union of Triumph"}
+                            {"lettera": "CQ", "name": "Yokai"},
+                            {"lettera": "CR", "name": "Union of Triumph"}
                         ]
                         
                         def converti_lettera_indice(let):
@@ -327,7 +349,7 @@ else:
                                 
                                 if col_idx < len(dati_freschi_home.columns):
                                     # Estrazione pulita del singolo valore in formato stringa
-                                    val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "")
+                                    val_cella = str(riga_giocatore.values[col_idx]).strip().replace(",", "")
                                     
                                     # Gestione e pulizia dei decimali se interpretati come float (es: 3.0 -> 3)
                                     if "." in val_cella:
