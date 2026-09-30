@@ -259,16 +259,15 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # MOTORE DI SCARICAMENTO AUTONOMO E DIRETTO DELLA PRIMA SCHEDA DEL FOGLIO GOOGLE
+        # COLLEGAMENTO SICURO ALLA PRIMA SCHEDA DEL FOGLIO CON IL MOTORE GVIZ DI MAURIZIO
         import pandas as pd
         dati_freschi_home = None
-        if 'GOOGLE_SHEET_LINK' in globals():
-            try:
-                url_esportazione_csv = GOOGLE_SHEET_LINK.replace("/edit?usp=sharing", "/export?format=csv")
-                # Pandas scarica direttamente la prima scheda del foglio dal web in millisecondi
-                dati_freschi_home = pd.read_csv(url_esportazione_csv, header=None)
-            except Exception:
-                dati_freschi_home = None
+        try:
+            # Puntiamo direttamente alla prima scheda del foglio (gid=0) usando il motore gviz sicuro
+            url_prima_scheda_gviz = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=432024066"
+            dati_freschi_home = pd.read_csv(url_prima_scheda_gviz, header=None)
+        except Exception:
+            dati_freschi_home = None
 
         if dati_freschi_home is not None:
             try:
@@ -304,8 +303,8 @@ else:
                             col_idx = converti_lettera_indice(let)
                             
                             if col_idx < len(dati_freschi_home.columns):
-                                # CORREZIONE DEFINITIVA: Estraiamo solo il singolo valore isolato (riga 0, colonna col_idx) della riga filtrata
-                                val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "").replace(".", "")
+                                # CORREZIONE ASSOLUTA: Estraiamo il singolo valore puro della cella del giocatore
+                                val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
                                 # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio originale
@@ -337,7 +336,8 @@ else:
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
-            st.warning("⚠️ Error: Unable to connect and fetch data directly from the main Google Sheets tab.")
+            st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+
  
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
