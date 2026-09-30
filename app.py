@@ -351,13 +351,13 @@ else:
                             return index - 1
 
                         dettagli_forzieri_player = []
+                        tot_points, tot_armageddon, tot_dark_omens = 0, 0, 0
                         
                         if not riga_giocatore.empty:
                             for item_forziere in mappatura_forzieri:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
-                                    # CORREZIONE CHIRURGICA INDICE: values[0][col_idx] isola la singola riga evitando errori out of bounds
                                     val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "")
                                     
                                     if "." in val_cella:
@@ -369,6 +369,20 @@ else:
                                         "Chest Name": item_forziere["name"],
                                         "Count": quantita
                                     })
+                            
+                            # FUNZIONE INTERNA PER ESTRARRE I TOTALI RICHIESTI DA MAURIZIO (E, I, J)
+                            def estrai_valore_colonna(lettera_col):
+                                idx = converti_lettera_indice(lettera_col)
+                                if idx < len(dati_freschi_home.columns):
+                                    val = str(riga_giocatore.values[0][idx]).strip().replace(",", "")
+                                    if "." in val:
+                                        val = val.split(".")[0]
+                                    return int(val) if val.isdigit() else 0
+                                return 0
+
+                            tot_points = estrai_valore_colonna("E")
+                            tot_armageddon = estrai_valore_colonna("I")
+                            tot_dark_omens = estrai_valore_colonna("J")
                         
                         st.markdown("<br>", unsafe_allow_html=True)
                         st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
@@ -379,6 +393,28 @@ else:
                                 st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Count"]}</span></div>', unsafe_allow_html=True)
                         else:
                             st.info("No chests recorded for this player.")
+
+                        # SEZIONE VISIVA SEPARATA IN INSERITA ESATTAMENTE IN FONDO ALLA PAGINA
+                        st.markdown("<br><hr>", unsafe_allow_html=True)
+                        st.markdown(f"### 🏆 {ctx.get('player_totals_title', 'Personal Player Totals')}", unsafe_allow_html=True)
+                        
+                        st.markdown(
+                            f"""
+                            <div class="chat-box" style="display:flex;justify-content:space-between;padding:12px 16px!important;margin-bottom:8px!important;border-left:5px solid #4a86e8!important;">
+                                <span style="color:#f0e6d2;font-weight:bold;">{ctx.get('total_points_lbl', 'Total points')}</span>
+                                <span style="color:#4a86e8;font-weight:bold;font-size:20px;">{tot_points}</span>
+                            </div>
+                            <div class="chat-box" style="display:flex;justify-content:space-between;padding:12px 16px!important;margin-bottom:8px!important;border-left:5px solid #990000!important;">
+                                <span style="color:#f0e6d2;font-weight:bold;">{ctx.get('arma_chests_lbl', 'Armageddon chests')}</span>
+                                <span style="color:#990000;font-weight:bold;font-size:20px;">{tot_armageddon}</span>
+                            </div>
+                            <div class="chat-box" style="display:flex;justify-content:space-between;padding:12px 16px!important;margin-bottom:8px!important;border-left:5px solid #38761d!important;">
+                                <span style="color:#f0e6d2;font-weight:bold;">{ctx.get('dark_omens_lbl', 'Dark Omens')}</span>
+                                <span style="color:#38761d;font-weight:bold;font-size:20px;">{tot_dark_omens}</span>
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
                     else:
                         # NUOVO BOX INFORMATIVO AGGANCIO GRAFICO PERFETTO ALLO STILE AVVISO PRINCIPALE (SENZA BORDI DORATI)
                         st.markdown("<br>", unsafe_allow_html=True)
@@ -399,6 +435,7 @@ else:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+
 
 
     # --- PAGINA 1: CLAN INFO & CHATS ---
