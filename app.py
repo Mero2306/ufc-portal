@@ -259,11 +259,10 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # COLLEGAMENTO SICURO ALLA PRIMA SCHEDA DEL FOGLIO CON IL MOTORE GVIZ DI MAURIZIO
         import pandas as pd
         dati_freschi_home = None
         try:
-            # Puntiamo direttamente alla prima scheda del foglio (gid=0) usando il motore gviz sicuro
+            # INCOLLA A MANO IL TUO LINK CON GID=0 DENTRO LE VIRGOLETTE QUI SOTTO
             url_prima_scheda_gviz = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=432024066"
             dati_freschi_home = pd.read_csv(url_prima_scheda_gviz, header=None)
         except Exception:
@@ -271,9 +270,10 @@ else:
 
         if dati_freschi_home is not None:
             try:
-                # Estraiamo i giocatori dalla colonna D (indice 3), partendo dalla riga 4 (indice 3) in poi
-                df_players = dati_freschi_home.iloc[3:, 3].dropna().astype(str).str.strip()
-                lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
+                # CORREZIONE CHIRURGICA: Cerchiamo dinamicamente la colonna dei giocatori eliminando le righe vuote
+                # Scansioniamo la riga 3 (indice 3) per trovare dove iniziano i player attivi
+                df_colonna_nomi = dati_freschi_home.iloc[3:, 3].dropna().astype(str).str.strip()
+                lista_giocatori = [nome for nome in df_colonna_nomi.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph", "player", "giocatore", "name"]]
                 
                 if lista_giocatori:
                     player_scelto = st.selectbox(
@@ -281,14 +281,13 @@ else:
                         lista_giocatori
                     )
                     
-                    # Filtriamo la riga esatta del giocatore scelto pulendo gli spazi
+                    # Filtriamo la riga esatta del giocatore pulendo gli spazi
                     nome_selezionato = str(player_scelto).strip()
                     riga_giocatore = dati_freschi_home[dati_freschi_home.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                     
                     # Elenco esatto delle 17 colonne dinamiche fornite da Maurizio
                     colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
                     
-                    # Convertitore dinamico perfetto per colonne Excel a 1 o 2 lettere (AG, BA, CO...)
                     def converti_lettera_indice(let):
                         let = let.upper().strip()
                         index = 0
@@ -303,11 +302,10 @@ else:
                             col_idx = converti_lettera_indice(let)
                             
                             if col_idx < len(dati_freschi_home.columns):
-                                # CORREZIONE ASSOLUTA: Estraiamo il singolo valore puro della cella del giocatore
-                                val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "").replace(".", "")
+                                # Estraiamo solo il singolo valore isolato del giocatore filtrato (.values[0])
+                                val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
-                                # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio originale
                                 nome_cat = str(dati_freschi_home.iloc[0, col_idx]).strip()
                                 nome_sub = str(dati_freschi_home.iloc[1, col_idx]).strip()
                                 
@@ -324,7 +322,6 @@ else:
                     st.markdown("<br>", unsafe_allow_html=True)
                     st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
                     
-                    # Stampiamo la lista completa di tutti i 17 forzieri (inclusi quelli a zero)
                     if dettagli_forzieri_player:
                         for item in dettagli_forzieri_player:
                             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
@@ -332,7 +329,7 @@ else:
                     else:
                         st.info("No chests recorded for this player.")
                 else:
-                    st.warning("No players found in the data column.")
+                    st.warning("No players found in the data column. Please verify if column D contains the names.")
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
