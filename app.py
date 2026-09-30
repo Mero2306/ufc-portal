@@ -358,10 +358,11 @@ else:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
-                                    val_cella = str(riga_giocatore.values[col_idx]).strip().replace(",", "")
+                                    # CORREZIONE CHIRURGICA INDICE: values[0][col_idx] isola la singola cella orizzontale
+                                    val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "")
                                     
                                     if "." in val_cella:
-                                        val_cella = val_cella.split(".")
+                                        val_cella = val_cella.split(".")[0]
                                         
                                     quantita = int(val_cella) if val_cella.isdigit() else 0
                                     
@@ -374,9 +375,10 @@ else:
                             def estrai_valore_colonna(lettera_col):
                                 idx = converti_lettera_indice(lettera_col)
                                 if idx < len(dati_freschi_home.columns):
-                                    val = str(riga_giocatore.values[idx]).strip().replace(",", "")
+                                    # CORREZIONE INDICE ANCHE SUI TOTALI
+                                    val = str(riga_giocatore.values[0][idx]).strip().replace(",", "")
                                     if "." in val:
-                                        val = val.split(".")
+                                        val = val.split(".")[0]
                                     return int(val) if val.isdigit() else 0
                                 return 0
 
@@ -405,7 +407,7 @@ else:
 
                         tc1, tc2, tc3 = st.columns(3)
                         tc1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("total_points_lbl", "Total points")}</h3><p style="font-size:28px;color:#4a86e8;font-weight:bold;">{punti_formattati}</p></div>', unsafe_allow_html=True)
-                        tc2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>{ctx.get('arma_chests_lbl', 'Armageddon chests')}</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{arma_formattati}</p></div>', unsafe_allow_html=True)
+                        tc2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>{ctx.get("arma_chests_lbl", "Armageddon chests")}</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{arma_formattati}</p></div>', unsafe_allow_html=True)
                         tc3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>{ctx.get("dark_omens_lbl", "Dark Omens")}</h3><p style="font-size:32px;color:#d4b373;font-weight:bold;">{dark_formattati}</p></div>', unsafe_allow_html=True)
                         
                     else:
@@ -428,10 +430,6 @@ else:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
-
-
-
-
 
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
