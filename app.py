@@ -354,14 +354,34 @@ else:
                         tot_points, tot_armageddon, tot_dark_omens = 0, 0, 0
                         
                         if not riga_giocatore.empty:
+                            # FUNZIONE INTERNA PER ESTRARRE I TOTALI CON ILOC SICURO E COMPATTO
+                            def estrai_valore_colonna(lettera_col):
+                                idx = converti_lettera_indice(lettera_col)
+                                if idx < len(dati_freschi_home.columns):
+                                    # CORREZIONE FILTRO: iloc[0, idx] garantisce l'estrazione della cella singola
+                                    val = str(riga_giocatore.iloc[0, idx]).strip().replace(",", "")
+                                    if val.endswith(".0"):
+                                        val = val[:-2]
+                                    else:
+                                        val = val.replace(".", "")
+                                    return int(val) if val.isdigit() else 0
+                                return 0
+
+                            tot_points = estrai_valore_colonna("E")
+                            tot_armageddon = estrai_valore_colonna("I")
+                            tot_dark_omens = estrai_valore_colonna("J")
+
+                            # SCANSIONE DEI 17 FORZIERI DETTAGLIATI CON ILOC SICURO
                             for item_forziere in mappatura_forzieri:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
-                                    val_cella = str(riga_giocatore.values[col_idx]).strip().replace(",", "")
-                                    
-                                    if "." in val_cella:
-                                        val_cella = val_cella.split(".")
+                                    # CORREZIONE FILTRO: iloc[0, col_idx] evita l'errore out of bounds
+                                    val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "")
+                                    if val_cella.endswith(".0"):
+                                        val_cella = val_cella[:-2]
+                                    else:
+                                        val_cella = val_cella.replace(".", "")
                                         
                                     quantita = int(val_cella) if val_cella.isdigit() else 0
                                     
@@ -369,36 +389,11 @@ else:
                                         "Chest Name": item_forziere["name"],
                                         "Count": quantita
                                     })
-                            
-                            # FUNZIONE INTERNA PER ESTRARRE I TOTALI RICHIESTI DA MAURIZIO (E, I, J)
-                            def estrai_valore_colonna(lettera_col):
-                                idx = converti_lettera_indice(lettera_col)
-                                if idx < len(dati_freschi_home.columns):
-                                    val = str(riga_giocatore.values[idx]).strip().replace(",", "")
-                                    if "." in val:
-                                        val = val.split(".")
-                                    return int(val) if val.isdigit() else 0
-                                return 0
-
-                            tot_points = estrai_valore_colonna("E")
-                            tot_armageddon = estrai_valore_colonna("I")
-                            tot_dark_omens = estrai_valore_colonna("J")
                         
-                        st.markdown("<br>", unsafe_allow_html=True)
-                        st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
-                        
-                        if dettagli_forzieri_player:
-                            for item in dettagli_forzieri_player:
-                                nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
-                                st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Count"]}</span></div>', unsafe_allow_html=True)
-                        else:
-                            st.info("No chests recorded for this player.")
-
-                        # SEZIONE VISIVA IN REALI TRE COLONNE FORMATTATE CON I PUNTI DELLE MIGLIAIA
+                        # STAMPA DEI TRE TOTALI IN ALTO
                         st.markdown("<br><hr>", unsafe_allow_html=True)
                         st.markdown(f"### 🏆 {ctx.get('player_totals_title', 'Personal Player Totals')}", unsafe_allow_html=True)
                         
-                        # Formattiamo i numeri inserendo il punto come separatore delle migliaia europeo
                         punti_formattati = f"{tot_points:,}".replace(",", ".")
                         arma_formattati = f"{tot_armageddon:,}".replace(",", ".")
                         dark_formattati = f"{tot_dark_omens:,}".replace(",", ".")
@@ -406,11 +401,20 @@ else:
                         tc1, tc2, tc3 = st.columns(3)
                         tc1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("total_points_lbl", "Total points")}</h3><p style="font-size:28px;color:#4a86e8;font-weight:bold;">{punti_formattati}</p></div>', unsafe_allow_html=True)
                         tc2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>{ctx.get("arma_chests_lbl", "Armageddon chests")}</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{arma_formattati}</p></div>', unsafe_allow_html=True)
-                        # CORREZIONE CHIRURGICA: Inserito l'aggancio dinamico al dizionario delle traduzioni
                         tc3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>{ctx.get("dark_omens_lbl", "Dark Omens")}</h3><p style="font-size:32px;color:#d4b373;font-weight:bold;">{dark_formattati}</p></div>', unsafe_allow_html=True)
                         
+                        # LISTA DETTAGLIATA SOTTO
+                        st.markdown("<br><hr>", unsafe_allow_html=True)
+                        st.markdown(f"### {ctx.get('Detailed Chest Summary', 'Detailed Chest Summary')}", unsafe_allow_html=True)
+                        
+                        if dettagli_forzieri_player:
+                            for item in dettagli_forzieri_player:
+                                count_formattato = f"{item['Count']:,}".replace(",", ".")
+                                nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
+                                st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{count_formattato}</span></div>', unsafe_allow_html=True)
+                        else:
+                            st.info("No chests recorded for this player.")
                     else:
-                        # BOX INFORMATIVO AGGANCIO GRAFICO PERFETTO ALLO STILE AVVISO PRINCIPALE
                         st.markdown("<br>", unsafe_allow_html=True)
                         text_select_info = ctx.get("select_info_lbl", "💡 **Notice:** Please select your nickname from the dropdown menu above to display your personal chest statistics.")
                         st.markdown(
