@@ -313,7 +313,7 @@ else:
                         dati_limitati = dati_freschi_home.iloc[3:106, :]
                         riga_giocatore = dati_limitati[dati_limitati.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                         
-                        # Mappatura fissa dei 17 forzieri associati (INVERSIONE INSERITA SU CQ E CR)
+                        # Mappatura fissa dei 17 forzieri associati (Allineata alle colonne esatte)
                         mappatura_forzieri = [
                             {"lettera": "AG", "name": "Rare Crypt 30"},
                             {"lettera": "AK", "name": "Epic Crypt 30"},
@@ -348,8 +348,8 @@ else:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
-                                    # Estrazione pulita del singolo valore in formato stringa
-                                    val_cella = str(riga_giocatore.values[col_idx]).strip().replace(",", "")
+                                    # CORREZIONE CHIRURGICA: values[0][col_idx] centra la cella singola orizzontale
+                                    val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "")
                                     
                                     # Gestione e pulizia dei decimali se interpretati come float (es: 3.0 -> 3)
                                     if "." in val_cella:
@@ -382,6 +382,7 @@ else:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+
 
 
 
