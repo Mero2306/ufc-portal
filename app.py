@@ -354,13 +354,16 @@ else:
                         tot_points, tot_armageddon, tot_dark_omens = 0, 0, 0
                         
                         if not riga_giocatore.empty:
-                            # ESTRAZIONE DEI TOTALI (E, I, J) CON ILOC SICURO
+                            # ESTRAZIONE DEI TOTALI (E, I, J) SENZA TAGLIARE LE MIGLIAIA
                             def estrai_valore_colonna(lettera_col):
                                 idx = converti_lettera_indice(lettera_col)
                                 if idx < len(dati_freschi_home.columns):
+                                    # CORREZIONE: Se Pandas importa un float (es: 105.0), togliamo il .0 finale, altrimenti eliminiamo il punto delle migliaia
                                     val = str(riga_giocatore.iloc[0, idx]).strip().replace(",", "")
-                                    if "." in val:
-                                        val = val.split(".")[0]
+                                    if val.endswith(".0"):
+                                        val = val[:-2]
+                                    else:
+                                        val = val.replace(".", "")
                                     return int(val) if val.isdigit() else 0
                                 return 0
 
@@ -373,9 +376,12 @@ else:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
+                                    # CORREZIONE STESSA LOGICA ANTI-TAGLIO SUI FORZIERI DETTAGLIATI
                                     val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "")
-                                    if "." in val_cella:
-                                        val_cella = val_cella.split(".")[0]
+                                    if val_cella.endswith(".0"):
+                                        val_cella = val_cella[:-2]
+                                    else:
+                                        val_cella = val_cella.replace(".", "")
                                         
                                     quantita = int(val_cella) if val_cella.isdigit() else 0
                                     
@@ -403,8 +409,10 @@ else:
                         
                         if dettagli_forzieri_player:
                             for item in dettagli_forzieri_player:
+                                # Formattiamo con i punti delle migliaia anche la lista singola dei 17 forzieri per pulizia visiva
+                                count_formattato = f"{item['Count']:,}".replace(",", ".")
                                 nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
-                                st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Count"]}</span></div>', unsafe_allow_html=True)
+                                st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{count_formattato}</span></div>', unsafe_allow_html=True)
                         else:
                             st.info("No chests recorded for this player.")
                     else:
