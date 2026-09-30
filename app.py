@@ -394,29 +394,17 @@ else:
                         else:
                             st.info("No chests recorded for this player.")
 
-                        # SEZIONE VISIVA SEPARATA IN INSERITA ESATTAMENTE IN FONDO ALLA PAGINA
+                        # SEZIONE VISIVA IN REALI TRE COLONNE (STILE PAGINA 5 CLAN RESULTS)
                         st.markdown("<br><hr>", unsafe_allow_html=True)
                         st.markdown(f"### 🏆 {ctx.get('player_totals_title', 'Personal Player Totals')}", unsafe_allow_html=True)
                         
-                        st.markdown(
-                            f"""
-                            <div class="chat-box" style="display:flex;justify-content:space-between;padding:12px 16px!important;margin-bottom:8px!important;border-left:5px solid #4a86e8!important;">
-                                <span style="color:#f0e6d2;font-weight:bold;">{ctx.get('total_points_lbl', 'Total points')}</span>
-                                <span style="color:#4a86e8;font-weight:bold;font-size:20px;">{tot_points}</span>
-                            </div>
-                            <div class="chat-box" style="display:flex;justify-content:space-between;padding:12px 16px!important;margin-bottom:8px!important;border-left:5px solid #990000!important;">
-                                <span style="color:#f0e6d2;font-weight:bold;">{ctx.get('arma_chests_lbl', 'Armageddon chests')}</span>
-                                <span style="color:#990000;font-weight:bold;font-size:20px;">{tot_armageddon}</span>
-                            </div>
-                            <div class="chat-box" style="display:flex;justify-content:space-between;padding:12px 16px!important;margin-bottom:8px!important;border-left:5px solid #38761d!important;">
-                                <span style="color:#f0e6d2;font-weight:bold;">{ctx.get('dark_omens_lbl', 'Dark Omens')}</span>
-                                <span style="color:#38761d;font-weight:bold;font-size:20px;">{tot_dark_omens}</span>
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
+                        tc1, tc2, tc3 = st.columns(3)
+                        tc1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("total_points_lbl", "Total points")}</h3><p style="font-size:28px;color:#4a86e8;font-weight:bold;">{tot_points}</p></div>', unsafe_allow_html=True)
+                        tc2.markdown(f'<div class="chat-box" style="text-align:center;border-left:5px solid #990000!important;"><h3>{ctx.get("arma_chests_lbl", "Armageddon chests")}</h3><p style="font-size:28px;color:#990000;font-weight:bold;">{tot_armageddon}</p></div>', unsafe_allow_html=True)
+                        tc3.markdown(f'<div class="chat-box" style="text-align:center;background:linear-gradient(145,#241f16,#14120e)!important;"><h3>{ctx.get("dark_omens_lbl", "Dark Omens")}</h3><p style="font-size:32px;color:#d4b373;font-weight:bold;">{tot_dark_omens}</p></div>', unsafe_allow_html=True)
+                        
                     else:
-                        # NUOVO BOX INFORMATIVO AGGANCIO GRAFICO PERFETTO ALLO STILE AVVISO PRINCIPALE (SENZA BORDI DORATI)
+                        # BOX INFORMATIVO AGGANCIO GRAFICO PERFETTO ALLO STILE AVVISO PRINCIPALE
                         st.markdown("<br>", unsafe_allow_html=True)
                         text_select_info = ctx.get("select_info_lbl", "💡 **Notice:** Please select your nickname from the dropdown menu above to display your personal chest statistics.")
                         st.markdown(
@@ -435,6 +423,7 @@ else:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+
 
 
 
