@@ -272,77 +272,87 @@ else:
             try:
                 # Estraiamo i giocatori solo fino alla riga 106 (indice 106 escluso) sulla colonna D (indice 3)
                 df_players = dati_freschi_home.iloc[3:106, 3].dropna().astype(str).str.strip()
-                lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
+                lista_giocatori_reali = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
-                if lista_giocatori:
+                if lista_giocatori_reali:
+                    # AGGIUNGIAMO IL SEGNAPOSTO IN INGLESE COME PRIMO ELEMENTO DELLA LISTA
+                    etichetta_placeholder = "-- Select Name --"
+                    lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reales
+                    
                     player_scelto = st.selectbox(
                         ctx.get("select_player_lbl", "Select your name to check your chests:"),
-                        lista_giocatori
+                        lista_con_placeholder
                     )
                     
-                    # Filtriamo la riga esatta del giocatore limitando la ricerca alla riga 106
-                    nome_selezionato = str(player_scelto).strip()
-                    dati_limitati = dati_freschi_home.iloc[3:106, :]
-                    riga_giocatore = dati_limitati[dati_limitati.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
-                    
-                    # MAPPARE FISSANDO NOMI E LETTERE DELLE COLONNE DIRETTAMENTE NEL CODICE
-                    mappatura_forzieri = [
-                        {"lettera": "AG", "name": "Rare Crypt 30"},
-                        {"lettera": "AK", "name": "Epic Crypt 30"},
-                        {"lettera": "AL", "name": "Epic Crypt 35"},
-                        {"lettera": "AS", "name": "Arachne's Swarm"},
-                        {"lettera": "AT", "name": "Epic Undead Squad"},
-                        {"lettera": "AU", "name": "Shadow City"},
-                        {"lettera": "AV", "name": "Armageddon"},
-                        {"lettera": "AW", "name": "Hellforge"},
-                        {"lettera": "AX", "name": "Epic Fenrir Squad"},
-                        {"lettera": "AY", "name": "Jormungandr Squad"},
-                        {"lettera": "AZ", "name": "Epic Chimera Squad"},
-                        {"lettera": "BA", "name": "Epic Basilisk Squad"},
-                        {"lettera": "BB", "name": "Epic Briareus Squad"},
-                        {"lettera": "CO", "name": "Sands of Eternity"},
-                        {"lettera": "CP", "name": "Arcanomancer squad"},
-                        {"lettera": "CR", "name": "Yokai"},
-                        {"lettera": "CQ", "name": "Union of Triumph"}
-                    ]
-                    
-                    def converti_lettera_indice(let):
-                        let = let.upper().strip()
-                        index = 0
-                        for char in let:
-                            index = index * 26 + (ord(char) - ord('A') + 1)
-                        return index - 1
+                    # MOSTRA I DATI SOLO SE VIENE SELEZIONATO UN GIOCATORE VERO
+                    if player_scelto != etichetta_placeholder:
+                        # Filtriamo la riga esatta del giocatore limitando la ricerca alla riga 106
+                        nome_selezionato = str(player_scelto).strip()
+                        dati_limitati = dati_freschi_home.iloc[3:106, :]
+                        riga_giocatore = dati_limitati[dati_limitati.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
+                        
+                        # Mappatura fissa dei 17 forzieri associati alle rispettive colonne
+                        mappatura_forzieri = [
+                            {"lettera": "AG", "name": "Rare Crypt 30"},
+                            {"lettera": "AK", "name": "Epic Crypt 30"},
+                            {"lettera": "AL", "name": "Epic Crypt 35"},
+                            {"lettera": "AS", "name": "Arachne's Swarm"},
+                            {"lettera": "AT", "name": "Epic Undead Squad"},
+                            {"lettera": "AU", "name": "Shadow City"},
+                            {"lettera": "AV", "name": "Armageddon"},
+                            {"lettera": "AW", "name": "Hellforge"},
+                            {"lettera": "AX", "name": "Epic Fenrir Squad"},
+                            {"lettera": "AY", "name": "Jormungandr Squad"},
+                            {"lettera": "AZ", "name": "Epic Chimera Squad"},
+                            {"lettera": "BA", "name": "Epic Basilisk Squad"},
+                            {"lettera": "BB", "name": "Epic Briareus Squad"},
+                            {"lettera": "CO", "name": "Sands of Eternity"},
+                            {"lettera": "CP", "name": "Arcanomancer squad"},
+                            {"lettera": "CR", "name": "Yokai"},
+                            {"lettera": "CQ", "name": "Union of Triumph"}
+                        ]
+                        
+                        def converti_lettera_indice(let):
+                            let = let.upper().strip()
+                            index = 0
+                            for char in let:
+                                index = index * 26 + (ord(char) - ord('A') + 1)
+                            return index - 1
 
-                    dettagli_forzieri_player = []
-                    
-                    if not riga_giocatore.empty:
-                        for item_forziere in mappatura_forzieri:
-                            col_idx = converti_lettera_indice(item_forziere["lettera"])
-                            
-                            if col_idx < len(dati_freschi_home.columns):
-                                # Estraiamo in totale sicurezza il singolo valore numerico orizzontale pulito
-                                val_cella = str(riga_giocatore.values[0][col_idx]).strip()
-                                # Rimuoviamo eventuali decimali se presenti (es: 3.0 -> 3)
-                                if "." in val_cella:
-                                    val_cella = val_cella.split(".")[0]
-                                    
-                                quantita = int(val_cella) if val_cella.isdigit() else 0
+                        dettagli_forzieri_player = []
+                        
+                        if not riga_giocatore.empty:
+                            for item_forziere in mappatura_forzieri:
+                                col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
-                                dettagli_forzieri_player.append({
-                                    "Chest Name": item_forziere["name"],
-                                    "Count": quantita
-                                })
-                    
-                    st.markdown("<br>", unsafe_allow_html=True)
-                    st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
-                    
-                    # Stampiamo l'elenco pulito con i nomi staccati a sinistra e i numeri singoli esatti a destra
-                    if dettagli_forzieri_player:
-                        for item in dettagli_forzieri_player:
-                            nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
-                            st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Count"]}</span></div>', unsafe_allow_html=True)
+                                if col_idx < len(dati_freschi_home.columns):
+                                    # Estrazione pulita del singolo valore in formato stringa
+                                    val_cella = str(riga_giocatore.values[col_idx]).strip().replace(",", "")
+                                    
+                                    # Gestione e pulizia dei decimali se interpretati come float (es: 3.0 -> 3)
+                                    if "." in val_cella:
+                                        val_cella = val_cella.split(".")[0]
+                                        
+                                    quantita = int(val_cella) if val_cella.isdigit() else 0
+                                    
+                                    dettagli_forzieri_player.append({
+                                        "Chest Name": item_forziere["name"],
+                                        "Count": quantita
+                                    })
+                        
+                        st.markdown("<br>", unsafe_allow_html=True)
+                        st.markdown(f"### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
+                        
+                        # Stampiamo l'elenco pulito con i nomi staccati a sinistra e i numeri singoli a destra
+                        if dettagli_forzieri_player:
+                            for item in dettagli_forzieri_player:
+                                nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
+                                st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Count"]}</span></div>', unsafe_allow_html=True)
+                        else:
+                            st.info("No chests recorded for this player.")
                     else:
-                        st.info("No chests recorded for this player.")
+                        # Messaggio informativo neutro visualizzato quando lo schermo è in attesa della scelta del nome
+                        st.info("💡 Please select your nickname from the dropdown menu above to display your personal chest statistics.")
                 else:
                     st.warning("No players found in the data column D.")
             except Exception as e:
