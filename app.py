@@ -255,6 +255,7 @@ else:
             GOOGLE_SHEET_LINK,
             width='stretch',
         )
+        
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
