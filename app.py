@@ -128,7 +128,7 @@ if not st.session_state["authenticated"]:
 else:
 
 
-               # 3. PORTAL INTERFACE (LOGO MAXI CENTRATO E SICURO)
+    # 3. PORTAL INTERFACE (LOGO MAXI CENTRATO E SICURO)
     if os.path.exists("logo.png"):
         side_c1, side_c2, side_c3 = st.sidebar.columns([1, 4, 1])
         with side_c2:
@@ -138,28 +138,6 @@ else:
 
     st.sidebar.markdown("<h2 style='font-size: 20px; text-align: center; margin-top: 10px; margin-bottom: 15px;'>UFC Portal</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
-
-
-
-
-    lang_choice = st.sidebar.selectbox(
-        ctx.get("sidebar_lang_lbl", "🌐 SELECT LANGUAGE:"),
-        [
-            "🇬🇧 English",
-            "🇮🇹 Italiano",
-            "🇫🇷 Français",
-            "🇪🇸 Español",
-            "🇩🇪 Deutsch",
-            "🇷🇺 Русский",
-            "🇹🇷 Türkçe",
-            "🇵🇹 Português",
-            "🇧🇷 Brasileiro",
-            "🇵🇱 Polski",
-            "🇨🇳 简体中文",
-            "🇺🇦 Українська",
-            "🇯🇵 日本語",
-        ],
-    )
 
     # Mappatura dei file esterni caricati sul tuo GitHub (Aggiornata con le bandiere)
     lang_files = {
@@ -171,25 +149,44 @@ else:
         "🇷🇺 Русский": "ru.json",
         "🇹🇷 Türkçe": "tr.json",
         "🇵🇹 Português": "pt.json",
-        "🇧🇷 Brasileiro": "br.json",
+        "🇧 رازيل Brasileiro": "br.json",
         "🇵🇱 Polski": "pl.json",
         "🇨🇳 简体中文": "zh.json",
         "🇺🇦 Українська": "uk.json",
         "🇯🇵 日本語": "ja.json",
     }
 
+    # PER EVITARE ERRORI DI INDICE, RECUPERIAMO PRIMA LA LINGUA SELEZIONATA DAL COSTRUTTO DELLO STATO DI STREAMLIT
+    if "selected_language_state" not in st.session_state:
+        st.session_state["selected_language_state"] = "🇮🇹 Italiano"
 
-    # Caricamento dinamico dei testi per la barra laterale
+    # CARICAMENTO DINAMICO DEI TESTI (SPOSTATO IN ALTO PER EVITARE L'ERRORE OUT OF BOUNDS)
     ctx = {}
-    if lang_choice in lang_files and os.path.exists(lang_files[lang_choice]):
+    lingua_corrente = st.session_state["selected_language_state"]
+    if lingua_corrente in lang_files and os.path.exists(lang_files[lingua_corrente]):
         try:
-            with open(lang_files[lang_choice], "r", encoding="utf-8") as f:
+            with open(lang_files[lingua_corrente], "r", encoding="utf-8") as f:
                 ctx = json.load(f)
         except Exception:
             ctx = {}
 
+    # COSTRUIAMO LA SELECTBOX DELLE LINGUE TRADOTTA USANDO IL DIZIONARIO APPENA CARICATO
+    lista_lingue = list(lang_files.keys())
+    indice_predefinito = lista_lingue.index(lingua_corrente) if lingua_corrente in lista_lingue else 1
+
+    lang_choice = st.sidebar.selectbox(
+        ctx.get("sidebar_lang_lbl", "🌐 SELECT LANGUAGE:"),
+        lista_lingue,
+        index=indice_predefinito,
+        key="home_language_selector_official_final"
+    )
+
+    # SE IL GIOCATORE CAMBIA LINGUA, AGGIORNIAMO LO STATO IN MEMORIA E RICARICHIAMO IL SITO CON I NUOVI TESTI
+    if lang_choice != st.session_state["selected_language_state"]:
+        st.session_state["selected_language_state"] = lang_choice
+        st.rerun()
+
     # Menu laterale che cambia lingua prendendo i dati dai tuoi JSON
-           # Menu laterale che cambia lingua prendendo i dati dai tuoi JSON
     options = [
         ctx.get("menu_home", "🏠 Home Dashboard"),
         ctx.get("menu_info", "📋 Clan Info & Chats"),
@@ -201,6 +198,7 @@ else:
 
     page = st.sidebar.radio("NAVIGATION:", options)
     st.sidebar.markdown("---")
+
 
     # IL TUO LINK REALE DI GOOGLE SHEET CONFIGURATO
     GOOGLE_SHEET_LINK = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/edit?usp=sharing"
