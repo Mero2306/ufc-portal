@@ -259,17 +259,19 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
+        # COLLEGAMENTO AL FOGLIO TRAMITE ESPORTAZIONE CSV NATIVA DELLA PRIMA PAGINA
         import pandas as pd
         dati_freschi_home = None
         try:
-            url_prima_scheda_gviz = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=432024066"
-            dati_freschi_home = pd.read_csv(url_prima_scheda_gviz, header=None)
+            # Sostituiamo i parametri per forzare il download del CSV puro senza filtri grafici
+            url_csv_nativo = GOOGLE_SHEET_LINK.replace("/edit?usp=sharing", "/export?format=csv&gid=0")
+            dati_freschi_home = pd.read_csv(url_csv_nativo, header=None)
         except Exception:
             dati_freschi_home = None
 
         if dati_freschi_home is not None:
             try:
-                # Estraiamo i giocatori solo ed esclusivamente dalla COLONNA D (indice 3), partendo dalla riga 4 (indice 3) in poi
+                # Estraiamo i giocatori dalla colonna D (indice 3), partendo dalla riga 4 (indice 3) in poi
                 df_players = dati_freschi_home.iloc[3:, 3].dropna().astype(str).str.strip()
                 lista_giocatori = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
@@ -279,11 +281,11 @@ else:
                         lista_giocatori
                     )
                     
-                    # Filtriamo la riga esatta del giocatore pulendo gli spazi sulla Colonna D (indice 3)
+                    # Filtriamo la riga esatta del giocatore pulendo gli spazi sulla colonna D (indice 3)
                     nome_selezionato = str(player_scelto).strip()
                     riga_giocatore = dati_freschi_home[dati_freschi_home.iloc[:, 3].astype(str).str.strip() == nome_selezionato]
                     
-                    # Elenco esatto delle 17 colonne dinamiche fornite da Maurizio
+                    # Elenco esatto delle 17 colonne fornite da Maurizio
                     colonne_lettere = ["AG", "AK", "AL", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "CO", "CP", "CR", "CQ"]
                     
                     def converti_lettera_indice(let):
@@ -300,11 +302,11 @@ else:
                             col_idx = converti_lettera_indice(let)
                             
                             if col_idx < len(dati_freschi_home.columns):
-                                # CORREZIONE DEFINITIVA: Estraiamo la singola cella isolata puntando all'indice [0] della matrice
-                                val_cella = str(riga_giocatore.values[0][col_idx]).strip().replace(",", "").replace(".", "")
+                                # CORREZIONE ASSOLUTA: Estraiamo il singolo numero isolato di quel giocatore (.iloc[0])
+                                val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
-                                # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 della prima pagina del foglio
+                                # Recuperiamo i titoli del forziere dalla riga 0 e riga 1 del foglio originale
                                 nome_cat = str(dati_freschi_home.iloc[0, col_idx]).strip()
                                 nome_sub = str(dati_freschi_home.iloc[1, col_idx]).strip()
                                 
