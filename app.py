@@ -322,9 +322,11 @@ else:
                     etichetta_placeholder = ctx.get("select_name_placeholder", "-- Select Name --")
                     lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reali
                     
+                    # INSERITA CHIAVE UNICA (key) PER EVITARE IL DUPLICATO DI ID NEL SERVER
                     player_scelto = st.selectbox(
                         ctx.get("select_player_lbl", "Select your name to check your chests:"),
-                        lista_con_placeholder
+                        lista_con_placeholder,
+                        key="home_player_selector_unique"
                     )
                     
                     # MOSTRA I DATI SOLO SE VIENE SELEZIONATO UN GIOCATORE VERO
