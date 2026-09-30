@@ -309,7 +309,8 @@ else:
                 lista_giocatori_reali = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
                 
                 if lista_giocatori_reali:
-                    etichetta_placeholder = "-- Select Name --"
+                    etichetta_placeholder = ctx.get("select_name_placeholder", "-- Select Name --")
+
                     lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reali
                     
                     player_scelto = st.selectbox(
