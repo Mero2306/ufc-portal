@@ -259,11 +259,17 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # Utilizziamo il DataFrame già caricato all'avvio del portale
-        if 'results_data' in globals() or 'results_data' in locals():
-            dati_totali = results_data
-        else:
-            dati_totali = None
+        # FORZIAMO IL CARICAMENTO DIRETTO DAL LINK DI GOOGLE SHEETS
+        import pandas as pd
+        dati_totali = None
+        if 'GOOGLE_SHEET_LINK' in globals():
+            try:
+                # Trasformiamo il link in formato esportazione CSV per Pandas
+                csv_url = GOOGLE_SHEET_LINK.replace('/edit?usp=sharing', '/export?format=csv')
+                csv_url = csv_url.replace('/edit#gid=', '/export?format=csv&gid=')
+                dati_totali = pd.read_csv(csv_url, header=None)
+            except Exception:
+                dati_totali = None
 
         if dati_totali is not None:
             try:
@@ -300,7 +306,7 @@ else:
                             col_idx = converti_lettera_indice(let)
                             
                             if col_idx < len(dati_totali.columns):
-                                # Estraiamo il valore reale entrando dentro la riga della matrice filtrata
+                                # Estraiamo il valore reale entrando dentro la prima riga della matrice filtrata
                                 val_cella = str(riga_trovata.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
@@ -333,7 +339,8 @@ else:
             except Exception as e:
                 st.error(f"Error processing player statistics: {e}")
         else:
-            st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
+            st.warning("⚠️ Error: Unable to fetch data directly from Google Sheets link. Please verify the URL.")
+      
    
        
     # --- PAGINA 1: CLAN INFO & CHATS ---
