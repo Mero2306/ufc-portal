@@ -259,14 +259,14 @@ else:
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
         st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
         
-        # FORZIAMO IL CARICAMENTO DIRETTO DAL LINK DI GOOGLE SHEETS
+        # FORZIAMO IL CARICAMENTO DIRETTO TRAMITE L'URL DI ESPORTAZIONE CORRETTO
         import pandas as pd
         dati_totali = None
         if 'GOOGLE_SHEET_LINK' in globals():
             try:
-                # Trasformiamo il link in formato esportazione CSV per Pandas
-                csv_url = GOOGLE_SHEET_LINK.replace('/edit?usp=sharing', '/export?format=csv')
-                csv_url = csv_url.replace('/edit#gid=', '/export?format=csv&gid=')
+                # Trasformiamo il link nel formato corretto di esportazione per fogli pubblici
+                sheet_id = GOOGLE_SHEET_LINK.split("/d/")[1].split("/")[0]
+                csv_url = f"https://google.com{sheet_id}/export?format=csv"
                 dati_totali = pd.read_csv(csv_url, header=None)
             except Exception:
                 dati_totali = None
@@ -306,7 +306,7 @@ else:
                             col_idx = converti_lettera_indice(let)
                             
                             if col_idx < len(dati_totali.columns):
-                                # Estraiamo il valore reale entrando dentro la prima riga della matrice filtrata
+                                # Estraiamo il valore reale entrando dentro la riga filtrata del giocatore usando .values[0]
                                 val_cella = str(riga_trovata.values[0][col_idx]).strip().replace(",", "").replace(".", "")
                                 quantita = int(val_cella) if val_cella.isdigit() else 0
                                 
@@ -340,9 +340,7 @@ else:
                 st.error(f"Error processing player statistics: {e}")
         else:
             st.warning("⚠️ Error: Unable to fetch data directly from Google Sheets link. Please verify the URL.")
-      
    
-       
     # --- PAGINA 1: CLAN INFO & CHATS ---
     elif page in ["📋 Clan Info & Chats", ctx.get("menu_info")]:
         apply_custom_style("bg_info.jpg")
