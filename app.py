@@ -317,6 +317,16 @@ else:
                         lista_con_placeholder
                     )
                     
+                if lista_giocatori_reali:
+                    # CORREZIONE ASSOLUTA: Creiamo il placeholder traducibile prima di riempire il menu
+                    etichetta_placeholder = ctx.get("select_name_placeholder", "-- Select Name --")
+                    lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reali
+                    
+                    player_scelto = st.selectbox(
+                        ctx.get("select_player_lbl", "Select your name to check your chests:"),
+                        lista_con_placeholder
+                    )
+                    
                     # MOSTRA I DATI SOLO SE VIENE SELEZIONATO UN GIOCATORE VERO
                     if player_scelto != etichetta_placeholder:
                         nome_selezionato = str(player_scelto).strip()
@@ -358,7 +368,6 @@ else:
                             def estrai_valore_colonna(lettera_col):
                                 idx = converti_lettera_indice(lettera_col)
                                 if idx < len(dati_freschi_home.columns):
-                                    # CORREZIONE FILTRO: iloc[0, idx] garantisce l'estrazione della cella singola
                                     val = str(riga_giocatore.iloc[0, idx]).strip().replace(",", "")
                                     if val.endswith(".0"):
                                         val = val[:-2]
@@ -376,7 +385,6 @@ else:
                                 col_idx = converti_lettera_indice(item_forziere["lettera"])
                                 
                                 if col_idx < len(dati_freschi_home.columns):
-                                    # CORREZIONE FILTRO: iloc[0, col_idx] evita l'errore out of bounds
                                     val_cella = str(riga_giocatore.iloc[0, col_idx]).strip().replace(",", "")
                                     if val_cella.endswith(".0"):
                                         val_cella = val_cella[:-2]
