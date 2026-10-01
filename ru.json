@@ -16,7 +16,7 @@
   "info_c2": "<b>🏙️ RoC CP Swap Cities</b><br>- здесь вы отмечаете вход/выход из городов CP",
   "info_c3": "<b>📢 The Daily Raid</b><br>- история объявлений клана",
   "info_c4": "<b>💀 OPERATION EPIC DEMISE</b><br>- координация и выбор целей для эпических монстров",
-  "info_c5": "<b>🔮 ROC DARK OMENS</b><br>- выделенный чат для события Мрачные знамения",
+  "info_c5": "<b>🔮 ROC DARK OMENS</b><br>- чат выделенный для события Мрачные знамения",
   "info_c6": "<b>⚡ ROC OLYMPUS</b><br>- выделенный чат для события Олимп",
   "info_c7": "<b>🔥 ROC TORCH</b><br>- чат для контроля того, чтобы артефакт факела у всех был на 5 звезд",
   "info_sub": "<b>🛡️ [SUB-CLAN] ((76 RoE))</b><br>- Подробности о K76 RoE",
@@ -66,5 +66,7 @@
   "Sands of Eternity": "Пески вечности",
   "Arcanomancer squad": "Отряд арканомагов",
   "Yokai": "Йокай",
-  "Union of Triumph": "Союз триумфа"
+  "Union of Triumph": "Союз триумфа",
+  "select_name_placeholder": "-- Выберите Имя --",
+  "sidebar_lang_lbl": "🌐 ВЫБЕРИТЕ ЯЗЫК:"
 }
