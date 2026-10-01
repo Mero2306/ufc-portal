@@ -12,8 +12,8 @@
   "info_h1": "📋 Klan Bilgisi ve Resmi Kanallar",
   "info_write": "UFC Raiders of Chaos resmi kanalları.",
   "info_h3": "### ⚔️ Klan Sohbetleri & Açıklamalar",
-  "info_c1": "<b>🏰 RoC Vaults</b><br>- oluşturduğunuz mahzeni kaydedeceğiniz yer",
-  "info_c2": "<b>🏙️ RoC CP Swap Cities</b><br>- CP şehirlerine giriş/çıkış yapacağınız yer",
+  "info_c1": "<b>🏰 RoC Vaults</b><br>- oluşturduğunuz mahzeni kaydedececeğiniz yer",
+  "info_c2": "<b>🏙️ RoC CP Swap Cities</b><br>- onde fará o check-in/out das cidades CP",
   "info_c3": "<b>📢 The Daily Raid</b><br>- klan duyurularının geçmişi",
   "info_c4": "<b>💀 OPERATION EPIC DEMISE</b><br>- destansı canavarlar için koordinasyon ve hedefleme",
   "info_c5": "<b>🔮 ROC DARK OMENS</b><br>- Kara Alametler etkinliği için özel sohbet",
@@ -27,7 +27,7 @@
   "min_w2": "- **Armageddon:** 50 sandık",
   "min_w3": "- **Ragnarok:** 500 M",
   "min_w4": "- **Olympus:** 570.000",
-  "min_w5": "- **Dark Omens:** 100 sandık, maksimum dökülen petrol ve adil savunma payı",
+  "min_w5": "- **Kara Alametler:** 100 sandık, maksimum dökülen petrol ve adil savunma payı",
   "disc_h1": "🌐 Resmi Raiders of Chaos Discord Sunucusu",
   "disc_info": "💡 Aşağıdaki buton yakında resmi davet koduyla aktif edilecektir.",
   "disc_btn": "🔮 DISCORD BUTONU - YAKINDA 🔮",
@@ -66,5 +66,7 @@
   "Sands of Eternity": "Sonsuzluk Kumları",
   "Arcanomancer squad": "Büyücü Mangası",
   "Yokai": "Yokai",
-  "Union of Triumph": "Zafer Birliği"
+  "Union of Triumph": "Zafer Birliği",
+  "select_name_placeholder": "-- İsim Seçin --",
+  "sidebar_lang_lbl": "🌐 DİL SEÇİN:"
 }
