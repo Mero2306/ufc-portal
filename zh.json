@@ -7,7 +7,7 @@
   "menu_res": "🏆 联盟结果",
   "home_h1": "🏠 UFC Raiders of Chaos",
   "home_write": "查看实时更新的官方宝箱排行榜。",
-  "home_info": "💡 **提示：** 点击下方按钮后，官方排行榜将在新浏览器标签页中以“仅限查看” class=\"\" 模式安全打开。",
+  "home_info": "💡 **提示：** 点击下方按钮后，官方排行榜将在新浏览器标签页中以“仅限查看”模式安全打开。",
   "home_btn": "⚔️ 点击此处打开 UFC 宝箱排行榜 ⚔️",
   "info_h1": "📋 联盟信息与官方频道",
   "info_write": "UFC Raiders of Chaos 官方频道。",
@@ -32,8 +32,8 @@
   "disc_info": "💡 下方按钮很快将随官方邀请码一起激活。",
   "disc_btn": "🔮 DISCORD 按钮 - 即将推出 🔮",
   "calc_h1": "⚔️ 军队计算器",
-  "calc_write": "访问大多数 Total Battle 联盟使用的高效军队和配兵模拟器。",
-  "calc_info": "💡 **战术提示：** 此按钮将把你安全重定向到官方 Kaiculator。动态计算你的队长和乘数，以实现最高效 complimentary 攻击。",
+  "calc_write": "访问大多数 Total Battle 联盟使用的高效军队 and 配兵模拟器。",
+  "calc_info": "💡 **战术提示：** 此按钮将把你安全重定向到官方 Kaiculator。动态计算你的队长和乘数，以实现最高效攻击。",
   "calc_btn": "🛡️ 打开官方 KAICULATOR 🛡️",
   "res_h1": "🏆 联盟实时结果",
   "res_write": "直接从宝箱统计中提取的数据。",
@@ -66,5 +66,7 @@
   "Sands of Eternity": "永恒之沙",
   "Arcanomancer squad": "奥术师小队",
   "Yokai": "妖怪",
-  "Union of Triumph": "凯旋联盟"
+  "Union of Triumph": "凯旋联盟",
+  "select_name_placeholder": "-- 选择姓名 --",
+  "sidebar_lang_lbl": "🌐 选择语言:"
 }
