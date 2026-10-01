@@ -6,7 +6,7 @@
   "menu_calc": "⚔️ Kalkulator wojsk",
   "menu_res": "🏆 Wyniki klanu",
   "home_h1": "🏠 UFC Raiders of Chaos",
-  "home_write": "Sprawdź oficjalny ranking skrzyń aktualizowany en czasie rzeczywistym.",
+  "home_write": "Sprawdź oficjalny ranking skrzyń aktualizowany w czasie rzeczywistym.",
   "home_info": "💡 **Uwaga:** Kliknięcie poniższego przycisku spowoduje bezpieczne otwarcie oficjalnego rankingu w nowej karcie przeglądarki w trybie Tylko do odczytu.",
   "home_btn": "⚔️ KLIKNIJ TUTAJ, ABY OTWORZYĆ RANKING SKRZYŃ UFC ⚔️",
   "info_h1": "📋 Informacje o klanie i oficjalne kanały",
@@ -16,7 +16,7 @@
   "info_c2": "<b>🏙️ RoC CP Swap Cities</b><br>- gdzie meldujesz się w miastach CP",
   "info_c3": "<b>📢 The Daily Raid</b><br>- historia ogłoszeń klanowych",
   "info_c4": "<b>💀 OPERATION EPIC DEMISE</b><br>- koordynacja i wyznaczanie celów dla epickich potworów",
-  "info_c5": "<b>🔮 ROC DARK OMENS</b><br>- czat dedykowany wydarzeniu Mroczne Znakami",
+  "info_c5": "<b>🔮 ROC DARK OMENS</b><br>- czat dedykowany wydarzeniu Mroczne Znaki",
   "info_c6": "<b>⚡ ROC OLYMPUS</b><br>- czat dedykowany wydarzeniu Olimp",
   "info_c7": "<b>🔥 ROC TORCH</b><br>- czat poświęcony dbaniu o to, aby artefakt pochodni każdego członka miał 5 gwiazdek",
   "info_sub": "<b>🛡️ [SUB-CLAN] ((76 RoE))</b><br>- Szczegóły K76 RoE",
@@ -27,7 +27,7 @@
   "min_w2": "- **Armagedon:** 50 skrzyń",
   "min_w3": "- **Ragnarok:** 500 M",
   "min_w4": "- **Olimp:** 570.000",
-  "min_w5": "- **Dark Omens:** 100 skrzyń, maksymalna ilość wlanej ropy i sprawiedliwy udział w obronie",
+  "min_w5": "- **Mroczne Znaki:** 100 skrzyń, maksymalna ilość wlanej ropy i sprawiedliwy udział w obronie",
   "disc_h1": "🌐 Oficjalny serwer Discord Raiders of Chaos",
   "disc_info": "💡 Poniższy przycisk zostanie wkrótce aktywowany z oficjalnym kodem zaproszenia.",
   "disc_btn": "🔮 PRZYCISK DISCORD - WKRÓTCE 🔮",
@@ -66,5 +66,7 @@
   "Sands of Eternity": "Piaski wieczności",
   "Arcanomancer squad": "Oddział arkanomantów",
   "Yokai": "Yokai",
-  "Union of Triumph": "Sojusz triumfu"
+  "Union of Triumph": "Sojusz triumfu",
+  "select_name_placeholder": "-- Wybierz Imię --",
+  "sidebar_lang_lbl": "🌐 WYBIERZ JĘZYK:"
 }
