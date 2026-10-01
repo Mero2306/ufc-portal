@@ -27,7 +27,7 @@
   "min_w2": "- **Armagedom:** 50 baús",
   "min_w3": "- **Ragnarok:** 500 M",
   "min_w4": "- **Olimpo:** 570.000",
-  "min_w5": "- **Dark Omens:** 100 baús, máximo de petróleo vertido e quota justa de defesa",
+  "min_w5": "- **Maus Presságios:** 100 baús, máximo de petróleo vertido e quota justa de defesa",
   "disc_h1": "🌐 Servidor Discord Oficial Raiders of Chaos",
   "disc_info": "💡 O botão abaixo será ativado em breve com o código de convite oficial.",
   "disc_btn": "🔮 BOTÃO DISCORD - EM BREVE 🔮",
@@ -40,7 +40,7 @@
   "res_box_crypts": "🏰 TOTAL CRIPTAS",
   "res_box_monsters": "👹 MONSTROS ÉPICOS",
   "res_box_total": "🏆 TOTAL BAÚS",
-  "res_warning": "⚠️ Aguardando os dados ativos... Clique em outra página do menu e volte aqui.",
+  "res_warning": "⚠️ Aguardando os dados ativos... Clique em outra página do menu e visite aqui.",
   "player_section_h2": "👤 Resumo Pessoal do Jogador",
   "select_player_lbl": "Selecione o seu nome para verificar os seus baús:",
   "📊 Detailed Chest Summary": "📊 Resumo Detalhado dos Baús",
@@ -66,5 +66,7 @@
   "Sands of Eternity": "Areias da Eternidade",
   "Arcanomancer squad": "Esquadrão de Arcanomantes",
   "Yokai": "Yokai",
-  "Union of Triumph": "União do Triunfo"
+  "Union of Triumph": "União do Triunfo",
+  "select_name_placeholder": "-- Selecionar Nome --",
+  "sidebar_lang_lbl": "🌐 SELECIONAR IDIOMA:"
 }
