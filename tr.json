@@ -12,8 +12,8 @@
   "info_h1": "📋 Klan Bilgisi ve Resmi Kanallar",
   "info_write": "UFC Raiders of Chaos resmi kanalları.",
   "info_h3": "### ⚔️ Klan Sohbetleri & Açıklamalar",
-  "info_c1": "<b>🏰 RoC Vaults</b><br>- oluşturduğunuz mahzeni kaydedececeğiniz yer",
-  "info_c2": "<b>🏙️ RoC CP Swap Cities</b><br>- onde fará o check-in/out das cidades CP",
+  "info_c1": "<b>🏰 RoC Vaults</b><br>- oluşturduğunuz mahzeni kaydedeceğiniz yer",
+  "info_c2": "<b>🏙️ RoC CP Swap Cities</b><br>- CP şehirlerine giriş/çıkış yapacağınız yer",
   "info_c3": "<b>📢 The Daily Raid</b><br>- klan duyurularının geçmişi",
   "info_c4": "<b>💀 OPERATION EPIC DEMISE</b><br>- destansı canavarlar için koordinasyon ve hedefleme",
   "info_c5": "<b>🔮 ROC DARK OMENS</b><br>- Kara Alametler etkinliği için özel sohbet",
@@ -33,7 +33,7 @@
   "disc_btn": "🔮 DISCORD BUTONU - YAKINDA 🔮",
   "calc_h1": "⚔️ Birlik Hesaplayıcı",
   "calc_write": "Total Battle klanlarının çoğunluğu tarafından kullanılan en verimli ordu ve stack simülatörüne erişin.",
-  "calc_info": "💡 **Taktik Uyarısı:** Bu buton sizi güvenli bir şekilde resmi Kaiculator'a yönlendirir. Verimli saldırılar için Kaptanlarınızı ve çarpanlarınızı dinamik olarak hesaplayın.",
+  "calc_info": "💡 **Taktik Uyarı:** Bu buton sizi güvenli bir şekilde resmi Kaiculator'a yönlendirir. Verimli saldırılar için Kaptanlarınızı ve çarpanlarınızı dinamik olarak hesaplayın.",
   "calc_btn": "🛡️ RESMİ KAICULATOR'U AÇ 🛡️",
   "res_h1": "🏆 Klanın Eş Zamanlı Sonuçları",
   "res_write": "Doğrudan sandık sayımından alınan istatistikler.",
@@ -67,6 +67,6 @@
   "Arcanomancer squad": "Büyücü Mangası",
   "Yokai": "Yokai",
   "Union of Triumph": "Zafer Birliği",
-  "select_name_placeholder": "-- İsim Seçin --",
+  "select_name_placeholder": "-- Dil Seçin --",
   "sidebar_lang_lbl": "🌐 DİL SEÇİN:"
 }
