@@ -7,7 +7,7 @@
   "menu_res": "🏆 クラン結果",
   "home_h1": "🏠 UFC Raiders of Chaos",
   "home_write": "リアルタイムで更新される公式の宝箱ランキングを確認してください。",
-  "home_info": "💡 **注意：** 下のボタンをクリックすると、公式ランキングがブラウザの新しタブで閲覧専用モードで安全に開きます。",
+  "home_info": "💡 **注意：** 下のボタンをクリックすると、公式ランキングがブラウザの新しいタブで閲覧専用モードで安全に開きます。",
   "home_btn": "⚔️ UFC宝箱ランキングを開くにはここをクリック ⚔️",
   "info_h1": "📋 クラン情報と公式チャンネル",
   "info_write": "UFC Raiders of Chaosの公式チャンネル。",
@@ -27,7 +27,7 @@
   "min_w2": "- **アルマゲドン：** 50個の宝箱",
   "min_w3": "- **ラグナロク：** 5億 (500 M)",
   "min_w4": "- **オリンポス：** 570,000",
-  "min_w5": "- **Dark Omens：** 100個の宝箱、タールの最大投入、および適切な防衛貢献",
+  "min_w5": "- **闇の兆候：** 100個の宝箱、タールの最大投入、および適切な防衛貢献",
   "disc_h1": "🌐 公式 Raiders of Chaos Discordサーバー",
   "disc_info": "💡 下のボタンは、公式の招待コードとともに間もなく有効化されます。",
   "disc_btn": "🔮 DISCORDボタン - まもなく登場 🔮",
@@ -66,5 +66,7 @@
   "Sands of Eternity": "永遠の砂",
   "Arcanomancer squad": "魔術師部隊",
   "Yokai": "妖怪",
-  "Union of Triumph": "凱旋の同盟"
+  "Union of Triumph": "凱旋の同盟",
+  "select_name_placeholder": "-- 名前を選択 --",
+  "sidebar_lang_lbl": "🌐 言語を選択:"
 }
