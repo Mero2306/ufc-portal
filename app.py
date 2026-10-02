@@ -737,7 +737,7 @@ else:
             <div style="background-color: rgba(212, 179, 115, 0.05); border: 1px solid #bd9b53; border-left: 5px solid #bd9b53; padding: 12px 15px; border-radius: 4px; margin-bottom: 20px; text-align: center;">
                 <p style="color: #f0e6d2; margin: 0; font-size: 13px; line-height: 1.5;">
                     💡 <b>Notice:</b> Please vote only for your own nickname. Maximum 6 preferences allowed. <br>
-                    In case of selection error, contact a clan Officer immediately to adjust your entry.
+                    In case of selection error, contact a clan Superior immediately to adjust your entry.
                 </p>
             </div>
             """,
