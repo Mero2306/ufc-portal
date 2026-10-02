@@ -973,20 +973,23 @@ else:
                             
                     # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI
                     st.markdown(f"<h4 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 5px;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 22px; font-weight: bold;'>{numero_votanti_totale}</span></h4>", unsafe_allow_html=True)
-                    st.markdown("<h4 style='font-family: \"Cinzel\", serif; margin-bottom: 15px;'>📈 TIME PREFERENCES COUNTER:</h4>", unsafe_allow_html=True)
+                    st.markdown("<h4 style='font-family: \"Cinzel\", serif; margin-bottom: 10px; font-size: 16px !important;'>📈 TIME PREFERENCES COUNTER:</h4>", unsafe_allow_html=True)
                     
                     # Ordiniamo gli orari dal più votato al meno votato
                     orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x[1], reverse=True)
                     
-                    # Creiamo una griglia a 3 colonne per i quadratini dorati sul cellulare
-                    cols_riepilogo = st.columns(3)
+                    # Creiamo una griglia a 4 colonne per renderla ancora più stretta e compatta su schermo
+                    cols_riepilogo = st.columns(4)
                     for idx, (fuso, num_voti) in enumerate(orari_ordinati):
-                        with cols_riepilogo[idx % 3]:
+                        with cols_riepilogo[idx % 4]:
+                            # Forza l'aggiunta della "R" davanti se l'orario ha solo il segno + o - (es. "+1" diventa "R+1")
+                            fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
+                            
                             st.markdown(
                                 f"""
-                                <div class="chat-box" style="text-align: center; padding: 10px !important; margin-bottom: 8px !important; border-left: 3px solid #d4b373 !important;">
-                                    <span style="color: #bd9b53; font-weight: bold; font-size: 14px;">{fuso}</span><br>
-                                    <span style="color: #f0e6d2; font-size: 18px; font-weight: bold;">{num_voti}</span> <span style="font-size: 12px; color: #a69e8d;">votes</span>
+                                <div class="chat-box" style="text-align: center; padding: 4px 6px !important; margin-bottom: 6px !important; border-left: 2px solid #d4b373 !important; border-radius: 4px !important;">
+                                    <span style="color: #bd9b53; font-weight: bold; font-size: 12px;">{fuso_etichetta}</span><br>
+                                    <span style="color: #f0e6d2; font-size: 15px; font-weight: bold;">{num_voti}</span> <span style="font-size: 10px; color: #a69e8d;">v</span>
                                 </div>
                                 """, 
                                 unsafe_allow_html=True
@@ -997,7 +1000,9 @@ else:
                     # SECONDO MENU A SCOMPARSA DEDICATO PER I DETTAGLI DEI NOMINATIVI
                     with st.expander("🔍 VIEW DETAILED PLAYER CHOICES"):
                         for g, o_list in voti_attuali.items():
-                            st.write(f"• **{g}:** {', '.join(o_list)}")
+                            # Anche qui aggiungiamo la R per coerenza visiva nella lista di chi ha votato cosa
+                            orari_formattati_lista = [orario if "R" in orario else f"R{orario}" for orario in o_list]
+                            st.write(f"• **{g}:** {', '.join(orari_formattati_lista)}")
             
             # --- PANNELLO STRUMENTI DI CONTROLLO DIREZIONE CLAN ---
             st.markdown("<br>", unsafe_allow_html=True)
