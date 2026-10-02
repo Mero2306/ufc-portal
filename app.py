@@ -712,7 +712,7 @@ else:
                 )
                 st.markdown("<br>", unsafe_allow_html=True)
                 if st.button("UNLOCK COMMAND CENTER", use_container_width=True):
-                    if pass_superiori == "UFC_Officers_2026":
+                    if pass_superiori == "Mero2306":
                         st.session_state["super_authenticated"] = True
                         st.success("🔑 Access Granted! Re-entering system...")
                         st.rerun()
