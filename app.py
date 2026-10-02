@@ -769,7 +769,7 @@ else:
                     livello_bonus = st.number_input(ctx.get("high_input_bonus", "Bonus Level (0 - 100):"), min_value=0, max_value=100, value=100, step=1, key="cmd_bonus_lvl")
                     num_giocatori = st.number_input(ctx.get("high_input_players", "Number of Players / Accounts (1 - 100):"), min_value=1, max_value=100, value=100, step=1, key="cmd_players_num")
                 with inp_c2:
-                    num_evocazioni = st.number_input(ctx.get("high_input_summons", "Number of Summons (1 - 100):"), min_value=1, max_value=100, value=1, step=1, key="cmd_summons_num")
+                    num_evocazioni = st.number_input(ctx.get("high_input_summons", "Number of Summons (1 - 6):"), min_value=1, max_value=6, value=1, step=1, key="cmd_summons_num")
                     livello_partenza = st.number_input(ctx.get("high_input_start_lvl", "Starting Ancient Level (150 - 250):"), min_value=150, max_value=250, value=200, step=1, key="cmd_start_lvl")
             
             # --- DATABASE REALE ---
