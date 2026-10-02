@@ -972,7 +972,7 @@ else:
                     import pandas as pd
                     import plotly.express as px
                     df_voti = pd.DataFrame([{"Time": k, "Votes": v} for k, v in conteggio_orari.items()]).sort_values(by="Votes", ascending=True)
-                    fig_voti = px.bar(df_voti, x="Votes", y="Time", orientation="h", title="Preferred Evocation Times Summary", color="Votes", color_continuous_scale="Gold")
+                    fig_voti = px.bar(df_voti, x="Votes", y="Time", orientation="h", title="Preferred Evocation Times Summary", color="Votes", color_continuous_scale="gold")
                     fig_voti.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), margin=dict(t=30,b=10,l=10,r=10), height=300)
                     st.plotly_chart(fig_voti, use_container_width=True, config={'displayModeBar': False})
                     
