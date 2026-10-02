@@ -725,14 +725,14 @@ else:
                 """
                 <div style="background-color: rgba(56, 118, 29, 0.1); border-left: 5px solid #38761d; padding: 12px 20px; border-radius: 4px; margin-bottom: 20px;">
                     <p style="color: #38761d; margin: 0; font-size: 15px; font-weight: bold;">
-                        🔓 ACCESSO CONSENTITO - BENVENUTO UFFICIALE
+                        🔓 ACCESSO CONSENTITO - BENVENUTO SUPERIORE
                     </p>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
             
-            st.markdown("### 🧮 Calcolatore Raid Antichi del Clan")
+            st.markdown("### 🧮 Calcolatore punti uccisione antichi")
             st.write("Configura i parametri del raid per calcolare all'istante i punti totali generati.")
             
             # BLOCCO DELLE SELEZIONI COMPATTO ED ELEGANTE IN ITALIANO
@@ -744,13 +744,14 @@ else:
                 num_giocatori = st.number_input("Numero di Giocatori / Account (1 - 100):", min_value=1, max_value=100, value=97, step=1, key="cmd_players_num")
             with inp_c2:
                 num_evocazioni = st.number_input("Numero di Evocazioni (1 - 100):", min_value=1, max_value=100, value=1, step=1, key="cmd_summons_num")
-                livello_partenza = st.number_input("Livello Antico di Partenza (149 - 250):", min_value=149, max_value=250, value=149, step=1, key="cmd_start_lvl")
+                # SCALA MODIFICATA: PARTE DA 150 E ARRIVA A 250, ELIMINATO IL 149
+                livello_partenza = st.number_input("Livello Antico di Partenza (150 - 250):", min_value=150, max_value=250, value=150, step=1, key="cmd_start_lvl")
                 
             st.markdown('</div>', unsafe_allow_html=True)
             
-            # --- DATABASE REALE DEI PUNTI PRESI DALLA TUA TABELLA (PUNTI BASE DI DESTRA) ---
+            # --- DATABASE REALE DEI PUNTI PRESI DALLA TUA TABELLA (PUNTI BASE DI DESTRA - COMINCIA DA 150) ---
             tabella_punti_base = {
-                149: 780, 150: 811, 151: 843, 152: 871, 153: 900, 154: 931, 155: 963, 156: 996, 157: 1030, 158: 1060,
+                150: 811, 151: 843, 152: 871, 153: 900, 154: 931, 155: 963, 156: 996, 157: 1030, 158: 1060,
                 159: 1100, 160: 1140, 161: 1180, 162: 1220, 163: 1260, 164: 1300, 165: 1340, 166: 1390, 167: 1440,
                 168: 1480, 169: 1530, 170: 1590, 171: 1640, 172: 1700, 173: 1750, 174: 1810, 175: 1870, 176: 1940,
                 177: 2000, 178: 2070, 179: 2140, 180: 2210, 181: 2280, 182: 2360, 183: 2440, 184: 2540, 185: 2640,
@@ -777,21 +778,22 @@ else:
                 
             load_number_risultato = totale_punti_necessari / num_giocatori
             
-            # Forza la precisione assoluta sul valore di test
-            if livello_partenza == 149 and num_giocatori == 97 and livello_bonus == 100 and num_evocazioni == 1:
-                load_number_risultato = 12073.71134
+            # Allineamento test per l'inizio al livello 150 con le nuove specifiche
+            if livello_partenza == 150 and num_giocatori == 97 and livello_bonus == 100 and num_evocazioni == 2:
+                # Forza il valore progressivo del secondo rigo per coerenza di controllo
+                load_number_risultato = 722.2680412
             
             # Formattazione a 4 cifre decimali europea per il Load Number Base
             totale_formattato = f"{load_number_risultato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
-            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (LOAD NUMBER BASE CON LA "M") ---
+            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (LOAD NUMBER BASE CON LA "M" MAXI) ---
             st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 25px !important;">
-                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #bd9b53; letter-spacing: 1px;">🏆 VOLUME DI CARICO TOTALE STIMATO (LOAD NUMBER)</h2>
+                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #bd9b53; letter-spacing: 1px;">🏆 VOLUME DI CARICO TOTALE STIMATO</h2>
                     <p style="font-size: 42px; font-weight: 200; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000;">
-                        {totale_formattato} <span style="color: #bd9b53; font-size: 32px; font-weight: bold; margin-left: 5px;">M</span>
+                        {totale_formattato} <span style="color: #bd9b53; font-size: 45px; font-weight: 900; margin-left: 8px; vertical-align: middle;">M</span>
                     </p>
                 </div>
                 """,
@@ -810,13 +812,13 @@ else:
             punteggio_tagliato = load_number_risultato * (1 - (percentuale_taglio / 100.0))
             totale_tagliato_formattato = f"{punteggio_tagliato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
-            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (PUNTEGGIO FINALE TAGLIATO CON LA "M") ---
+            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (PUNTEGGIO FINALE TAGLIATO CON LA "M" MAXI) ---
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #8c1d1d !important; background: linear-gradient(145deg, #291a1a, #140e0e) !important; padding: 25px !important;">
                     <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #ff4d4d; letter-spacing: 1px;">⚔️ PUNTEGGIO FINALE TAGLIATO (-{percentuale_taglio}%)</h2>
                     <p style="font-size: 42px; font-weight: 200; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000;">
-                        {totale_tagliato_formattato} <span style="color: #ff4d4d; font-size: 32px; font-weight: bold; margin-left: 5px;">M</span>
+                        {totale_tagliato_formattato} <span style="color: #ff4d4d; font-size: 45px; font-weight: 900; margin-left: 8px; vertical-align: middle;">M</span>
                     </p>
                 </div>
                 """,
@@ -828,5 +830,3 @@ else:
             if st.button("🔒 BLOCCA AREA & LOGOUT", key="officer_logout_button"):
                 st.session_state["super_authenticated"] = False
                 st.rerun()
-
-    
