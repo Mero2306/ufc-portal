@@ -688,11 +688,9 @@ else:
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
-        # DIVISORIO INVISIBILE DI SICUREZZA DA 35 PIXEL E TITOLO CENTRATO ULTRA-SPAZIATO
+        # UN SOLO TITOLO DI SICUREZZA CENTRATO E ULTRA-SPAZIATO (CANCELLATO IL DOPPIONE SOTTO)
         st.markdown("<div style='margin-bottom: 35px;'></div>", unsafe_allow_html=True)
         st.markdown(f"<h4 style='margin: 0; text-align: center; font-family: \"Cinzel\", serif; font-size: 16px; font-weight: bold;'>{ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}</h4>", unsafe_allow_html=True)
-
-        st.markdown(f"<br><br><h4 style='margin: 15px 0 5px 0; text-align: center; font-family: \"Cinzel\", serif; font-size: 16px; font-weight: bold;'>{ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}</h4>", unsafe_allow_html=True)
 
 
         # Stampa dei 16 forzieri con i nomi tradotti dinamicamente
