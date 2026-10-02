@@ -41,9 +41,10 @@ def apply_custom_style(image_path):
         
         [data-testid="stSidebar"] {{ background-color: #121212; border-right: 2px solid #bd9b53; box-shadow: 5px 0 15px rgba(0,0,0,0.7); }}
         
-        /* Titoli stile Epic War */
-        h1, h2, h3 {{ color: #d4b373 !important; font-family: 'Cinzel', serif !important; text-shadow: 3px 3px 6px #000000; letter-spacing: 1px; font-weight: 700; }}
-        h1 {{ border-bottom: 2px solid #bd9b53; padding-bottom: 10px; margin-bottom: 25px !important; font-size: 28px !important; }}
+        /* Titoli stile Epic War - CENTRATI SU PC E CELLULARE */
+        h1, h2, h3 {{ color: #d4b373 !important; font-family: 'Cinzel', serif !important; text-shadow: 3px 3px 6px #000000; letter-spacing: 1px; font-weight: 700; text-align: center !important; }}
+        h1 {{ border-bottom: 2px solid #bd9b53; padding-bottom: 10px; margin-bottom: 25px !important; font-size: 28px !important; text-align: center !important; }}
+
         
         /* Box delle Chat e Contenitori con effetto Glow Dorato */
         .chat-box, .stAlert {{ 
