@@ -971,14 +971,14 @@ else:
                     # CONTEGGIO DEL NUMERO TOTALI DI GIOCATORI REALI CHE HANNO ESPRESSO IL VOTO
                     numero_votanti_totale = len(voti_attuali)
                             
-                    # RIPARTO DEI RISULTATI IN FORMATO TESTUALE PULITO E ORDINATO (CON CONTATORE VOTANTI)
+                    # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI
                     st.markdown(f"<h4 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 5px;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 22px; font-weight: bold;'>{numero_votanti_totale}</span></h4>", unsafe_allow_html=True)
                     st.markdown("<h4 style='font-family: \"Cinzel\", serif; margin-bottom: 15px;'>📈 TIME PREFERENCES COUNTER:</h4>", unsafe_allow_html=True)
                     
-                    # Ordiniamo gli orari per mostrare prima quelli con più voti
+                    # Ordiniamo gli orari dal più votato al meno votato
                     orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x[1], reverse=True)
                     
-                    # Creiamo una griglia a 3 colonne per mostrare i voti in modo compatto sul cellulare
+                    # Creiamo una griglia a 3 colonne per i quadratini dorati sul cellulare
                     cols_riepilogo = st.columns(3)
                     for idx, (fuso, num_voti) in enumerate(orari_ordinati):
                         with cols_riepilogo[idx % 3]:
@@ -992,10 +992,12 @@ else:
                                 unsafe_allow_html=True
                             )
                     
-                    # LISTA COMPATTA DETTAGLIATA DI CHI HA VOTATO COSA
-                    st.markdown("<br><b>Detailed Player Choices:</b>", unsafe_allow_html=True)
-                    for g, o_list in voti_attuali.items():
-                        st.write(f"• **{g}:** {', '.join(o_list)}")
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    
+                    # SECONDO MENU A SCOMPARSA DEDICATO PER I DETTAGLI DEI NOMINATIVI
+                    with st.expander("🔍 VIEW DETAILED PLAYER CHOICES"):
+                        for g, o_list in voti_attuali.items():
+                            st.write(f"• **{g}:** {', '.join(o_list)}")
             
             # --- PANNELLO STRUMENTI DI CONTROLLO DIREZIONE CLAN ---
             st.markdown("<br>", unsafe_allow_html=True)
