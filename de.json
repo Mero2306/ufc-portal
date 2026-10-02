@@ -82,7 +82,7 @@
   "high_calc_subtitle": "Konfigurieren Sie die Parameter, um die für Tötungen erforderlichen Gesamtpunkte sofort zu berechnen.",
   "high_input_bonus": "Bonus-Stufe (0 - 100):",
   "high_input_players": "Anzahl der Spieler / Konten (1 - 100):",
-  "high_input_summons": "Anzahl der Beschwörungen (1 - 100):",
+  "high_input_summons": "Anzahl der Beschwörungen (1 - 6):",
   "high_input_start_lvl": "Startstufe des Uralten (150 - 250):",
   "high_box_title_base": "🏆 GESCHÄTZTE GESAMTLADEKAPAZITÄT",
   "high_section_cut_title": "Prozentualer Abzug von der Punktzahl",
