@@ -732,10 +732,100 @@ else:
                 unsafe_allow_html=True
             )
             
-            st.write("### 📜 Strategic Operations & Officer Logs")
-            st.write("This confidential space is ready to host your custom leaderboards, notes, or hidden targets.")
+            st.markdown("### 🧮 Official Ancient Raid Calculator")
+            st.write("Configura i parametri del mostro e i bonus del marciatore per calcolare la forza necessaria e i colpi ideali.")
             
-            # Pulsante di disconnessione e blocco
+            # 1. PANNELLO SELEZIONE MOSTRO ANCIENT
+            st.markdown('### 👹 Target Specifications', unsafe_allow_html=True)
+            st.markdown('<div class="chat-box">', unsafe_allow_html=True)
+            
+            col_m1, col_m2 = st.columns(2)
+            with col_m1:
+                livello_ancient = st.number_input("Ancient Level:", min_value=1, max_value=25, value=5, step=1, key="anc_level_input")
+            with col_m2:
+                # Tabella HP indicativa basata sul livello per velocizzare l'inserimento, modificabile
+                hp_suggeriti = livello_ancient * 1500000
+                hp_mostro = st.number_input("Monster Current HP:", min_value=1, value=int(hp_suggeriti), step=500000, key="anc_hp_input")
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # 2. PANNELLO ACCOUNT & MARCIATORE (DA SPECCHIO FOGLIO GOOGLE)
+            st.markdown('### ⚔️ Marcher & Army Bonuses', unsafe_allow_html=True)
+            st.markdown('<div class="chat-box">', unsafe_allow_html=True)
+            
+            col_b1, col_b2, col_b3 = st.columns(3)
+            with col_b1:
+                forza_marcia = st.number_input("Base Stack Might (Forza Base):", min_value=1000, value=2500000, step=50000, key="anc_might_input")
+            with col_b2:
+                bonus_attacco = st.slider("Attack Bonus / Artifacts (%)", min_value=0, max_value=800, value=120, step=5, key="anc_bonus_input")
+            with col_b3:
+                valor_level = st.slider("Valor / Leadership Level:", min_value=1, max_value=30, value=12, step=1, key="anc_valor_input")
+                
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # --- MOTORE DI CALCOLO FORMULE (MODELLO INTERNO EXTRACTED) ---
+            # Calcolo dei coefficienti di mitigazione del mostro antico in base al livello
+            coefficiente_armatura = 1 + (livello_ancient * 0.12)
+            forza_reale_attaccante = forza_marcia * (1 + (bonus_attacco / 100)) * (1 + (valor_level * 0.04))
+            
+            # Formula del danno effettivo inflitto per singolo colpo (Hit)
+            danno_singolo_colpo = forza_reale_attaccante / coefficiente_armatura
+            
+            # Calcolo dei colpi necessari (minimo 1)
+            colpi_necessari = int(hp_mostro / danno_singolo_colpo) if danno_singolo_colpo > 0 else 1
+            if colpi_necessari < 1: 
+                colpi_necessari = 1
+                
+            # Calcolo della forza totale di marcia cumulativa per ucciderlo (forza complessiva da riversare)
+            forza_totale_richiesta = hp_mostro * coefficiente_armatura / (1 + (bonus_attacco / 100))
+            
+            # Calcolo stimato dei punti evento (punti generati proporzionali agli HP abbattuti e livello)
+            punti_evento_generati = hp_mostro * 0.45 * (1 + (livello_ancient * 0.05))
+            
+            # Formattazione per la corretta lettura europea (punti per le migliaia)
+            forza_necessaria_fmt = f"{int(forza_totale_richiesta):,}".replace(",", ".")
+            danno_colpo_fmt = f"{int(danno_singolo_colpo):,}".replace(",", ".")
+            punti_generati_fmt = f"{int(punti_evento_generati):,}".replace(",", ".")
+            
+            # 3. PANNELLO OUTPUT DEI RISULTATI STATISTICI
+            st.markdown("<br>#### 📊 Raid Execution Strategy:", unsafe_allow_html=True)
+            
+            res_c1, res_c2, res_c3 = st.columns(3)
+            
+            res_c1.markdown(
+                f"""
+                <div class="chat-box" style="text-align:center; border-left: 5px solid #bd9b53 !important;">
+                    <h4 style="margin:0; font-size:13px; color:#bd9b53;">⚔️ TOTAL MIGHT REQUIRED</h4>
+                    <p style="font-size:24px; font-weight:bold; color:#f0e6d2; margin:10px 0 0 0;">{forza_necessaria_fmt}</p>
+                    <small style="color:#a69e8d;">Forza totale minima di squadra</small>
+                </div>
+                """, 
+                unsafe_allow_html=True
+            )
+            
+            res_c2.markdown(
+                f"""
+                <div class="chat-box" style="text-align:center; border-left: 5px solid #8c1d1d !important;">
+                    <h4 style="margin:0; font-size:13px; color:#8c1d1d;">🎯 HITS & SINGLE DAMAGE</h4>
+                    <p style="font-size:24px; font-weight:bold; color:#ff4d4d; margin:10px 0 0 0;">{colpi_necessari} Colpi</p>
+                    <small style="color:#a69e8d;">Danno/Colpo: {danno_colpo_fmt}</small>
+                </div>
+                """, 
+                unsafe_allow_html=True
+            )
+            
+            res_c3.markdown(
+                f"""
+                <div class="chat-box" style="text-align:center; border-left: 5px solid #38761d !important;">
+                    <h4 style="margin:0; font-size:13px; color:#38761d;">🏆 CLAN POINTS GENERATED</h4>
+                    <p style="font-size:24px; font-weight:bold; color:#4caf50; margin:10px 0 0 0;">{punti_generati_fmt}</p>
+                    <small style="color:#a69e8d;">Stima punti evento guadagnati</small>
+                </div>
+                """, 
+                unsafe_allow_html=True
+            )
+            
+            # Pulsante per richiudere la pagina e fare il logout di segurança
             st.markdown("<br><br><hr>", unsafe_allow_html=True)
             if st.button("🔒 LOCK AREA & LOGOUT", key="officer_logout_button"):
                 st.session_state["super_authenticated"] = False
