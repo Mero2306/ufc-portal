@@ -700,9 +700,8 @@ else:
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
     # --- NUOVA PAGINA: VOTAZIONE ORARIO ANTICHI (GESTITA INTERNAMENTE SU FILE LOCAL-SERVER) ---
     elif page == "🗳️ Ancient Evocation Time Voting":
-        apply_custom_style("bg_home.jpg")  # SFONDO DELLA HOME DASHBOARD RICHIESTO
+        apply_custom_style("bg_home.jpg")
         
-        # FUNZIONI DI SERVIZIO PER LEGGERE E SCRIVERE I VOTI SUL SERVER SENZA GOOGLE DRIVE
         FILE_VOTI_SERVER = "voti_interni.json"
         
         def carica_voti_locali():
@@ -723,7 +722,6 @@ else:
 
         voti_totali_memoria = carica_voti_locali()
 
-        # CONNESSIONE DI EMERGENZA PER SCARICARE I NOMI REALI DEI 100 GIOCATORI
         import pandas as pd
         dati_freschi_home = None
         try:
@@ -733,7 +731,9 @@ else:
             dati_freschi_home = None
 
         st.markdown(f"<h1>ANCIENT EVOCATION TIME VOTING</h1>", unsafe_allow_html=True)
-
+        
+        st.markdown(
+            """
             <div style="background-color: rgba(212, 179, 115, 0.05); border: 1px solid #bd9b53; border-left: 5px solid #bd9b53; padding: 12px 15px; border-radius: 4px; margin-bottom: 20px; text-align: center;">
                 <p style="color: #f0e6d2; margin: 0; font-size: 13px; line-height: 1.5;">
                     💡 <b>Notice:</b> Please vote only for your own nickname. Maximum 6 preferences allowed. <br>
@@ -759,7 +759,6 @@ else:
                     if voter_name != "-- Select Player --":
                         st.markdown("<br>", unsafe_allow_html=True)
                         
-                        # ELENCO DEI 24 ORARI BASATI SUL RESET DEL GIOCO
                         orari_disponibili = [
                             "R", "+1", "+2", "+3", "+4", "+5", "+6", "+7", "+8", "+9", "+10", "+11", "+12",
                             "-11", "-10", "-9", "-8", "-7", "-6", "-5", "-4", "-3", "-2", "-1"
@@ -780,6 +779,25 @@ else:
                                     scelte_effettuate.append(orario)
                         
                         st.markdown("<br>", unsafe_allow_html=True)
+                        
+                        if len(scelte_effettuate) > 6:
+                            st.error(f"❌ You have selected {len(scelte_effettuate)} preferences! Maximum 6 allowed. Please uncheck some boxes to proceed.")
+                        elif voter_name in voti_totali_memoria:
+                            st.info(f"ℹ️ {voter_name}, you have already submitted your votes for this session. To change it, please contact an Officer.")
+                        else:
+                            col_sub1, col_sub2, col_sub3 = st.columns([1, 1.5, 1])
+                            with col_sub2:
+                                if st.button("🗳️ SUBMIT VOTING", use_container_width=True):
+                                    if len(scelte_effettuate) == 0:
+                                        st.warning("⚠️ Please select at least 1 time preference before submitting!")
+                                    else:
+                                        voti_totali_memoria[voter_name] = scelte_effettuate
+                                        salva_voti_locali(voti_totali_memoria)
+                                        st.success("🎯 Voting submitted successfully! Your choices are now locked.")
+                                        st.rerun()
+            except Exception as e:
+                st.error(f"Error loading player list for voting: {e}")
+
                         
                         # VERIFICA DEL LIMITE DELLE PREFERENZE MASSIME
                         if len(scelte_effettuate) > 6:
