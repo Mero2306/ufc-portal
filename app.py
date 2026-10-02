@@ -749,7 +749,7 @@ else:
             )
             
             # --- LINK COLLEGAMENTO STRATEGICO ALL'ACCETTA DI ATTILA (PENALITÀ) ---
-            LINK_ATTILA_AXE = "https://google.com"
+            LINK_ATTILA_AXE = "https://docs.google.com/spreadsheets/d/1HWSgbwkahAcDrsHOq3rH4OsnoDvEXLCa/edit?gid=1274350295#gid=1274350295"
             
             st.link_button(
                 ctx.get("high_btn_attila", "⚔️ OPEN ATTILA'S AXE SHEET ⚔️"),
