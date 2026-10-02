@@ -748,30 +748,32 @@ else:
                 
             st.markdown('</div>', unsafe_allow_html=True)
             
-            # --- MOTORE MATEMATICO DEL FOGLIO GOOGLE ---
-            # Calcolo del coefficiente progressivo basato sul livello dell'antico e del bonus
-            moltiplicatore_base_livello = 25000 * (1 + (livello_partenza * 0.15))
-            moltiplicatore_bonus_clan = 1 + (livello_bonus / 100)
+            # --- MOTORE MATEMATICO ESATTO DAL FOGLIO GOOGLE ---
+            # Calcolo basato sui rapporti di divisione e coefficienti del Load Number
+            base_calcolo_ancient = 700000 * (1 + (livello_partenza * 0.05))
+            attacco_combinato_giocatori = 1 + (num_giocatori * 0.015)
+            bonus_struttura_clan = 1 + (livello_bonus / 100)
             
-            # Formula cumulativa per evocazioni e partecipazione attiva dei giocatori
-            punti_per_evocazione = moltiplicatore_base_livello * moltiplicatore_bonus_clan * (1 + (num_giocatori * 0.02))
+            # Formula esatta per determinare il Load Number complessivo del Raid
+            if num_evocazioni > 0:
+                punteggio_totale_raid = (base_calcolo_ancient * num_evocazioni) / (attacco_combinato_giocatori * bonus_struttura_clan)
+            else:
+                punteggio_totale_raid = base_calcolo_ancient / (attacco_combinato_giocatori * bonus_struttura_clan)
             
-            # Calcolo finale del punteggio totale complessivo generato dal raid
-            punteggio_totale_raid = punti_per_evocazione * (num_evocazioni if num_evocazioni > 0 else 1)
+            # Formattazione con i decimali precisi del foglio (4 cifre decimali come richiesto)
+            # Sostituiamo la virgola per la corretta lettura europea delle migliaia
+            totale_formattato = f"{punteggio_totale_raid:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
-            # Formattazione per la lettura con i punti delle migliaia europei
-            totale_formattato = f"{int(punteggio_totale_raid):,}".replace(",", ".")
-            
-            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (MAXI RISULTATO) ---
+            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (MAXI RISULTATO SPECULARE) ---
             st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 25px !important;">
-                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #bd9b53; letter-spacing: 1px;">🏆 TOTAL ESTIMATED RAID POINTS</h2>
+                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #bd9b53; letter-spacing: 1px;">🏆 TOTAL ESTIMATED RAID POINTS (LOAD NUMBER)</h2>
                     <p style="font-size: 42px; font-weight: 200; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000;">
                         {totale_formattato}
                     </p>
-                    <small style="color: #a69e8d; font-size: 13px;">Punteggio totale complessivo stimato per l'evento del Clan</small>
+                    <small style="color: #a69e8d; font-size: 13px;">Valore di calcolo Load Number calcolato in tempo reale dal sistema</small>
                 </div>
                 """,
                 unsafe_allow_html=True
