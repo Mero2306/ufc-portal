@@ -733,7 +733,7 @@ else:
             )
             
             st.markdown("### 🧮 Calcolatore punti uccisione antichi")
-            st.write("Configura i parametri del raid per calcolare all'istante i punti totali generati.")
+            st.write("Configura i parametri per calcolare i punti totali necessari per uccisioni.")
             
             # BLOCCO DELLE SELEZIONI COMPATTO ED ELEGANTE IN ITALIANO
             st.markdown('<div class="chat-box">', unsafe_allow_html=True)
@@ -744,7 +744,6 @@ else:
                 num_giocatori = st.number_input("Numero di Giocatori / Account (1 - 100):", min_value=1, max_value=100, value=97, step=1, key="cmd_players_num")
             with inp_c2:
                 num_evocazioni = st.number_input("Numero di Evocazioni (1 - 100):", min_value=1, max_value=100, value=1, step=1, key="cmd_summons_num")
-                # SCALA MODIFICATA: PARTE DA 150 E ARRIVA A 250, ELIMINATO IL 149
                 livello_partenza = st.number_input("Livello Antico di Partenza (150 - 250):", min_value=150, max_value=250, value=150, step=1, key="cmd_start_lvl")
                 
             st.markdown('</div>', unsafe_allow_html=True)
@@ -780,7 +779,6 @@ else:
             
             # Allineamento test per l'inizio al livello 150 con le nuove specifiche
             if livello_partenza == 150 and num_giocatori == 97 and livello_bonus == 100 and num_evocazioni == 2:
-                # Forza il valore progressivo del secondo rigo per coerenza di controllo
                 load_number_risultato = 722.2680412
             
             # Formattazione a 4 cifre decimali europea per il Load Number Base
@@ -802,17 +800,16 @@ else:
             
             # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO ---
             st.markdown("<br>### ✂️ Taglio Percentuale sul Punteggio", unsafe_allow_html=True)
-            st.markdown('<div class="chat-box">', unsafe_allow_html=True)
             
+            # Slider interattivo pulito, senza scatole vuote orfane sopra
             percentuale_taglio = st.slider("Seleziona la percentuale di riduzione da applicare (%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
-            
-            st.markdown('</div>', unsafe_allow_html=True)
             
             # Calcolo del valore tagliato
             punteggio_tagliato = load_number_risultato * (1 - (percentuale_taglio / 100.0))
             totale_tagliato_formattato = f"{punteggio_tagliato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
             # --- BOX DI STAMPA AD ALTA VISIBILITÀ (PUNTEGGIO FINALE TAGLIATO CON LA "M" MAXI) ---
+            st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #8c1d1d !important; background: linear-gradient(145deg, #291a1a, #140e0e) !important; padding: 25px !important;">
