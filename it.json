@@ -82,7 +82,7 @@
   "high_calc_subtitle": "Configura i parametri per calcolare i punti totali necessari per uccisioni.",
   "high_input_bonus": "Livello del Bonus (0 - 100):",
   "high_input_players": "Numero di Giocatori / Account (1 - 100):",
-  "high_input_summons": "Numero di Evocazioni (1 - 100):",
+  "high_input_summons": "Numero di Evocazioni (1 - 6):",
   "high_input_start_lvl": "Livello Antico di Partenza (150 - 250):",
   "high_box_title_base": "🏆 VOLUME DI CARICO TOTALE STIMATO",
   "high_section_cut_title": "Taglio Percentuale sul Punteggio",
