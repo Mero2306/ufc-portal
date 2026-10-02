@@ -88,6 +88,6 @@
   "high_section_cut_title": "Taglio Percentuale sul Punteggio",
   "high_input_cut": "Seleziona la percentuale di riduzione da applicare (0 - 100%):",
   "high_box_title_cut": "⚔️ PUNTEGGIO FINALE TAGLIATO",
-  "high_btn_logout": "🔒 BLOCCA AREA & LOGOUT",
+  "high_btn_logout": "🔒 ESCI E BLOCCA AREA",
   "high_btn_attila": "⚔️ APRI FILE L'ASCIA DI ATTILA ⚔️"
 }
