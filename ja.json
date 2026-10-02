@@ -82,7 +82,7 @@
   "high_calc_subtitle": "パラメータを設定して、討伐に必要な合計ポイントを即座に計算します。",
   "high_input_bonus": "ボーナスレベル (0 - 100):",
   "high_input_players": "プレイヤー/アカウント数 (1 - 100):",
-  "high_input_summons": "召喚回数 (1 - 100):",
+  "high_input_summons": "召喚回数 (1 - 6):",
   "high_input_start_lvl": "開始古代レベル (150 - 250):",
   "high_box_title_base": "🏆 推定総負荷量",
   "high_section_cut_title": "スコアのパーセンテージ削減",
