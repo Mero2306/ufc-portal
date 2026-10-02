@@ -723,11 +723,17 @@ else:
 
         voti_totali_memoria = carica_voti_locali()
 
+        # CONNESSIONE DI EMERGENZA PER SCARICARE I NOMI REALI DEI 100 GIOCATORI
+        import pandas as pd
+        dati_freschi_home = None
+        try:
+            url_prima_pagina_clan = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=0"
+            dati_freschi_home = pd.read_csv(url_prima_pagina_clan, header=None)
+        except Exception:
+            dati_freschi_home = None
+
         st.markdown(f"<h1>ANCIENT EVOCATION TIME VOTING</h1>", unsafe_allow_html=True)
-        
-        # AVVISO COMPORTAMENTALE IN INGLESE NATIVO (TITOLI CON STESSE DIMENSIONI DEL PORTALE)
-        st.markdown(
-            """
+
             <div style="background-color: rgba(212, 179, 115, 0.05); border: 1px solid #bd9b53; border-left: 5px solid #bd9b53; padding: 12px 15px; border-radius: 4px; margin-bottom: 20px; text-align: center;">
                 <p style="color: #f0e6d2; margin: 0; font-size: 13px; line-height: 1.5;">
                     💡 <b>Notice:</b> Please vote only for your own nickname. Maximum 6 preferences allowed. <br>
