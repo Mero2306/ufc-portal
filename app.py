@@ -197,8 +197,9 @@ else:
         ctx.get("menu_disc", "🌐 Discord Server"),
         ctx.get("menu_calc", "⚔️ Troops Calculator"),
         ctx.get("menu_res", "🏆 Clan Results")
+        ctx.get("menu_high", "👑 Command")  # NUOVA VOCE NATIVA IN INGLESE
     ]
-
+     
     page = st.sidebar.radio("NAVIGATION:", options)
     st.sidebar.markdown("---")
 
@@ -676,3 +677,66 @@ else:
             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
 
+    # --- PAGINA 6: COMMAND CENTER (PROTETTA DA PASSWORD OFFICERS) ---
+    elif page in ["👑 Command", ctx.get("menu_high")]:
+        apply_custom_style("bg_info.jpg")
+        
+        st.markdown(f"<h1>{ctx.get('high_h1', '👑 Command Center')}</h1>", unsafe_allow_html=True)
+        
+        # Inizializzazione dello stato di autenticazione dei superiori
+        if "super_authenticated" not in st.session_state:
+            st.session_state["super_authenticated"] = False
+            
+        # BLOCCO DI SICUREZZA SE L'UTENTE NON È AUTENTICATO
+        if not st.session_state["super_authenticated"]:
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown(
+                """
+                <div style="background-color: rgba(212, 179, 115, 0.05); border: 1px solid #bd9b53; border-left: 5px solid #8c1d1d; padding: 20px; border-radius: 4px; margin-bottom: 25px;">
+                    <h3 style="margin: 0 0 10px 0; color: #8c1d1d !important;">🔒 RESTRICTED AREA - OFFICERS ONLY</h3>
+                    <p style="color: #f0e6d2; margin: 0; font-size: 15px; line-height: 1.6;">
+                        This section contains confidential strategic data. Please enter the Command authentication code to proceed.
+                    </p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            
+            col_p1, col_p2, col_p3 = st.columns(3)
+            with col_p2:
+                pass_superiori = st.text_input(
+                    ctx.get("high_pass_lbl", "ENTER COMMAND PASSWORD:"), 
+                    type="password", 
+                    placeholder="Enter secret code...",
+                    key="officer_password_input_field"
+                )
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("UNLOCK COMMAND CENTER", use_container_width=True):
+                    if pass_superiori == "UFC_Officers_2026":
+                        st.session_state["super_authenticated"] = True
+                        st.success("🔑 Access Granted! Re-entering system...")
+                        st.rerun()
+                    else:
+                        st.error("❌ Invalid Code!")
+                        
+        # CONTENUTO SEGRETO SBLOCCATO
+        else:
+            st.markdown(
+                """
+                <div style="background-color: rgba(56, 118, 29, 0.1); border-left: 5px solid #38761d; padding: 12px 20px; border-radius: 4px; margin-bottom: 20px;">
+                    <p style="color: #38761d; margin: 0; font-size: 15px; font-weight: bold;">
+                        🔓 ACCESS GRANTED - WELCOME OFFICER
+                    </p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            
+            st.write("### 📜 Strategic Operations & Officer Logs")
+            st.write("This confidential space is ready to host your custom leaderboards, notes, or hidden targets.")
+            
+            # Pulsante di disconnessione e blocco
+            st.markdown("<br><br><hr>", unsafe_allow_html=True)
+            if st.button("🔒 LOCK AREA & LOGOUT", key="officer_logout_button"):
+                st.session_state["super_authenticated"] = False
+                st.rerun()
