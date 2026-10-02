@@ -968,13 +968,29 @@ else:
                         for o in orari_scelti:
                             conteggio_orari[o] = conteggio_orari.get(o, 0) + 1
                             
-                    # CREAZIONE DEL GRAFICO A BARRE ORIZZONTALI CON SCALA CROMATICA COMPATIBILE ED EPICA
-                    import pandas as pd
-                    import plotly.express as px
-                    df_voti = pd.DataFrame([{"Time": k, "Votes": v} for k, v in conteggio_orari.items()]).sort_values(by="Votes", ascending=True)
-                    fig_voti = px.bar(df_voti, x="Votes", y="Time", orientation="h", title="Preferred Evocation Times Summary", color="Votes", color_continuous_scale="oranges")
-                    fig_voti.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), margin=dict(t=30,b=10,l=10,r=10), height=300)
-                    st.plotly_chart(fig_voti, use_container_width=True, config={'displayModeBar': False})
+                    # CONTEGGIO DEL NUMERO TOTALI DI GIOCATORI REALI CHE HANNO ESPRESSO IL VOTO
+                    numero_votanti_totale = len(voti_attuali)
+                            
+                    # RIPARTO DEI RISULTATI IN FORMATO TESTUALE PULITO E ORDINATO (CON CONTATORE VOTANTI)
+                    st.markdown(f"<h4 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 5px;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 22px; font-weight: bold;'>{numero_votanti_totale}</span></h4>", unsafe_allow_html=True)
+                    st.markdown("<h4 style='font-family: \"Cinzel\", serif; margin-bottom: 15px;'>📈 TIME PREFERENCES COUNTER:</h4>", unsafe_allow_html=True)
+                    
+                    # Ordiniamo gli orari per mostrare prima quelli con più voti
+                    orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x[1], reverse=True)
+                    
+                    # Creiamo una griglia a 3 colonne per mostrare i voti in modo compatto sul cellulare
+                    cols_riepilogo = st.columns(3)
+                    for idx, (fuso, num_voti) in enumerate(orari_ordinati):
+                        with cols_riepilogo[idx % 3]:
+                            st.markdown(
+                                f"""
+                                <div class="chat-box" style="text-align: center; padding: 10px !important; margin-bottom: 8px !important; border-left: 3px solid #d4b373 !important;">
+                                    <span style="color: #bd9b53; font-weight: bold; font-size: 14px;">{fuso}</span><br>
+                                    <span style="color: #f0e6d2; font-size: 18px; font-weight: bold;">{num_voti}</span> <span style="font-size: 12px; color: #a69e8d;">votes</span>
+                                </div>
+                                """, 
+                                unsafe_allow_html=True
+                            )
                     
                     # LISTA COMPATTA DETTAGLIATA DI CHI HA VOTATO COSA
                     st.markdown("<br><b>Detailed Player Choices:</b>", unsafe_allow_html=True)
