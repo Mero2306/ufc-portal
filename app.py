@@ -681,14 +681,16 @@ else:
         if len(t_valori) > 0:
             fig = px.pie(names=t_nomi, values=t_valori, color=t_nomi, color_discrete_map=colori, hole=0.35)
             fig.update_traces(textposition='auto', textinfo='percent', textfont=dict(color='#f0e6d2', size=13, weight='bold'), marker=dict(line=dict(color='#14120e', width=2)))
-            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', showlegend=True, legend=dict(orientation="h", yanchor="top", y=-0.1, xanchor="center", x=0.5, font=dict(color='#f0e6d2', size=11)), margin=dict(t=10,b=40,l=10,r=10), height=450)
+            # AUMENTATO IL MARGINE IN BASSO (B=100) PER DARE SPAZIO ALLA LEGENDA SU SMARTPHONE
+            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', showlegend=True, legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5, font=dict(color='#f0e6d2', size=11)), margin=dict(t=10,b=100,l=10,r=10), height=480)
             st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
 
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
-        # Il titolo ora è fuori dall'else, senza cancelletti e centrato in stile Cinzel
-        st.markdown(f"<br><h4 style='margin: 0; font-family: \"Cinzel\", serif; font-size: 16px; font-weight: bold;'>{ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}</h4>", unsafe_allow_html=True)
+        # AGGIUNTI DUE ACAPO MARGINALI E CENTRATO IL TITOLO DETTAGLIATO PER EVITARE SOVRAPPOSIZIONI
+        st.markdown(f"<br><br><h4 style='margin: 15px 0 5px 0; text-align: center; font-family: \"Cinzel\", serif; font-size: 16px; font-weight: bold;'>{ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}</h4>", unsafe_allow_html=True)
+
 
         # Stampa dei 16 forzieri con i nomi tradotti dinamicamente
         for item in dettagli_forzieri:
