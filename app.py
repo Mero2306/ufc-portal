@@ -143,7 +143,7 @@ else:
 
 
     lang_choice = st.sidebar.selectbox(
-        "🌐 SELECT LANGUAGE:",
+        ctx.get("sidebar_lang_lbl", "🌐 SELECT LANGUAGE:"),
         [
             "🇬🇧 English",
             "🇮🇹 Italiano",
@@ -160,6 +160,7 @@ else:
             "🇯🇵 日本語",
         ],
     )
+
 
     # Mappatura dei file esterni caricati sul tuo GitHub (Aggiornata con le bandiere)
     lang_files = {
