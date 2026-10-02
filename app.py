@@ -998,10 +998,10 @@ else:
                         st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 8px; font-size: 11px !important; color: #bd9b53; text-align: center;'>🏆 WINNING PREFERENCES (RANKED)</p>", unsafe_allow_html=True)
                         if orari_ordinati:
                             testo_classifica = ""
-                            for pos, (fuso, num_voti) in enumerate(orari_ordinati, start=1) [not_cited]:
+                            for pos, (fuso, num_voti) in enumerate(orari_ordinati, start=1):
                                 fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
-                                medaglia = "🥇" if pos == 1 else "🥈" if pos == 2 else "🥉" if pos == 3 else "✨" [not_cited]
-                                testo_classifica += f"<div style='padding: 3px 0; font-size: 13px;'>{medaglia} <b>Pos.{pos}:</b> {fuso_etichetta} — <span style='color:#bd9b53; font-weight:bold;'>{num_voti} votes</span></div>" [not_cited]
+                                medaglia = "🥇" if pos == 1 else "🥈" if pos == 2 else "🥉" if pos == 3 else "✨"
+                                testo_classifica += f"<div style='padding: 3px 0; font-size: 13px;'>{medaglia} <b>Pos.{pos}:</b> {fuso_etichetta} — <span style='color:#bd9b53; font-weight:bold;'>{num_voti} votes</span></div>"
                             st.markdown(f"<div class='chat-box' style='padding: 10px !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
                         else:
                             st.info("No active preferences.")
@@ -1024,7 +1024,6 @@ else:
                     lista_votanti = ["-- Select Player to Remove --"] + list(voti_attuali.keys())
                     player_to_del = st.selectbox("Select the profile to reset:", lista_votanti, key="del_single_voter_dropdown")
                     if player_to_del != "-- Select Player to Remove --":
-                        # CASSA DI CONFERMA PER IL SINGOLO GIOCATORE
                         st.warning(f"⚠️ Are you sure you want to delete the vote for {player_to_del}?")
                         if st.button("🗑️ CONFIRM SINGLE DELETE", use_container_width=True):
                             if player_to_del in voti_attuali:
@@ -1042,11 +1041,12 @@ else:
             with c_admin2:
                 st.markdown("##### ♻️ RESET ALL SESSIONS")
                 st.write("Click below to clear all entries and start a fresh voting session.")
-                # CASSA DI CONFERMA PER IL RESET TOTALE
+                
+                # Controllo pulito e lineare senza scritte orfane
                 if st.button("♻️ RESET ALL VOTES", use_container_width=True, key="btn_total_reset_votes_key"):
                     st.session_state["confirm_total_reset_wipe"] = True
                 
-                if st.get_volume_state if "confirm_total_reset_wipe" in st.session_state and st.session_state["confirm_total_reset_wipe"]:
+                if "confirm_total_reset_wipe" in st.session_state and st.session_state["confirm_total_reset_wipe"]:
                     st.error("🚨 CRITICAL: Are you sure you want to wipe ALL clan votes? This action is irreversible!")
                     if st.button("🔥 CONFIRM DANGEROUS TOTAL RESET", use_container_width=True):
                         if os.path.exists(FILE_VOTI_SERVER):
@@ -1054,7 +1054,8 @@ else:
                                 os.remove(FILE_VOTI_SERVER)
                             except Exception:
                                 pass
-                        del st.session_state["confirm_total_reset_wipe"]
+                        if "confirm_total_reset_wipe" in st.session_state:
+                            del st.session_state["confirm_total_reset_wipe"]
                         st.success("♻️ Complete database wiped successfully!")
                         st.rerun()
             
