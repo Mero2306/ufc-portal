@@ -200,7 +200,7 @@ else:
         ctx.get("menu_high", "👑 Command")  # NUOVA VOCE NATIVA IN INGLESE
     ]
      
-    page = st.sidebar.radio("NAVIGATION:", options)
+    page = st.sidebar.radio(ctx.get("sidebar_nav_lbl", "NAVIGATION:"), options)
     st.sidebar.markdown("---")
 
     # IL TUO LINK REALE DI GOOGLE SHEET CONFIGURATO
@@ -683,19 +683,17 @@ else:
         
         st.markdown(f"<h1>{ctx.get('high_h1', '👑 Command Center')}</h1>", unsafe_allow_html=True)
         
-        # Inizializzazione dello stato di autenticazione dei superiori
         if "super_authenticated" not in st.session_state:
             st.session_state["super_authenticated"] = False
             
-        # BLOCCO DI SICUREZZA SE L'UTENTE NON È AUTENTICATO
         if not st.session_state["super_authenticated"]:
             st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(
-                """
+                f"""
                 <div style="background-color: rgba(212, 179, 115, 0.05); border: 1px solid #bd9b53; border-left: 5px solid #8c1d1d; padding: 20px; border-radius: 4px; margin-bottom: 25px;">
-                    <h3 style="margin: 0 0 10px 0; color: #8c1d1d !important;">🔒 RESTRICTED AREA - OFFICERS ONLY</h3>
+                    <h3 style="margin: 0 0 10px 0; color: #8c1d1d !important;">{ctx.get('high_restricted_title', '🔒 RESTRICTED AREA - OFFICERS ONLY')}</h3>
                     <p style="color: #f0e6d2; margin: 0; font-size: 15px; line-height: 1.6;">
-                        This section contains confidential strategic data. Please enter the Command authentication code to proceed.
+                        {ctx.get('high_restricted_text', 'This section contains confidential strategic data. Please enter the Command authentication code to proceed.')}
                     </p>
                 </div>
                 """,
@@ -707,11 +705,11 @@ else:
                 pass_superiori = st.text_input(
                     ctx.get("high_pass_lbl", "ENTER COMMAND PASSWORD:"), 
                     type="password", 
-                    placeholder="Enter secret code...",
+                    placeholder=ctx.get("high_pass_placeholder", "Enter secret code..."),
                     key="officer_password_input_field"
                 )
                 st.markdown("<br>", unsafe_allow_html=True)
-                if st.button("UNLOCK COMMAND CENTER", use_container_width=True):
+                if st.button(ctx.get("high_btn_unlock", "UNLOCK COMMAND CENTER"), use_container_width=True):
                     if pass_superiori == "Mero2306":
                         st.session_state["super_authenticated"] = True
                         st.success("🔑 Access Granted! Re-entering system...")
@@ -719,33 +717,30 @@ else:
                     else:
                         st.error("❌ Invalid Code!")
                         
-        # CONTENUTO SEGRETO SBLOCCATO (VERSIONE INGLESE NATIVA FINALE CORRETTA)
         else:
             st.markdown(
-                """
+                f"""
                 <div style="background-color: rgba(56, 118, 29, 0.1); border-left: 5px solid #38761d; padding: 12px 20px; border-radius: 4px; margin-bottom: 20px;">
                     <p style="color: #38761d; margin: 0; font-size: 15px; font-weight: bold;">
-                        🔓 ACCESS GRANTED - WELCOME OFFICER
+                        {ctx.get('high_access_granted', '🔓 ACCESS GRANTED - WELCOME OFFICER')}
                     </p>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
             
-            st.markdown("### 🧮 Clan Ancient Kill Points Calculator")
-            st.write("Configure the parameters to calculate the total points needed for kills.")
+            st.markdown(f"### {ctx.get('high_calc_title', '🧮 Clan Ancient Kill Points Calculator')}", unsafe_allow_html=True)
+            st.write(ctx.get("high_calc_subtitle", "Configure the parameters to calculate the total points needed for kills."))
             
-            # CORNICE DELLE SELEZIONI NATIVA - ORA FUNZIONA, ABBIAMO RIPRISTINATO IL CONTROLLO SUI DATI
             with st.container():
                 inp_c1, inp_c2 = st.columns(2)
                 with inp_c1:
-                    livello_bonus = st.number_input("Bonus Level (0 - 100):", min_value=0, max_value=100, value=100, step=1, key="cmd_bonus_lvl")
-                    num_giocatori = st.number_input("Number of Players / Accounts (1 - 100):", min_value=1, max_value=100, value=97, step=1, key="cmd_players_num")
+                    livello_bonus = st.number_input(ctx.get("high_input_bonus", "Bonus Level (0 - 100):"), min_value=0, max_value=100, value=100, step=1, key="cmd_bonus_lvl")
+                    num_giocatori = st.number_input(ctx.get("high_input_players", "Number of Players / Accounts (1 - 100):"), min_value=1, max_value=100, value=97, step=1, key="cmd_players_num")
                 with inp_c2:
-                    num_evocazioni = st.number_input("Number of Summons (1 - 100):", min_value=1, max_value=100, value=1, step=1, key="cmd_summons_num")
-                    livello_partenza = st.number_input("Starting Ancient Level (150 - 250):", min_value=150, max_value=250, value=150, step=1, key="cmd_start_lvl")
+                    num_evocazioni = st.number_input(ctx.get("high_input_summons", "Number of Summons (1 - 100):"), min_value=1, max_value=100, value=1, step=1, key="cmd_summons_num")
+                    livello_partenza = st.number_input(ctx.get("high_input_start_lvl", "Starting Ancient Level (150 - 250):"), min_value=150, max_value=250, value=150, step=1, key="cmd_start_lvl")
             
-            # --- DATABASE REALE DEI PUNTI PRESI DALLA TUA TABELLA (PUNTI BASE DI DESTRA - COMINCIA DA 150) ---
             tabella_punti_base = {
                 150: 811, 151: 843, 152: 871, 153: 900, 154: 931, 155: 963, 156: 996, 157: 1030, 158: 1060,
                 159: 1100, 160: 1140, 161: 1180, 162: 1220, 163: 1260, 164: 1300, 165: 1340, 166: 1390, 167: 1440,
@@ -761,7 +756,6 @@ else:
                 247: 16500, 248: 17000, 249: 17500, 250: 18100
             }
             
-            # --- MOTORE DI CALCOLO APPLICANDO LA FORMULA REALE ESCALATA ---
             totale_punti_necessari = 0
             livello_corrente = int(livello_partenza)
             bonus_percentuale = livello_bonus / 100.0
@@ -774,19 +768,16 @@ else:
                 
             load_number_risultato = totale_punti_necessari / num_giocatori
             
-            # Allineamento test per l'inizio al livello 150 con le nuove specifiche
             if livello_partenza == 150 and num_giocatori == 97 and livello_bonus == 100 and num_evocazioni == 2:
                 load_number_risultato = 722.2680412
             
-            # Formattazione a 4 cifre decimali europea per il Load Number Base
             totale_formattato = f"{load_number_risultato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
-            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (LOAD NUMBER BASE CON LA "M" MAXI) ---
             st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 25px !important;">
-                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #bd9b53; letter-spacing: 1px;">🏆 TOTAL ESTIMATED VOLUME</h2>
+                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #bd9b53; letter-spacing: 1px;">{ctx.get('high_box_title_base', '🏆 TOTAL ESTIMATED VOLUME')}</h2>
                     <p style="font-size: 42px; font-weight: 200; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000;">
                         {totale_formattato} <span style="color: #bd9b53; font-size: 45px; font-weight: 900; margin-left: 8px; vertical-align: middle;">M</span>
                     </p>
@@ -795,22 +786,18 @@ else:
                 unsafe_allow_html=True
             )
             
-            # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO (MODIFICATA CON MENU + E -) ---
-            st.markdown("<br>### ✂️ Score Percentage Cut", unsafe_allow_html=True)
+            st.markdown(f"### {ctx.get('high_section_cut_title', '✂️ Score Percentage Cut')}", unsafe_allow_html=True)
             
-            # Sostituito lo slider con un number_input nativo che ha i pulsanti + e - integrati ai lati del valore
-            percentuale_taglio = st.number_input("Select reduction percentage (0 - 100%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
+            percentuale_taglio = st.number_input(ctx.get("high_input_cut", "Select reduction percentage (0 - 100%):"), min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
             
-            # Calcolo del valore tagliato
             punteggio_tagliato = load_number_risultato * (1 - (percentuale_taglio / 100.0))
             totale_tagliato_formattato = f"{punteggio_tagliato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
-            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (PUNTEGGIO FINALE TAGLIATO CON LA "M" MAXI) ---
             st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #8c1d1d !important; background: linear-gradient(145deg, #291a1a, #140e0e) !important; padding: 25px !important;">
-                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #ff4d4d; letter-spacing: 1px;">⚔️ FINAL CUT SCORE (-{percentuale_taglio}%)</h2>
+                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #ff4d4d; letter-spacing: 1px;">{ctx.get('high_box_title_cut', '⚔️ FINAL CUT SCORE')} (-{percentuale_taglio}%)</h2>
                     <p style="font-size: 42px; font-weight: 200; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000;">
                         {totale_tagliato_formattato} <span style="color: #ff4d4d; font-size: 45px; font-weight: 900; margin-left: 8px; vertical-align: middle;">M</span>
                     </p>
@@ -819,8 +806,8 @@ else:
                 unsafe_allow_html=True
             )
             
-            # Pulsante per richiudere la pagina e fare il logout di sicurezza
             st.markdown("<br><br><hr>", unsafe_allow_html=True)
-            if st.button("🔒 LOCK AREA & LOGOUT", key="officer_logout_button"):
+            if st.button(ctx.get("high_btn_logout", "🔒 LOCK AREA & LOGOUT"), key="officer_logout_button"):
                 st.session_state["super_authenticated"] = False
                 st.rerun()
+
