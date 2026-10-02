@@ -687,13 +687,13 @@ else:
         if "super_authenticated" not in st.session_state:
             st.session_state["super_authenticated"] = False
             
+        # BLOCCO DI SICUREZZA SE L'UTENTE NON È AUTENTICATO (DIMEZZATO, PIATTO E CENTRATO)
         if not st.session_state["super_authenticated"]:
-            st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(
                 f"""
-                <div style="background-color: rgba(212, 179, 115, 0.05); border: 1px solid #bd9b53; border-left: 5px solid #8c1d1d; padding: 20px; border-radius: 4px; margin-bottom: 25px;">
-                    <h3 style="margin: 0 0 10px 0; color: #8c1d1d !important;">{ctx.get('high_restricted_title', '🔒 RESTRICTED AREA - OFFICERS ONLY')}</h3>
-                    <p style="color: #f0e6d2; margin: 0; font-size: 15px; line-height: 1.6;">
+                <div style="background-color: rgba(212, 179, 115, 0.05); border: 1px solid #bd9b53; border-left: 5px solid #8c1d1d; padding: 10px 15px; border-radius: 4px; max-width: 450px; margin: 0 auto 15px auto; text-align: center;">
+                    <h3 style="margin: 0 0 5px 0; color: #8c1d1d !important; font-size: 14px;">{ctx.get('high_restricted_title', '🔒 RESTRICTED AREA - OFFICERS ONLY')}</h3>
+                    <p style="color: #f0e6d2; margin: 0; font-size: 12px; line-height: 1.4;">
                         {ctx.get('high_restricted_text', 'This section contains confidential strategic data. Please enter the Command authentication code to proceed.')}
                     </p>
                 </div>
@@ -701,7 +701,8 @@ else:
                 unsafe_allow_html=True
             )
             
-            col_p1, col_p2, col_p3 = st.columns(3)
+            # Griglia di colonne bilanciata per stringere anche i campi di input
+            col_p1, col_p2, col_p3 = st.columns([1, 1.2, 1])
             with col_p2:
                 pass_superiori = st.text_input(
                     ctx.get("high_pass_lbl", "ENTER COMMAND PASSWORD:"), 
@@ -709,7 +710,7 @@ else:
                     placeholder=ctx.get("high_pass_placeholder", "Enter secret code..."),
                     key="officer_password_input_field"
                 )
-                st.markdown("<br>", unsafe_allow_html=True)
+                st.markdown("<div style='margin-top: 4px;'></div>", unsafe_allow_html=True)
                 if st.button(ctx.get("high_btn_unlock", "UNLOCK COMMAND CENTER"), use_container_width=True):
                     if pass_superiori == "Mero2306":
                         st.session_state["super_authenticated"] = True
@@ -717,6 +718,7 @@ else:
                         st.rerun()
                     else:
                         st.error("❌ Invalid Code!")
+
                         
         # CONTENUTO SEGRETO SBLOCCATO (VERSIONE CON COLLEGAMENTO FOGLIO ACCETTA DI ATTILA)
         else:
