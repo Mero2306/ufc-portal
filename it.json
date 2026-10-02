@@ -8,7 +8,7 @@
   "menu_high": "👑 Comando",
   "home_h1": "🏠 UFC Raiders of Chaos",
   "home_write": "Controlla la classifica ufficiale dei forzieri aggiornata in tempo reale.",
-  "home_info": "💡 **Avviso:** Cliccando sul pubblicatore qui sotto, la classifica ufficiale si aprirà in una nuova scheda del browser in modalità Sola Lettura.",
+  "home_info": "💡 **Avviso:** Cliccando sul pulsante qui sotto, la classifica ufficiale si aprirà in una nuova scheda del browser in modalità Sola Lettura.",
   "home_btn": "⚔️ CLICCA QUI PER APRIRE LA CLASSIFICA FORZIERI UFC ⚔️",
   "info_h1": "📋 Info Clan e Canali Ufficiali",
   "info_write": "Canali ufficiali di UFC Raiders of Chaos.",
@@ -29,7 +29,7 @@
   "min_w3": "- **Ragnarok:** 500 M",
   "min_w4": "- **Olympus:** 570.000",
   "min_w5": "- **Presagi Oscuri:** 100 forzieri, massimo petrolio versato e giusta quota di difesa",
-  "disc_h1": "🌐 Server Discord Ufficiali Raiders of Chaos",
+  "disc_h1": "🌐 Server Discord Ufficiale Raiders of Chaos",
   "disc_info": "💡 Il pulsante qui sotto sarà attivato presto con il codice di invito ufficiale.",
   "disc_btn": "🔮 PULSANTE DISCORD - IN ARRIVO 🔮",
   "calc_h1": "⚔️ Calcolatore di truppe.",
@@ -88,5 +88,6 @@
   "high_section_cut_title": "Taglio Percentuale sul Punteggio",
   "high_input_cut": "Seleziona la percentuale di riduzione da applicare (0 - 100%):",
   "high_box_title_cut": "⚔️ PUNTEGGIO FINALE TAGLIATO",
-  "high_btn_logout": "🔒 BLOCCA AREA & LOGOUT"
+  "high_btn_logout": "🔒 BLOCCA AREA & LOGOUT",
+  "high_btn_attila": "⚔️ APRI FILE L'ASCIA DI ATTILA ⚔️"
 }
