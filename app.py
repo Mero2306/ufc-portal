@@ -225,23 +225,27 @@ else:
     if page in ["🏠 Home Dashboard", ctx.get("menu_home")]:
         apply_custom_style("bg_home.jpg")
 
+        # CONTENITORE COMPATTO DIMEZZATO PER IL TITOLO E IL PULSANTE
         st.markdown(
-            f"<h1>{ctx.get('home_h1', '🏠 UFC Raiders of Chaos')}</h1>",
+            f"""
+            <div style="max-width: 500px; margin: 0 auto; text-align: center;">
+                <h1 style="font-size: 22px !important; margin-bottom: 8px !important; border-bottom: none; padding-bottom: 0;">
+                    {ctx.get('home_h1', '🏠 UFC Raiders of Chaos')}
+                </h1>
+                <p style="font-size: 13px !important; margin-bottom: 12px !important; color: #a69e8d;">
+                    {ctx.get('home_write', 'Check the official chest leaderboard updated in real-time.')}
+                </p>
+            </div>
+            """,
             unsafe_allow_html=True,
         )
-        st.write(
-            ctx.get(
-                "home_write",
-                "Check the official chest leaderboard updated in real-time.",
-            )
-        )
         
-        # NUOVO BOX AZZURRO AD ALTA LEGGIBILITÀ
+        # BOX AZZURRO INFORMATIVO DIMEZZATO E COMPATTO
         text_home_info = ctx.get("home_info", "💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode.")
         st.markdown(
             f"""
-            <div style="background-color: rgba(28, 142, 230, 0.1); border-left: 5px solid rgb(28, 142, 230); padding: 16px 20px; border-radius: 4px; margin-bottom: 15px;">
-                <p style="color: #f0e6d2; margin: 0; font-size: 16px; font-weight: 500; line-height: 1.6; letter-spacing: 0.3px;">
+            <div style="background-color: rgba(28, 142, 230, 0.1); border-left: 4px solid rgb(28, 142, 230); padding: 8px 12px; border-radius: 4px; max-width: 500px; margin: 0 auto 12px auto; text-align: left;">
+                <p style="color: #f0e6d2; margin: 0; font-size: 13px; line-height: 1.4; letter-spacing: 0.2px;">
                     {text_home_info}
                 </p>
             </div>
@@ -249,17 +253,28 @@ else:
             unsafe_allow_html=True
         )
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.link_button(
-            ctx.get(
-                "home_btn", "⚔️ CLICK HERE TO OPEN UFC CHESTS LEADERBOARD ⚔️"
-            ),
-            GOOGLE_SHEET_LINK,
-            width='stretch',
-        )
+        # PULSANTE DELLA CLASSIFICA RISTRETTO NELLA GRIGLIA CENTRATA
+        col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
+        with col_btn2:
+            st.link_button(
+                ctx.get("home_btn", "⚔️ CLICK HERE TO OPEN UFC CHESTS LEADERBOARD ⚔️"),
+                GOOGLE_SHEET_LINK,
+                use_container_width=True,
+            )
   
-        st.markdown("<br><hr><br>", unsafe_allow_html=True)
-        st.markdown(f"<h2>{ctx.get('player_section_h2', '👤 Personal Player Summary')}</h2>", unsafe_allow_html=True)
+        # SEZIONE RIEPILOGO GIOCATORE DIMEZZATA E CENTRATA
+        st.markdown(
+            f"""
+            <div style="max-width: 500px; margin: 15px auto 5px auto; text-align: center;">
+                <hr style="margin-top: 5px; margin-bottom: 12px; border-color: rgba(240, 230, 210, 0.1);">
+                <h2 style="font-size: 18px !important; margin-bottom: 2px !important;">
+                    {ctx.get('player_section_h2', '👤 Personal Player Summary')}
+                </h2>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
         
         # STILIZZAZIONE DELLA BARRA DI SELEZIONE IN LINEA CON IL RESTO DEL SITO (SENZA BORDI DORATI)
         st.markdown(
