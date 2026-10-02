@@ -719,32 +719,32 @@ else:
                     else:
                         st.error("❌ Invalid Code!")
                         
-        # CONTENUTO SEGRETO SBLOCCATO
+        # CONTENUTO SEGRETO SBLOCCATO (VERSIONE INGLESE NATIVA FINALE)
         else:
             st.markdown(
                 """
                 <div style="background-color: rgba(56, 118, 29, 0.1); border-left: 5px solid #38761d; padding: 12px 20px; border-radius: 4px; margin-bottom: 20px;">
                     <p style="color: #38761d; margin: 0; font-size: 15px; font-weight: bold;">
-                        🔓 ACCESSO CONSENTITO - BENVENUTO SUPERIORE
+                        🔓 ACCESS GRANTED - WELCOME OFFICER
                     </p>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
             
-            st.markdown("### 🧮 Calcolatore punti uccisione antichi")
-            st.write("Configura i parametri per calcolare i punti totali necessari per uccisioni.")
+            st.markdown("### 🧮 Clan Ancient Kill Points Calculator")
+            st.write("Configure the parameters to calculate the total points needed for kills.")
             
-            # BLOCCO DELLE SELEZIONI COMPATTO ED ELEGANTE IN ITALIANO
+            # BLOCCO DELLE SELEZIONI COMPATTO ED ELEGANTE
             st.markdown('<div class="chat-box">', unsafe_allow_html=True)
             
             inp_c1, inp_c2 = st.columns(2)
             with inp_c1:
-                livello_bonus = st.number_input("Livello del Bonus (0 - 100):", min_value=0, max_value=100, value=100, step=1, key="cmd_bonus_lvl")
-                num_giocatori = st.number_input("Numero di Giocatori / Account (1 - 100):", min_value=1, max_value=100, value=97, step=1, key="cmd_players_num")
+                livello_bonus = st.number_input("Bonus Level (0 - 100):", min_value=0, max_value=100, value=100, step=1, key="cmd_bonus_lvl")
+                num_giocatori = st.number_input("Number of Players / Accounts (1 - 100):", min_value=1, max_value=100, value=97, step=1, key="cmd_players_num")
             with inp_c2:
-                num_evocazioni = st.number_input("Numero di Evocazioni (1 - 100):", min_value=1, max_value=100, value=1, step=1, key="cmd_summons_num")
-                livello_partenza = st.number_input("Livello Antico di Partenza (150 - 250):", min_value=150, max_value=250, value=150, step=1, key="cmd_start_lvl")
+                num_evocazioni = st.number_input("Number of Summons (1 - 100):", min_value=1, max_value=100, value=1, step=1, key="cmd_summons_num")
+                livello_partenza = st.number_input("Starting Ancient Level (150 - 250):", min_value=150, max_value=250, value=150, step=1, key="cmd_start_lvl")
                 
             st.markdown('</div>', unsafe_allow_html=True)
             
@@ -789,7 +789,7 @@ else:
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 25px !important;">
-                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #bd9b53; letter-spacing: 1px;">🏆 VOLUME DI CARICO TOTALE STIMATO</h2>
+                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #bd9b53; letter-spacing: 1px;">🏆 TOTAL ESTIMATED ESTIMATED VOLUME</h2>
                     <p style="font-size: 42px; font-weight: 200; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000;">
                         {totale_formattato} <span style="color: #bd9b53; font-size: 45px; font-weight: 900; margin-left: 8px; vertical-align: middle;">M</span>
                     </p>
@@ -799,10 +799,9 @@ else:
             )
             
             # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO ---
-            st.markdown("<br>### ✂️ Taglio Percentuale sul Punteggio", unsafe_allow_html=True)
+            st.markdown("<br>### ✂️ Score Percentage Cut", unsafe_allow_html=True)
             
-            # Slider interattivo pulito, senza scatole vuote orfane sopra
-            percentuale_taglio = st.slider("Seleziona la percentuale di riduzione da applicare (%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
+            percentuale_taglio = st.slider("Select the reduction percentage to apply (%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
             
             # Calcolo del valore tagliato
             punteggio_tagliato = load_number_risultato * (1 - (percentuale_taglio / 100.0))
@@ -813,7 +812,7 @@ else:
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #8c1d1d !important; background: linear-gradient(145deg, #291a1a, #140e0e) !important; padding: 25px !important;">
-                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #ff4d4d; letter-spacing: 1px;">⚔️ PUNTEGGIO FINALE TAGLIATO (-{percentuale_taglio}%)</h2>
+                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #ff4d4d; letter-spacing: 1px;">⚔️ FINAL CUT SCORE (-{percentuale_taglio}%)</h2>
                     <p style="font-size: 42px; font-weight: 200; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000;">
                         {totale_tagliato_formattato} <span style="color: #ff4d4d; font-size: 45px; font-weight: 900; margin-left: 8px; vertical-align: middle;">M</span>
                     </p>
@@ -824,6 +823,6 @@ else:
             
             # Pulsante per richiudere la pagina e fare il logout di sicurezza
             st.markdown("<br><br><hr>", unsafe_allow_html=True)
-            if st.button("🔒 BLOCCA AREA & LOGOUT", key="officer_logout_button"):
+            if st.button("🔒 LOCK AREA & LOGOUT", key="officer_logout_button"):
                 st.session_state["super_authenticated"] = False
                 st.rerun()
