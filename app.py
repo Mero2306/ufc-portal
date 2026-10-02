@@ -789,7 +789,7 @@ else:
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 25px !important;">
-                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #bd9b53; letter-spacing: 1px;">🏆 TOTAL ESTIMATED ESTIMATED VOLUME</h2>
+                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #bd9b53; letter-spacing: 1px;">🏆 TOTAL ESTIMATED VOLUME</h2>
                     <p style="font-size: 42px; font-weight: 200; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000;">
                         {totale_formattato} <span style="color: #bd9b53; font-size: 45px; font-weight: 900; margin-left: 8px; vertical-align: middle;">M</span>
                     </p>
@@ -798,17 +798,20 @@ else:
                 unsafe_allow_html=True
             )
             
-            # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO ---
+            # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO (RIPRISTINATO DENTRO IL BOX CLICCABILE) ---
             st.markdown("<br>### ✂️ Score Percentage Cut", unsafe_allow_html=True)
             
-            percentuale_taglio = st.slider("Select the reduction percentage to apply (%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
+            # Lo slider viene inserito con il comando corretto di Streamlit dentro il contenitore grafico
+            with st.container():
+                st.markdown('<div class="chat-box">', unsafe_allow_html=True)
+                percentuale_taglio = st.slider("Select the reduction percentage to apply (0 - 100%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
+                st.markdown('</div>', unsafe_allow_html=True)
             
             # Calcolo del valore tagliato
             punteggio_tagliato = load_number_risultato * (1 - (percentuale_taglio / 100.0))
             totale_tagliato_formattato = f"{punteggio_tagliato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
             # --- BOX DI STAMPA AD ALTA VISIBILITÀ (PUNTEGGIO FINALE TAGLIATO CON LA "M" MAXI) ---
-            st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #8c1d1d !important; background: linear-gradient(145deg, #291a1a, #140e0e) !important; padding: 25px !important;">
