@@ -82,7 +82,7 @@
   "high_calc_subtitle": "Configurez les paramètres pour calculer le total des points nécessaires pour les éliminations.",
   "high_input_bonus": "Niveau du Bonus (0 - 100) :",
   "high_input_players": "Nombre de Joueurs / Comptes (1 - 100) :",
-  "high_input_summons": "Nombre d'Invocations (1 - 100) :",
+  "high_input_summons": "Nombre d'Invocations (1 - 6) :",
   "high_input_start_lvl": "Niveau Ancien de Départ (150 - 250) :",
   "high_box_title_base": "🏆 VOLUME DE CHARGE TOTAL ESTIMÉ",
   "high_section_cut_title": "Coupe en Pourcentage sur le Score",
