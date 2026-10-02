@@ -196,7 +196,7 @@ else:
         ctx.get("menu_min", "📊 Event Minimums"),
         ctx.get("menu_disc", "🌐 Discord Server"),
         ctx.get("menu_calc", "⚔️ Troops Calculator"),
-        ctx.get("menu_res", "🏆 Clan Results")
+        ctx.get("menu_res", "🏆 Clan Results"),
         ctx.get("menu_high", "👑 Command")  # NUOVA VOCE NATIVA IN INGLESE
     ]
      
