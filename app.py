@@ -686,9 +686,9 @@ else:
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
-        # Il titolo ora è fuori dall'else, allineato a sinistra e legge la traduzione
-        st.markdown(f"<br>### {ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}", unsafe_allow_html=True)
-        
+        # Il titolo ora è fuori dall'else, senza cancelletti e centrato in stile Cinzel
+        st.markdown(f"<br><h4 style='margin: 0; font-family: \"Cinzel\", serif; font-size: 16px; font-weight: bold;'>{ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}</h4>", unsafe_allow_html=True)
+
         # Stampa dei 16 forzieri con i nomi tradotti dinamicamente
         for item in dettagli_forzieri:
             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
