@@ -262,14 +262,14 @@ else:
                 use_container_width=True,
             )
   
-        # SEZIONE RIEPILOGO GIOCATORE DIMEZZATA E CENTRATA
+        # SEZIONE RIEPILOGO GIOCATORE RISTRETTA E COMPATTA PER CELLULARE
         st.markdown(
             f"""
-            <div style="max-width: 500px; margin: 15px auto 5px auto; text-align: center;">
-                <hr style="margin-top: 5px; margin-bottom: 12px; border-color: rgba(240, 230, 210, 0.1);">
-                <h2 style="font-size: 18px !important; margin-bottom: 2px !important;">
+            <div style="max-width: 450px; margin: 2px auto 0 auto; text-align: center;">
+                <hr style="margin-top: 2px; margin-bottom: 6px; border-color: rgba(240, 230, 210, 0.1);">
+                <h4 style="font-size: 15px !important; margin: 0 !important; font-weight: bold; font-family: 'Cinzel', serif;">
                     {ctx.get('player_section_h2', '👤 Personal Player Summary')}
-                </h2>
+                </h4>
             </div>
             """,
             unsafe_allow_html=True
