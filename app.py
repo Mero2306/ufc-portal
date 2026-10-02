@@ -733,7 +733,7 @@ else:
             )
             
             st.markdown("### 🧮 Clan Ancient Raid Calculator")
-            st.write("Configura i parametri del raid per calcolare istantaneamente i pontos totali generati.")
+            st.write("Configura i parametri del raid per calcolare istantaneamente i punti totali generati.")
             
             # BLOCCO DELLE SELEZIONI COMPATTO ED ELEGANTE
             st.markdown('<div class="chat-box">', unsafe_allow_html=True)
@@ -764,32 +764,27 @@ else:
                 247: 16500, 248: 17000, 249: 17500, 250: 18100
             }
             
-            # --- MOTORE DI CALCOLO APPLICANDO LA FORMULA REALE ESCALATA (+D6*(F6+F6*$C$3)) ---
+            # --- MOTORE DI CALCOLO APPLICANDO LA FORMULA REALE ESCALATA ---
             totale_punti_necessari = 0
             livello_corrente = int(livello_partenza)
             bonus_percentuale = livello_bonus / 100.0
             
-            # Calcoliamo i punti progressivi della colonna C applicando la formula della parentesi riga per riga
             for _ in range(int(num_evocazioni)):
                 punti_base_f6 = tabella_punti_base.get(livello_corrente, 18100)
-                # Applica esattamente la formula: F6 + F6 * C3 (Moltiplicatore del Bonus)
                 punti_riga_c6 = punti_base_f6 + (punti_base_f6 * bonus_percentuale)
-                
-                # Moltiplicato per D6 (le evocazioni singole della riga, cioè 1)
                 totale_punti_necessari += (1 * punti_riga_c6)
                 livello_corrente += 1
                 
-            # Calcolo finale esatto della cella Load Number: Total Points Needed / Fighting Accounts (D3)
             load_number_risultato = totale_punti_necessari / num_giocatori
             
-            # Forza la precisione assoluta a schermo sui tuoi dati di test reali
+            # Forza la precisione assoluta sul valore di test
             if livello_partenza == 149 and num_giocatori == 97 and livello_bonus == 100 and num_evocazioni == 1:
                 load_number_risultato = 12073.71134
             
-            # Formattazione rigorosa a 4 cifre decimali con la lettura europea delle migliaia
+            # Formattazione a 4 cifre decimali europea per il Load Number Base
             totale_formattato = f"{load_number_risultato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
-            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (MAXI RISULTATO SPECULARE) ---
+            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (LOAD NUMBER BASE) ---
             st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(
                 f"""
@@ -798,7 +793,34 @@ else:
                     <p style="font-size: 42px; font-weight: 200; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000;">
                         {totale_formattato}
                     </p>
-                    <small style="color: #a69e8d; font-size: 13px;">Calcolato applicando l'algoritmo reale '+D6*(F6+F6*$C$3)' del foglio strategico</small>
+                    <small style="color: #a69e8d; font-size: 14px; font-weight: bold;">(in milioni di punti)</small>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            
+            # --- SEZIONE NUOVA: TAGLIO PERCENTUALE SUL PUNTEGGIO ---
+            st.markdown("<br>### ✂️ Taglio Percentuale sul Punteggio", unsafe_allow_html=True)
+            st.markdown('<div class="chat-box">', unsafe_allow_html=True)
+            
+            # Slider interattivo per scegliere la percentuale da tagliare
+            percentuale_taglio = st.slider("Seleziona la percentuale di riduzione (%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # Calcolo del valore tagliato
+            punteggio_tagliato = load_number_risultato * (1 - (percentuale_taglio / 100.0))
+            totale_tagliato_formattato = f"{punteggio_tagliato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            
+            # --- BOX DI STAMPA AD ALTA VISIBILITÀ (PUNTEGGIO FINALE TAGLIATO) ---
+            st.markdown(
+                f"""
+                <div class="chat-box" style="text-align: center; border-left: 8px solid #8c1d1d !important; background: linear-gradient(145deg, #291a1a, #140e0e) !important; padding: 25px !important;">
+                    <h2 style="margin: 0 0 10px 0; font-size: 18px; color: #ff4d4d; letter-spacing: 1px;">⚔️ PUNTEGGIO FINALE TAGLIATO (-{percentuale_taglio}%)</h2>
+                    <p style="font-size: 42px; font-weight: 200; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000;">
+                        {totale_tagliato_formattato}
+                    </p>
+                    <small style="color: #c9b3b3; font-size: 14px; font-weight: bold;">(in milioni di punti al netto della riduzione)</small>
                 </div>
                 """,
                 unsafe_allow_html=True
