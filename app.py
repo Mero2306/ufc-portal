@@ -944,6 +944,76 @@ else:
                 """,
                 unsafe_allow_html=True
             )
+            # --- ZONA MONITORAGGIO VOTAZIONI STRATEGICHE (SALA COMANDO SUPERIORI) ---
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # FILE DI BACKUP INTERNO DEI VOTI
+            FILE_VOTI_SERVER = "voti_interni.json"
+            voti_attuali = {}
+            if os.path.exists(FILE_VOTI_SERVER):
+                try:
+                    with open(FILE_VOTI_SERVER, "r", encoding="utf-8") as file_db:
+                        voti_attuali = json.load(file_db)
+                except Exception:
+                    voti_attuali = {}
+            
+            # IL MENU A SCOMPARSA RICHIESTO IN INGLESE NATIVO PER NON APPESANTIRE LA PAGINA
+            with st.expander("📊 VIEW VOTING RESULTS"):
+                if not voti_attuali:
+                    st.info("📊 No votes recorded yet for this session. Waiting for players to vote.")
+                else:
+                    # CONTEGGIO DEI VOTI TOTALI PER OGNI FUSO ORARIO
+                    conteggio_orari = {}
+                    for giocatore, orari_scelti in voti_attuali.items():
+                        for o in orari_scelti:
+                            conteggio_orari[o] = conteggio_orari.get(o, 0) + 1
+                            
+                    # CREAZIONE DEL GRAFICO A BARRE ORIZZONTALI PER SCOPRIRE L'ORARIO VINCENTE
+                    import plotly.express as px
+                    df_voti = pd.DataFrame([{"Time": k, "Votes": v} for k, v in conteggio_orari.items()]).sort_values(by="Votes", ascending=True)
+                    fig_voti = px.bar(df_voti, x="Votes", y="Time", orientation="h", title="Preferred Evocation Times Summary", color="Votes", color_continuous_scale="Gold")
+                    fig_voti.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), margin=dict(t=30,b=10,l=10,r=10), height=300)
+                    st.plotly_chart(fig_voti, use_container_width=True, config={'displayModeBar': False})
+                    
+                    # LISTA COMPATTA DETTAGLIATA DI CHI HA VOTATO COSA
+                    st.markdown("<br><b>Detailed Player Choices:</b>", unsafe_allow_html=True)
+                    for g, o_list in voti_attuali.items():
+                        st.write(f"• **{g}:** {', '.join(o_list)}")
+            
+            # --- PANNELLO STRUMENTI DI CONTROLLO DIREZIONE CLAN ---
+            st.markdown("<br>", unsafe_allow_html=True)
+            c_admin1, c_admin2 = st.columns(2)
+            
+            with c_admin1:
+                st.markdown("##### ❌ CANCEL SINGLE PLAYER VOTE")
+                if voti_attuali:
+                    lista_votanti = ["-- Select Player to Remove --"] + list(voti_attuali.keys())
+                    player_to_del = st.selectbox("Select the profile to reset:", lista_votanti, key="del_single_voter_dropdown")
+                    if player_to_del != "-- Select Player to Remove --":
+                        if st.button("🗑️ DELETE SELECTED VOTE", use_container_width=True):
+                            if player_to_del in voti_attuali:
+                                del voti_attuali[player_to_del]
+                                try:
+                                    with open(FILE_VOTI_SERVER, "w", encoding="utf-8") as file_db:
+                                        json.dump(voti_attuali, file_db, ensure_ascii=False, indent=4)
+                                except Exception:
+                                    pass
+                                st.success(f"💥 Vote for {player_to_del} removed! This player can now vote again.")
+                                st.rerun()
+                else:
+                    st.caption("No active votes to remove.")
+                    
+            with c_admin2:
+                st.markdown("##### ♻️ RESET ALL SESSIONS")
+                st.write("Click below to clear all entries and start a fresh voting session.")
+                if st.button("♻️ RESET ALL VOTES", use_container_width=True, key="btn_total_reset_votes_key"):
+                    if os.path.exists(FILE_VOTI_SERVER):
+                        try:
+                            os.remove(FILE_VOTI_SERVER)
+                        except Exception:
+                            pass
+                    st.success("♻️ Complete database wiped successfully! A new voting session has started.")
+                    st.rerun()
             
             st.markdown("<hr style='margin-top: 10px; margin-bottom: 5px;'>", unsafe_allow_html=True)
             if st.button(ctx.get("high_btn_logout", "🔒 LOCK AREA & LOGOUT"), key="officer_logout_button"):
