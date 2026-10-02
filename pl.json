@@ -82,7 +82,7 @@
   "high_calc_subtitle": "Skonfiguruj parametry, aby natychmiast obliczyć całkowitą liczbę punktów wymaganą do zabójstw.",
   "high_input_bonus": "Poziom bonusu (0 - 100):",
   "high_input_players": "Liczba graczy / kont (1 - 100):",
-  "high_input_summons": "Liczba przywołań (1 - 100):",
+  "high_input_summons": "Liczba przywołań (1 - 6):",
   "high_input_start_lvl": "Poziom początkowy Pradawnego (150 - 250):",
   "high_box_title_base": "🏆 SZACOWANA CAŁKOWITA POJEMNOŚĆ ŁADUNKU",
   "high_section_cut_title": "Procentowe obniżenie wyniku",
