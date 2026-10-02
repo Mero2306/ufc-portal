@@ -798,25 +798,6 @@ else:
             except Exception as e:
                 st.error(f"Error loading player list for voting: {e}")
 
-                        
-                        # VERIFICA DEL LIMITE DELLE PREFERENZE MASSIME
-                        if len(scelte_effettuate) > 6:
-                            st.error(f"❌ You have selected {len(scelte_effettuate)} preferences! Maximum 6 allowed. Please uncheck some boxes to proceed.")
-                        elif voter_name in voti_totali_memoria:
-                            st.info(f"ℹ️ {voter_name}, you have already submitted your votes for this session. To change it, please contact an Officer.")
-                        else:
-                            col_sub1, col_sub2, col_sub3 = st.columns([1, 1.5, 1])
-                            with col_sub2:
-                                if st.button("🗳 *SUBMIT VOTING*", use_container_width=True):
-                                    if len(scelte_effettuate) == 0:
-                                        st.warning("⚠️ Please select at least 1 time preference before submitting!")
-                                    else:
-                                        voti_totali_memoria[voter_name] = scelte_effettuate
-                                        salva_voti_locali(voti_totali_memoria)
-                                        st.success("🎯 Voting submitted successfully! Your choices are now locked.")
-                                        st.rerun()
-            except Exception as e:
-                st.error(f"Error loading player list for voting: {e}")
 
 
     # --- PAGINA 6: COMMAND CENTER (PROTETTA DA PASSWORD OFFICERS) ---
