@@ -718,13 +718,13 @@ else:
                     else:
                         st.error("❌ Invalid Code!")
                         
-        # CONTENUTO SEGRETO SBLOCCATO (VERSIONE INGLESE NATIVA FINALE CORRETTA CON BOX COMPATTI)
+        # CONTENUTO SEGRETO SBLOCCATO (VERSIONE ULTRA-COMPATTA CON NOTIFICA IN BIANCO)
         else:
             st.markdown(
                 """
-                <div style="background-color: rgba(56, 118, 29, 0.1); border-left: 5px solid #38761d; padding: 12px 20px; border-radius: 4px; margin-bottom: 20px;">
-                    <p style="color: #38761d; margin: 0; font-size: 15px; font-weight: bold;">
-                        🔓 ACCESS GRANTED - WELCOME OFFICER
+                <div style="background-color: rgba(56, 118, 29, 0.15); border-left: 5px solid #38761d; padding: 6px 15px; border-radius: 4px; margin-bottom: 12px;">
+                    <p style="color: #ffffff !important; margin: 0; font-size: 14px; font-weight: bold; letter-spacing: 0.5px;">
+                        🔓 ACCESSO CONSENTITO - BENVENUTO SUPERIORE
                     </p>
                 </div>
                 """,
@@ -744,7 +744,7 @@ else:
                     num_evocazioni = st.number_input(ctx.get("high_input_summons", "Number of Summons (1 - 100):"), min_value=1, max_value=100, value=1, step=1, key="cmd_summons_num")
                     livello_partenza = st.number_input(ctx.get("high_input_start_lvl", "Starting Ancient Level (150 - 250):"), min_value=150, max_value=250, value=150, step=1, key="cmd_start_lvl")
             
-            # --- DATABASE REALE DEI PUNTI PRESI DALLA TUA TABELLA (PUNTI BASE DI DESTRA - COMINCIA DA 150) ---
+            # --- DATABASE REALE DEI PUNTI PRESI DALLA TABELLA (PUNTI BASE DI DESTRA - COMINCIA DA 150) ---
             tabella_punti_base = {
                 150: 811, 151: 843, 152: 871, 153: 900, 154: 931, 155: 963, 156: 996, 157: 1030, 158: 1060,
                 159: 1100, 160: 1140, 161: 1180, 162: 1220, 163: 1260, 164: 1300, 165: 1340, 166: 1390, 167: 1440,
@@ -779,13 +779,13 @@ else:
             # Formattazione a 4 cifre decimali europea per il Load Number Base
             totale_formattato = f"{load_number_risultato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
-            # --- BOX DI STAMPA AD ALTA VISIBILITÀ COMPATTO (LARGHEZZA E ALTEZZA RIDOTTE) ---
+            # --- BOX DI STAMPA AD ALTA VISIBILITÀ ULTRA-SOTTILE ---
             st.markdown(
                 f"""
-                <div class="chat-box" style="text-align: center; max-width: 500px; margin: 10px auto; border-left: 8px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 10px 15px !important;">
-                    <h2 style="margin: 0 0 5px 0; font-size: 16px; color: #bd9b53; letter-spacing: 1px;">{ctx.get('high_box_title_base', '🏆 TOTAL ESTIMATED VOLUME')}</h2>
-                    <p style="font-size: 38px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000; line-height: 1.2;">
-                        {totale_formattato} <span style="color: #bd9b53; font-size: 40px; font-weight: 900; margin-left: 5px; vertical-align: middle;">M</span>
+                <div class="chat-box" style="text-align: center; max-width: 500px; margin: 6px auto; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 6px 12px !important;">
+                    <h2 style="margin: 0 0 3px 0; font-size: 14px; color: #bd9b53; letter-spacing: 0.5px; font-family: 'Cinzel', serif;">{ctx.get('high_box_title_base', '🏆 TOTAL ESTIMATED VOLUME')}</h2>
+                    <p style="font-size: 28px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000; line-height: 1.1;">
+                        {totale_formattato} <span style="color: #bd9b53; font-size: 30px; font-weight: 900; margin-left: 4px; vertical-align: middle;">M</span>
                     </p>
                 </div>
                 """,
@@ -801,13 +801,13 @@ else:
             punteggio_tagliato = load_number_risultato * (1 - (percentuale_taglio / 100.0))
             totale_tagliato_formattato = f"{punteggio_tagliato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
-            # --- BOX DI STAMPA AD ALTA VISIBILITÀ COMPATTO (LARGHEZZA E ALTEZZA RIDOTTE) ---
+            # --- BOX DI STAMPA AD ALTA VISIBILITÀ ULTRA-SOTTILE ---
             st.markdown(
                 f"""
-                <div class="chat-box" style="text-align: center; max-width: 500px; margin: 10px auto; border-left: 8px solid #8c1d1d !important; background: linear-gradient(145deg, #291a1a, #140e0e) !important; padding: 10px 15px !important;">
-                    <h2 style="margin: 0 0 5px 0; font-size: 16px; color: #ff4d4d; letter-spacing: 1px;">{ctx.get('high_box_title_cut', '⚔️ FINAL CUT SCORE')} (-{percentuale_taglio}%)</h2>
-                    <p style="font-size: 38px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000; line-height: 1.2;">
-                        {totale_tagliato_formattato} <span style="color: #ff4d4d; font-size: 40px; font-weight: 900; margin-left: 5px; vertical-align: middle;">M</span>
+                <div class="chat-box" style="text-align: center; max-width: 500px; margin: 6px auto; border-left: 6px solid #8c1d1d !important; background: linear-gradient(145deg, #291a1a, #140e0e) !important; padding: 6px 12px !important;">
+                    <h2 style="margin: 0 0 3px 0; font-size: 16px; color: #ff4d4d; letter-spacing: 0.5px; font-family: 'Cinzel', serif;">{ctx.get('high_box_title_cut', '⚔️ FINAL CUT SCORE')} (-{percentuale_taglio}%)</h2>
+                    <p style="font-size: 28px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 4px #000000; line-height: 1.1;">
+                        {totale_tagliato_formattato} <span style="color: #ff4d4d; font-size: 30px; font-weight: 900; margin-left: 4px; vertical-align: middle;">M</span>
                     </p>
                 </div>
                 """,
@@ -815,7 +815,7 @@ else:
             )
             
             # Pulsante per richiudere la pagina e fare il logout di sicurezza
-            st.markdown("<br><hr>", unsafe_allow_html=True)
+            st.markdown("<hr style='margin-top: 15px; margin-bottom: 10px;'>", unsafe_allow_html=True)
             if st.button(ctx.get("high_btn_logout", "🔒 LOCK AREA & LOGOUT"), key="officer_logout_button"):
                 st.session_state["super_authenticated"] = False
                 st.rerun()
