@@ -128,7 +128,7 @@ if not st.session_state["authenticated"]:
 else:
 
 
-    # 3. PORTAL INTERFACE (LOGO MAXI CENTRATO E SICURO)
+               # 3. PORTAL INTERFACE (LOGO MAXI CENTRATO E SICURO)
     if os.path.exists("logo.png"):
         side_c1, side_c2, side_c3 = st.sidebar.columns([1, 4, 1])
         with side_c2:
@@ -138,6 +138,28 @@ else:
 
     st.sidebar.markdown("<h2 style='font-size: 20px; text-align: center; margin-top: 10px; margin-bottom: 15px;'>UFC Portal</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
+
+
+
+
+    lang_choice = st.sidebar.selectbox(
+        "🌐 SELECT LANGUAGE:",
+        [
+            "🇬🇧 English",
+            "🇮🇹 Italiano",
+            "🇫🇷 Français",
+            "🇪🇸 Español",
+            "🇩🇪 Deutsch",
+            "🇷🇺 Русский",
+            "🇹🇷 Türkçe",
+            "🇵🇹 Português",
+            "🇧🇷 Brasileiro",
+            "🇵🇱 Polski",
+            "🇨🇳 简体中文",
+            "🇺🇦 Українська",
+            "🇯🇵 日本語",
+        ],
+    )
 
     # Mappatura dei file esterni caricati sul tuo GitHub (Aggiornata con le bandiere)
     lang_files = {
@@ -149,61 +171,36 @@ else:
         "🇷🇺 Русский": "ru.json",
         "🇹🇷 Türkçe": "tr.json",
         "🇵🇹 Português": "pt.json",
-        "🇧 رازيل Brasileiro": "br.json",
+        "🇧🇷 Brasileiro": "br.json",
         "🇵🇱 Polski": "pl.json",
         "🇨🇳 简体中文": "zh.json",
         "🇺🇦 Українська": "uk.json",
         "🇯🇵 日本語": "ja.json",
     }
 
-    # PER EVITARE ERRORI DI INDICE, RECUPERIAMO PRIMA LA LINGUA SELEZIONATA DAL COSTRUTTO DELLO STATO DI STREAMLIT
-    if "selected_language_state" not in st.session_state:
-        st.session_state["selected_language_state"] = "🇮🇹 Italiano"
 
-    # CARICAMENTO DINAMICO DEI TESTI (SPOSTATO IN ALTO PER EVITARE L'ERRORE OUT OF BOUNDS)
+    # Caricamento dinamico dei testi per la barra laterale
     ctx = {}
-    lingua_corrente = st.session_state["selected_language_state"]
-    if lingua_corrente in lang_files and os.path.exists(lang_files[lingua_corrente]):
+    if lang_choice in lang_files and os.path.exists(lang_files[lang_choice]):
         try:
-            with open(lang_files[lingua_corrente], "r", encoding="utf-8") as f:
+            with open(lang_files[lang_choice], "r", encoding="utf-8") as f:
                 ctx = json.load(f)
         except Exception:
             ctx = {}
 
-    # COSTRUIAMO LA SELECTBOX DELLE LINGUE TRADOTTA USANDO IL DIZIONARIO APPENA CARICATO
-    lista_lingue = list(lang_files.keys())
-    indice_predefinito = lista_lingue.index(lingua_corrente) if lingua_corrente in lista_lingue else 1
-
-    lang_choice = st.sidebar.selectbox(
-        ctx.get("sidebar_lang_lbl", "🌐 SELECT LANGUAGE:"),
-        lista_lingue,
-        index=indice_predefinito,
-        key="home_language_selector_official_final"
-    )
-
-    # SE IL GIOCATORE CAMBIA LINGUA, AGGIORNIAMO LO STATO IN MEMORIA E RICARICHIAMO IL SITO CON I NUOVI TESTI
-    if lang_choice != st.session_state["selected_language_state"]:
-        st.session_state["selected_language_state"] = lang_choice
-        st.rerun()
-
     # Menu laterale che cambia lingua prendendo i dati dai tuoi JSON
+           # Menu laterale che cambia lingua prendendo i dati dai tuoi JSON
     options = [
         ctx.get("menu_home", "🏠 Home Dashboard"),
         ctx.get("menu_info", "📋 Clan Info & Chats"),
         ctx.get("menu_min", "📊 Event Minimums"),
         ctx.get("menu_disc", "🌐 Discord Server"),
         ctx.get("menu_calc", "⚔️ Troops Calculator"),
-        ctx.get("menu_res", "🏆 Clan Results"),
-        ctx.get("menu_high", "👑 Command")  # IMPOSTATO SU COMMAND
+        ctx.get("menu_res", "🏆 Clan Results")
     ]
 
     page = st.sidebar.radio("NAVIGATION:", options)
     st.sidebar.markdown("---")
-    
-
-    page = st.sidebar.radio("NAVIGATION:", options)
-    st.sidebar.markdown("---")
-
 
     # IL TUO LINK REALE DI GOOGLE SHEET CONFIGURATO
     GOOGLE_SHEET_LINK = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/edit?usp=sharing"
@@ -679,62 +676,3 @@ else:
             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
 
-         # --- PAGINA 6: COMMAND CENTER (PROTETTA DA PASSWORD) ---
-    elif page in ["👑 Command", ctx.get("menu_high")]:
-        apply_custom_style("bg_info.jpg")
-        
-        st.markdown(f"<h1>{ctx.get('high_h1', '👑 Command Center')}</h1>", unsafe_allow_html=True)
-        
-        if "super_authenticated" not in st.session_state:
-            st.session_state["super_authenticated"] = False
-            
-        if not st.session_state["super_authenticated"]:
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown(
-                """
-                <div style="background-color: rgba(212, 179, 115, 0.05); border: 1px solid #bd9b53; border-left: 5px solid #8c1d1d; padding: 20px; border-radius: 4px; margin-bottom: 25px;">
-                    <h3 style="margin: 0 0 10px 0; color: #8c1d1d !important;">🔒 RESTRICTED AREA - OFFICERS ONLY</h3>
-                    <p style="color: #f0e6d2; margin: 0; font-size: 15px; line-height: 1.6;">
-                        This section contains confidential strategic data. Please enter the Command authentication code to proceed.
-                    </p>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            
-            col_p1, col_p2, col_p3 = st.columns(3)
-            with col_p2:
-                pass_superiori = st.text_input(
-                    ctx.get("high_pass_lbl", "ENTER COMMAND PASSWORD:"), 
-                    type="password", 
-                    placeholder="Enter secret code...",
-                    key="officer_password_input_field"
-                )
-                st.markdown("<br>", unsafe_allow_html=True)
-                if st.button("UNLOCK COMMAND CENTER", use_container_width=True):
-                    if pass_superiori == "UFC_Officers_2026":
-                        st.session_state["super_authenticated"] = True
-                        st.success("🔑 Access Granted! Re-entering system...")
-                        st.rerun()
-                    else:
-                        st.error("❌ Invalid Code!")
-                        
-        else:
-            st.markdown(
-                """
-                <div style="background-color: rgba(56, 118, 29, 0.1); border-left: 5px solid #38761d; padding: 12px 20px; border-radius: 4px; margin-bottom: 20px;">
-                    <p style="color: #38761d; margin: 0; font-size: 15px; font-weight: bold;">
-                        🔓 ACCESS GRANTED - WELCOME OFFICER
-                    </p>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            
-            st.write("### 📜 Strategic Operations & Officer Logs")
-            st.write("This confidential space is ready to host your custom leaderboards, notes, or hidden targets.")
-            
-            st.markdown("<br><br><hr>", unsafe_allow_html=True)
-            if st.button("🔒 LOCK AREA & LOGOUT", key="officer_logout_button"):
-                st.session_state["super_authenticated"] = False
-                st.rerun()
