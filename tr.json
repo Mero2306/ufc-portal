@@ -82,7 +82,7 @@
   "high_calc_subtitle": "Canavar öldürmeleri için gereken toplam puanı anında hesaplamak üzere parametreleri yapılandırın.",
   "high_input_bonus": "Bonus Seviyesi (0 - 100):",
   "high_input_players": "Oyuncu / Hesap Sayısı (1 - 100):",
-  "high_input_summons": "Çağrı Sayısı (1 - 100):",
+  "high_input_summons": "Çağrı Sayısı (1 - 6):",
   "high_input_start_lvl": "Başlangıç Kadim Seviyesi (150 - 250):",
   "high_box_title_base": "🏆 TAHMİNİ TOPLAM YÜK HACMİ",
   "high_section_cut_title": "Skorda Yüzdelik Kesinti",
