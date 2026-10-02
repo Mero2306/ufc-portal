@@ -142,27 +142,13 @@ else:
 
 
 
-    lang_choice = st.sidebar.selectbox(
-        "🌐 SELECT LANGUAGE:",
-        [
-            "🇬🇧 English",
-            "🇮🇹 Italiano",
-            "🇫🇷 Français",
-            "🇪🇸 Español",
-            "🇩🇪 Deutsch",
-            "🇷🇺 Русский",
-            "🇹🇷 Türkçe",
-            "🇵🇹 Português",
-            "🇧🇷 Brasileiro",
-            "🇵🇱 Polski",
-            "🇨🇳 简体中文",
-            "🇺🇦 Українська",
-            "🇯🇵 日本語",
-        ],
-    )
+    # 1. RECUPERIAMO PRIMA LA LINGUA SELEZIONATA IN MEMORIA (DI BASE PARTE IN INGLESE)
+    if "selected_language_state" not in st.session_state:
+        st.session_state["selected_language_state"] = "🇬🇧 English"
 
+    lingua_corrente = st.session_state["selected_language_state"]
 
-    # Mappatura dei file esterni caricati sul tuo GitHub (Aggiornata con le bandiere)
+    # 2. MAPPATURA DEI FILE ESTERNI CARICATI SUT TUO GITHUB
     lang_files = {
         "🇬🇧 English": "en.json",
         "🇮🇹 Italiano": "it.json",
@@ -179,18 +165,32 @@ else:
         "🇯🇵 日本語": "ja.json",
     }
 
-
-    # Caricamento dinamico dei testi per la barra laterale
+    # 3. CARICAMENTO DEL FILE DI TRADUZIONE (CTX) ANTICIPATO
     ctx = {}
-    if lang_choice in lang_files and os.path.exists(lang_files[lang_choice]):
+    if lingua_corrente in lang_files and os.path.exists(lang_files[lingua_corrente]):
         try:
-            with open(lang_files[lang_choice], "r", encoding="utf-8") as f:
+            with open(lang_files[lingua_corrente], "r", encoding="utf-8") as f:
                 ctx = json.load(f)
         except Exception:
             ctx = {}
 
-    # Menu laterale che cambia lingua prendendo i dati dai tuoi JSON
-           # Menu laterale che cambia lingua prendendo i dati dai tuoi JSON
+    lista_lingue = list(lang_files.keys())
+    indice_predefinito = lista_lingue.index(lingua_corrente) if lingua_corrente in lista_lingue else 0
+
+    # 4. LA CASELLA DELLE LINGUE (CON TESTO NATIVO IN INGLESE, DINAMICO SOLO SE SI CAMBIA)
+    lang_choice = st.sidebar.selectbox(
+        ctx.get("sidebar_lang_lbl", "🌐 SELECT LANGUAGE:"),
+        lista_lingue,
+        index=indice_predefinito,
+        key="home_language_selector_official_final_v8"
+    )
+
+    # 5. SE L'UTENTE CAMBIA SELEZIONE, AGGIORNIAMO IL SITO ALL'ISTANTE
+    if lang_choice != st.session_state["selected_language_state"]:
+        st.session_state["selected_language_state"] = lang_choice
+        st.rerun()
+
+    # 6. MENU LATERALE DELLA NAVIGAZIONE (DINAMICO CON I TUOI JSON)
     options = [
         ctx.get("menu_home", "🏠 Home Dashboard"),
         ctx.get("menu_info", "📋 Clan Info & Chats"),
@@ -198,11 +198,12 @@ else:
         ctx.get("menu_disc", "🌐 Discord Server"),
         ctx.get("menu_calc", "⚔️ Troops Calculator"),
         ctx.get("menu_res", "🏆 Clan Results"),
-        ctx.get("menu_high", "👑 Command")  # NUOVA VOCE NATIVA IN INGLESE
+        ctx.get("menu_high", "👑 Command")
     ]
      
     page = st.sidebar.radio(ctx.get("sidebar_nav_lbl", "NAVIGATION:"), options)
     st.sidebar.markdown("---")
+
 
     # IL TUO LINK REALE DI GOOGLE SHEET CONFIGURATO
     GOOGLE_SHEET_LINK = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/edit?usp=sharing"
