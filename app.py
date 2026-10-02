@@ -969,6 +969,7 @@ else:
                             conteggio_orari[o] = conteggio_orari.get(o, 0) + 1
                             
                     # CREAZIONE DEL GRAFICO A BARRE ORIZZONTALI PER SCOPRIRE L'ORARIO VINCENTE
+                    import pandas as pd
                     import plotly.express as px
                     df_voti = pd.DataFrame([{"Time": k, "Votes": v} for k, v in conteggio_orari.items()]).sort_values(by="Votes", ascending=True)
                     fig_voti = px.bar(df_voti, x="Votes", y="Time", orientation="h", title="Preferred Evocation Times Summary", color="Votes", color_continuous_scale="Gold")
