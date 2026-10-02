@@ -82,7 +82,7 @@
   "high_calc_subtitle": "Configure os parâmetros para calcular instantaneamente o total de pontos necessários para as eliminações.",
   "high_input_bonus": "Nível de Bónus (0 - 100):",
   "high_input_players": "Número de Jogadores / Contas (1 - 100):",
-  "high_input_summons": "Número de Invocações (1 - 100):",
+  "high_input_summons": "Número de Invocações (1 - 6):",
   "high_input_start_lvl": "Nível Inicial do Ancient (150 - 250):",
   "high_box_title_base": "🏆 VOLUME DE CARGA TOTAL ESTIMADO",
   "high_section_cut_title": "Corte Percentual na Pontuação",
