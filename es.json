@@ -82,7 +82,7 @@
   "high_calc_subtitle": "Configure los parámetros para calcular los puntos totales necesarios para las eliminaciones.",
   "high_input_bonus": "Nivel del Bono (0 - 100):",
   "high_input_players": "Número de Jugadores / Cuentas (1 - 100):",
-  "high_input_summons": "Número de Invocaciones (1 - 100):",
+  "high_input_summons": "Número de Invocaciones (1 - 6):",
   "high_input_start_lvl": "Nivel Antiguo de Inicio (150 - 250):",
   "high_box_title_base": "🏆 VOLUMEN DE CARGA TOTAL ESTIMADO",
   "high_section_cut_title": "Corte Porcentual en la Puntuación",
