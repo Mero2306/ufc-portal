@@ -798,20 +798,18 @@ else:
                 unsafe_allow_html=True
             )
             
-            # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO (RIPRISTINATO DENTRO IL BOX CLICCABILE) ---
+            # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO (SBLOCCATA E PULITA) ---
             st.markdown("<br>### ✂️ Score Percentage Cut", unsafe_allow_html=True)
             
-            # Lo slider viene inserito con il comando corretto di Streamlit dentro il contenitore grafico
-            with st.container():
-                st.markdown('<div class="chat-box">', unsafe_allow_html=True)
-                percentuale_taglio = st.slider("Select the reduction percentage to apply (0 - 100%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
-                st.markdown('</div>', unsafe_allow_html=True)
+            # Usiamo un contenitore Streamlit pulito che applica il nostro stile di sfondo senza interferire con i click
+            percentuale_taglio = st.slider("Select the reduction percentage to apply (0 - 100%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
             
             # Calcolo del valore tagliato
             punteggio_tagliato = load_number_risultato * (1 - (percentuale_taglio / 100.0))
             totale_tagliato_formattato = f"{punteggio_tagliato:,.4f}".replace(",", "X").replace(".", ",").replace("X", ".")
             
             # --- BOX DI STAMPA AD ALTA VISIBILITÀ (PUNTEGGIO FINALE TAGLIATO CON LA "M" MAXI) ---
+            st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div class="chat-box" style="text-align: center; border-left: 8px solid #8c1d1d !important; background: linear-gradient(145deg, #291a1a, #140e0e) !important; padding: 25px !important;">
