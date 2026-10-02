@@ -82,7 +82,7 @@
   "high_calc_subtitle": "配置参数以立即计算击杀所需的总积分。",
   "high_input_bonus": "奖励等级 (0 - 100):",
   "high_input_players": "玩家/账号数量 (1 - 100):",
-  "high_input_summons": "召唤次数 (1 - 100):",
+  "high_input_summons": "召唤次数 (1 - 6):",
   "high_input_start_lvl": "起始远古等级 (150 - 250):",
   "high_box_title_base": "🏆 估计总负荷量",
   "high_section_cut_title": "积分百分比削减",
