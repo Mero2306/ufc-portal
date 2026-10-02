@@ -795,10 +795,11 @@ else:
                 unsafe_allow_html=True
             )
             
-            # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO (TOTALMENTE SBLOCCATA) ---
+            # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO (MODIFICATA CON MENU + E -) ---
             st.markdown("<br>### ✂️ Score Percentage Cut", unsafe_allow_html=True)
             
-            percentuale_taglio = st.slider("Select the reduction percentage to apply (0 - 100%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
+            # Sostituito lo slider con un number_input nativo che ha i pulsanti + e - integrati ai lati del valore
+            percentuale_taglio = st.number_input("Select reduction percentage (0 - 100%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
             
             # Calcolo del valore tagliato
             punteggio_tagliato = load_number_risultato * (1 - (percentuale_taglio / 100.0))
