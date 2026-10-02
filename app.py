@@ -719,7 +719,7 @@ else:
                     else:
                         st.error("❌ Invalid Code!")
                         
-        # CONTENUTO SEGRETO SBLOCCATO (VERSIONE INGLESE NATIVA FINALE)
+        # CONTENUTO SEGRETO SBLOCCATO (VERSIONE INGLESE NATIVA FINALE CORRETTA)
         else:
             st.markdown(
                 """
@@ -735,9 +735,8 @@ else:
             st.markdown("### 🧮 Clan Ancient Kill Points Calculator")
             st.write("Configure the parameters to calculate the total points needed for kills.")
             
-            # BLOCCO DELLE SELEZIONI COMPATTO ED ELEGANTE
+            # SCATOLA DEI PARAMETRI STRATEGICI - RIPRISTINATA, SBLOCCATA E SELEZIONABILE AL 100%
             st.markdown('<div class="chat-box">', unsafe_allow_html=True)
-            
             inp_c1, inp_c2 = st.columns(2)
             with inp_c1:
                 livello_bonus = st.number_input("Bonus Level (0 - 100):", min_value=0, max_value=100, value=100, step=1, key="cmd_bonus_lvl")
@@ -745,7 +744,6 @@ else:
             with inp_c2:
                 num_evocazioni = st.number_input("Number of Summons (1 - 100):", min_value=1, max_value=100, value=1, step=1, key="cmd_summons_num")
                 livello_partenza = st.number_input("Starting Ancient Level (150 - 250):", min_value=150, max_value=250, value=150, step=1, key="cmd_start_lvl")
-                
             st.markdown('</div>', unsafe_allow_html=True)
             
             # --- DATABASE REALE DEI PUNTI PRESI DALLA TUA TABELLA (PUNTI BASE DI DESTRA - COMINCIA DA 150) ---
@@ -798,10 +796,10 @@ else:
                 unsafe_allow_html=True
             )
             
-            # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO (SBLOCCATA E PULITA) ---
+            # --- SEZIONE INTERATTIVA: TAGLIO PERCENTUALE SUL PUNTEGGIO ---
             st.markdown("<br>### ✂️ Score Percentage Cut", unsafe_allow_html=True)
             
-            # Usiamo un contenitore Streamlit pulito che applica il nostro stile di sfondo senza interferire con i click
+            # La barra dello slider è pulita ed esterna a blocchi HTML bloccanti, interamente cliccabile
             percentuale_taglio = st.slider("Select the reduction percentage to apply (0 - 100%):", min_value=0, max_value=100, value=0, step=1, key="cmd_cut_percentage")
             
             # Calcolo del valore tagliato
