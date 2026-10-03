@@ -122,29 +122,28 @@ def mostra_trends_e_stats(ctx):
                     
                     p_l, p_h = 0, 0
                     
-                    def estrai_punteggio_reale(riga_df):
+                    def pulisci_valore_totale(cella):
                         try:
-                            # Isola la cella della colonna E (indice 4)
-                            cella = riga_df.iloc[0, 4]
-                            # Se è già un numero (intero o float), lo converte matematicamente eliminando i decimali .0
-                            if pd.api.types.is_number(cella):
-                                return int(float(cella))
-                            
-                            # Se viene letto come testo con i punti (es. "37.344.450"), pulisce la punteggiatura
-                            val_str = str(cella).strip().lower()
-                            if val_str == "nan" or val_str == "":
-                                return 0
-                            if val_str.endswith(".0") and val_str.count(".") == 1:
-                                val_str = val_str[:-2]
-                            val_str = val_str.replace('.', '').replace(',', '')
-                            return int(val_str) if val_str.isdigit() else 0
+                            # Convertiamo direttamente in numero float (decimale) e poi in intero.
+                            # Questo elimina matematicamente il .0 finale senza aggiungere zeri!
+                            return int(float(str(cella).strip()))
                         except Exception:
                             return 0
 
-                    # Estrazione matematica sicura e pulita per Clan e Giocatori
-                    p_l = estrai_punteggio_reale(r_p_l)
-                    if not r_p_h.empty:
-                        p_h = estrai_punteggio_reale(r_p_h)
+                    # Estrazione e pulizia nativa senza manipolazione di stringhe o punti
+                    if g_scelto == clan_holder:
+                        try:
+                            p_l = pulisci_valore_totale(r_p_l.iloc)
+                            p_h = pulisci_valore_totale(r_p_h.iloc) if not r_p_h.empty else 0
+                        except Exception: pass
+                    else:
+                        try: 
+                            p_l = pulisci_valore_totale(r_p_l.iloc)
+                        except Exception: pass
+                        if not r_p_h.empty:
+                            try: 
+                                p_h = pulisci_valore_totale(r_p_h.iloc)
+                            except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
