@@ -70,7 +70,7 @@ def mostra_trends_e_stats(ctx):
                 
 # ATTIVAZIONE SOLO SE ENTRAMBI I FILTRI SONO SELEZIONATI CORRETTAMENTE
             if g_scelto != p_holder and p_scelto != period_holder:
-                url_h = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
+                url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:106].copy()
 
