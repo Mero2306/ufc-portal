@@ -945,7 +945,8 @@ else:
                 unsafe_allow_html=True
             )
             # --- ZONA MONITORAGGIO VOTAZIONI STRATEGICHE (SALA COMANDO SUPERIORI) ---
-            st.markdown("<br>", unsafe_allow_html=True)
+            # INSERITA LINEA CONTINUA DORATA DI SEPARAZIONE DALLA CALCOLATRICE
+            st.markdown("<hr style='border: 1px solid #bd9b53; margin-top: 30px; margin-bottom: 25px; opacity: 0.6;'>", unsafe_allow_html=True)
             
             # FILE DI BACKUP INTERNO DEI VOTI
             FILE_VOTI_SERVER = "voti_interni.json"
@@ -956,67 +957,64 @@ else:
                         voti_attuali = json.load(file_db)
                 except Exception:
                     voti_attuali = {}
-            
-            # IL MENU A SCOMPARSA RICHIESTO IN INGLESE NATIVO PER NON APPESANTIRE LA PAGINA
+
+            # IL MENU A SCOMPARSA IN INGLESE NATIVO
             with st.expander("📊 VIEW VOTING RESULTS"):
-                if not voti_attuali:
-                    st.info("📊 No votes recorded yet for this session. Waiting for players to vote.")
-                else:
-                    # CONTEGGIO DEI VOTI TOTALI PER OGNI FUSO ORARIO
-                    conteggio_orari = {}
-                    for giocatore, orari_scelti in voti_attuali.items():
-                        for o in orari_scelti:
-                            conteggio_orari[o] = conteggio_orari.get(o, 0) + 1
-                            
-                    # CONTEGGIO DEL NUMERO TOTALI DI GIOCATORI REALI CHE HANNO ESPRESSO IL VOTO
-                    numero_votanti_totale = len(voti_attuali)
-                            
-                    # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI EXTRA COMPATTI AFFIANCATI
-                    st.markdown(f"<h5 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 11px !important;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 13px; font-weight: bold;'>{numero_votanti_totale}</span></h5>", unsafe_allow_html=True)
-                    
-                    # DISTRIBUZIONE SPAZI: 70% A SINISTRA PER I RIQUADRI AFFIANCATI, 30% A DESTRA PER LA CLASSIFICA STRETTA
-                    col_sinistra_riquadri, col_destra_classifica = st.columns([2.1, 0.9])
-                    
-                    # Ordiniamo gli orari dal più votato al meno votato per numero di voti
-                    orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x[1], reverse=True)
-                    
-                    with col_sinistra_riquadri:
-                        st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #a69e8d; text-align: center;'>📈 TIME COUNTER</p>", unsafe_allow_html=True)
+                # CONTEGGIO DEI VOTI TOTALI PER OGNI FUSO ORARIO
+                conteggio_orari = {}
+                for giocatore, orari_scelti in voti_attuali.items():
+                    for o in orari_scelti:
+                        conteggio_orari[o] = conteggio_orari.get(o, 0) + 1
                         
-                        # CREIAMO UNA SOTTO-GRIGLIA A 4 COLONNE PER AFFIANCARE I RIQUADRI CON LA R L'UNO ALL'ALTRO
-                        cols_interne_orari = st.columns(4)
-                        for idx_o, (fuso, num_voti) in enumerate(orari_ordinati):
-                            with cols_interne_orari[idx_o % 4]:
-                                fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
-                                st.markdown(
-                                    f"""
-                                    <div class="chat-box" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1px 2px !important; margin-bottom: 3px !important; border-left: 2px solid #d4b373 !important; border-radius: 2px !important; height: 34px !important; background: transparent !important; box-shadow: none !important; width: 100% !important;">
-                                        <span style="color: #d4b373; font-weight: bold; font-size: 13px !important; font-family: 'Cinzel', serif; line-height: 1.1;">{fuso_etichetta}</span>
-                                        <span style="color: #ffffff; font-weight: bold; font-size: 12px !important; font-family: 'Cinzel', serif; line-height: 1.1;">{num_voti}v</span>
-                                    </div>
-                                    """, 
-                                    unsafe_allow_html=True
-                                )
-                            
-                    with col_destra_classifica:
-                        st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #bd9b53; text-align: center;'>🏆 RANKING</p>", unsafe_allow_html=True)
-                        if orari_ordinati:
-                            testo_classifica = ""
-                            for pos, (fuso, num_voti) in enumerate(orari_ordinati, start=1):
-                                fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
-                                medaglia = "🥇" if pos == 1 else "🥈" if pos == 2 else "🥉" if pos == 3 else "✨"
-                                testo_classifica += f"<div style='padding: 0px 0; font-size: 10px !important; line-height: 1.2;'>{medaglia} <b>P.{pos}:</b> {fuso_etichetta} ({num_voti}v)</div>"
-                            st.markdown(f"<div class='chat-box' style='padding: 3px 5px !important; border-radius: 3px !important; background: rgba(30, 26, 19, 0.4) !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
-                        else:
-                            st.info("Empty")
+                # CONTEGGIO DEL NUMERO TOTALI DI GIOCATORI REALI CHE HANNO ESPRESSO IL VOTO
+                numero_votanti_totale = len(voti_attuali)
+                        
+                # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI EXTRA COMPATTI AFFIANCATI
+                st.markdown(f"<h5 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 11px !important;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 13px; font-weight: bold;'>{numero_votanti_totale}</span></h5>", unsafe_allow_html=True)
+                
+                # DISTRIBUZIONE SPAZI: 70% A SINISTRA PER I RIQUADRI AFFIANCATI, 30% A DESTRA PER LA CLASSIFICA STRETTA
+                col_sinistra_riquadri, col_destra_classifica = st.columns([2.1, 0.9])
+                
+                # Ordiniamo gli orari dal più votato al meno votato per numero di voti
+                orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x, reverse=True)
+                
+                with col_sinistra_riquadri:
+                    st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #a69e8d; text-align: center;'>📈 TIME COUNTER</p>", unsafe_allow_html=True)
                     
-                    st.markdown("<br>", unsafe_allow_html=True)
-                    
-                    # SECONDO MENU A SCOMPARSA DEDICATO PER I DETTAGLI DEI NOMINATIVI
-                    with st.expander("🔍 VIEW DETAILED PLAYER CHOICES"):
-                        for g, o_list in voti_attuali.items():
-                            orari_formattati_lista = [orario if "R" in orario else f"R{orario}" for orario in o_list]
-                            st.write(f"• **{g}:** {', '.join(orari_formattati_lista)}")
+                    # CREIAMO UNA SOTTO-GRIGLIA A 4 COLONNE PER AFFIANCARE I RIQUADRI CON LA R L'UNO ALL'ALTRO
+                    cols_interne_orari = st.columns(4)
+                    for idx_o, (fuso, num_voti) in enumerate(orari_ordinati):
+                        with cols_interne_orari[idx_o % 4]:
+                            fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
+                            st.markdown(
+                                f"""
+                                <div class="chat-box" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1px 2px !important; margin-bottom: 3px !important; border-left: 2px solid #d4b373 !important; border-radius: 2px !important; height: 34px !important; background: transparent !important; box-shadow: none !important; width: 100% !important;">
+                                    <span style="color: #d4b373; font-weight: bold; font-size: 13px !important; font-family: 'Cinzel', serif; line-height: 1.1;">{fuso_etichetta}</span>
+                                    <span style="color: #ffffff; font-weight: bold; font-size: 12px !important; font-family: 'Cinzel', serif; line-height: 1.1;">{num_voti}v</span>
+                                </div>
+                                """, 
+                                unsafe_allow_html=True
+                            )
+                        
+                with col_destra_classifica:
+                    st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #bd9b53; text-align: center;'>🏆 RANKING</p>", unsafe_allow_html=True)
+                    if orari_ordinati:
+                        testo_classifica = ""
+                        for pos, (fuso, num_voti) in enumerate(orari_ordinati, start=1):
+                            fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
+                            medaglia = "🥇" if pos == 1 else "🥈" if pos == 2 else "🥉" if pos == 3 else "✨"
+                            testo_classifica += f"<div style='padding: 0px 0; font-size: 10px !important; line-height: 1.2;'>{medaglia} <b>P.{pos}:</b> {fuso_etichetta} ({num_voti}v)</div>"
+                        st.markdown(f"<div class='chat-box' style='padding: 3px 5px !important; border-radius: 3px !important; background: rgba(30, 26, 19, 0.4) !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
+                    else:
+                        st.info("Empty")
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                
+                # SECONDO MENU A SCOMPARSA DEDICATO PER I DETTAGLI DEI NOMINATIVI
+                with st.expander("🔍 VIEW DETAILED PLAYER CHOICES"):
+                    for g, o_list in voti_attuali.items():
+                        orari_formattati_lista = [orario if "R" in orario else f"R{orario}" for orario in o_list]
+                        st.write(f"• **{g}:** {', '.join(orari_formattati_lista)}")
             
             # --- PANNELLO STRUMENTI DI CONTROLLO CON SÌ / NO DI SICUREZZA ---
             st.markdown("<br>", unsafe_allow_html=True)
