@@ -698,6 +698,7 @@ else:
         for item in dettagli_forzieri:
             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
+            
     # --- NUOVA PAGINA: VOTAZIONE ORARIO ANTICHI DIALETTO DINAMICO ---
     elif page in ["🗳️ Ancient Evocation Time Voting", ctx.get("menu_voting")]:
         apply_custom_style("bg_home.jpg")
