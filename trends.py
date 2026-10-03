@@ -95,7 +95,7 @@ def mostra_trends_e_stats(ctx):
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": label_live, "Volume": val_l})
                     
-                    # NUOVO GRAFICO: Barre affiancate chiare, pulite e leggibili su smartphone
+                    # FORZATURA NUOVO GRAFICO: Struttura a barre raggruppate e affiancate (Ultra leggibile)
                     df_grafico = pd.DataFrame(g_data)
                     fig = px.bar(
                         df_grafico, 
@@ -119,7 +119,7 @@ def mostra_trends_e_stats(ctx):
                         margin=dict(t=10, b=80, l=10, r=10), 
                         height=350, 
                         xaxis=dict(
-                            tickangle=-45,  # Ruota i testi in diagonale per non accavallarli
+                            tickangle=-45,  # Ruota i testi di 45 gradi in diagonale per evitare accavallamenti
                             title=None
                         ),
                         yaxis=dict(
@@ -164,5 +164,10 @@ def mostra_trends_e_stats(ctx):
                         st.markdown(f"""<div class="chat-box" style="padding: 10px !important; border-left: 3px solid #d4b373 !important;"><span style="color: #a69e8d; font-size: 10px;">GOAL PROGRESS COMPARISON</span><br><span style="font-size: 12px; color: #f0e6d2;">Current: <b>{o_l}</b></span><br><span style="font-size: 12px; color: #bd9b53;">Previous: <b>{o_h}</b></span></div>""", unsafe_allow_html=True)
                 else:
                     st.info("👤 Player details not found in the live log database.")
+            else:
+                # Schermata di cortesia se manca la selezione di un profilo o del periodo
+                st.markdown("<br>", unsafe_allow_html=True)
+                text_trends_info = ctx.get("trends_select_info_lbl", "💡 **Notice:** Please select both a player profile and an archive period to display the progression graphs.")
+                st.markdown(f"""<div style="background-color: rgba(28, 142, 230, 0.1); border-left: 5px solid rgb(28, 142, 230); padding: 16px 20px; border-radius: 4px; margin-bottom: 15px;"><p style="color: #f0e6d2; margin: 0; font-size: 16px; font-weight: 500; line-height: 1.6; letter-spacing: 0.3px;">{text_trends_info}</p></div>""", unsafe_allow_html=True)
     except Exception as e:
         st.error(f"Error rendering trends page: {e}")
