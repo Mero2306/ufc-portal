@@ -691,7 +691,7 @@ else:
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
-        # DIVISORIO INVISIBILE MASSIMO DA 60 PIXEL E UN SOLO TITOLO CENTRATO PULITO
+# DIVISORIO INVISIBILE MASSIMO DA 60 PIXEL E UN SOLO TITOLO CENTRATO PULITO
         st.markdown("<div style='margin-bottom: 60px;'></div>", unsafe_allow_html=True)
         st.markdown(f"<h4 style='margin: 0; text-align: center; font-family: \"Cinzel\", serif; font-size: 16px; font-weight: bold;'>{ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}</h4>", unsafe_allow_html=True)
 
@@ -699,6 +699,11 @@ else:
         for item in dettagli_forzieri:
             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
+            
+    # --- NUOVA PAGINA ESTERNA: CONFRONTO TREND STORICI CLAN & GIOCATORI ---
+    elif page in ["📊 Clan Trends & Stats", ctx.get("menu_trends")]:
+        import trends
+        trends.mostra_trends_e_stats(ctx)
             
     # --- NUOVA PAGINA: VOTAZIONE ORARIO ANTICHI CON TRADUZIONI DINAMICHE ---
     elif page in ["🗳️ Ancient Evocation Time Voting", ctx.get("menu_voting")]:
@@ -721,6 +726,7 @@ else:
                     json.dump(database_voti, file_db, ensure_ascii=False, indent=4)
             except Exception:
                 pass
+
 
         voti_totali_memoria = carica_voti_locali()
 
