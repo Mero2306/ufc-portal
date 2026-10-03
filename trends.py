@@ -117,8 +117,6 @@ def mostra_trends_e_stats(ctx):
                         yaxis=dict(title=None, gridcolor='rgba(240, 230, 210, 0.1)', fixedrange=True),
                         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, title=None)
                     )
-                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-                    
                     p_l, p_h = 0, 0
                     def pulisci_valore_totale(cella):
                         val_str = str(cella).strip().lower()
@@ -127,11 +125,18 @@ def mostra_trends_e_stats(ctx):
                         val_str = val_str.replace('.', '').replace(',', '')
                         return int(val_str) if val_str.isdigit() else 0
 
-                    try: p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
-                    except Exception: pass
-                    if not r_p_h.empty:
-                        try: p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
+                    # Estrazione sicura differenziata per Intero Clan o giocatore singolo
+                    if is_clan:
+                        try: p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
                         except Exception: pass
+                        try: p_h = pulisci_valore_totale(r_p_h.iloc[0, 4]) if not r_p_h.empty else 0
+                        except Exception: pass
+                    else:
+                        try: p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
+                        except Exception: pass
+                        if not r_p_h.empty:
+                            try: p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
+                            except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
