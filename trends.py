@@ -125,39 +125,31 @@ def mostra_trends_e_stats(ctx):
                     )
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
+                    # NUOVA LOGICA NUMERICA PURA (Risolve il crash dello 0 e lo sfasamento dei totali)
                     p_l, p_h = 0, 0
                     
-                    # FUNZIONE DI PULIZIA BLINDATA CONTRO IL BUG DEL .0 DI PANDAS
-                    def pulisci_valore_totale(cella_input):
+                    def estrai_valore_cella_sicuro(riga_selezionata):
                         try:
-                            val_str = str(cella_input).strip().lower()
-                            if val_str == "nan" or val_str == "":
+                            if riga_selezionata.empty:
                                 return 0
+                            # Estraiamo la cella E (indice 4) garantendo la lettura del primo elemento
+                            valore_cella = riga_selezionata.iloc[0, 4]
                             
-                            # INTERCETTAZIONE CRITICA: Se finisce con .0 lo tronca per evitare il moltiplicatore x10
-                            if val_str.endswith(".0"):
-                                val_str = val_str[:-2]
-                                
-                            # Ora rimuove in totale sicurezza i punti e le virgole residui
-                            val_str = val_str.replace('.', '').replace(',', '')
-                            return int(val_str) if val_str.isdigit() else 0
+                            # Se Pandas ha letto la cella come numero float (es: 37344450.0 o 194800.0)
+                            # la conversione matematica int(float(...)) elimina il decimale senza aggiungere zeri
+                            return int(float(str(valore_cella).strip()))
                         except Exception:
-                            return 0
+                            try:
+                                # Fallback testuale se la cella contiene formattazioni non standard
+                                s = str(riga_selezionata.iloc[0, 4]).strip().split('.')[0].replace(',', '')
+                                return int(s) if s.isdigit() else 0
+                            except Exception:
+                                return 0
 
-                    # Estrazione e pulizia millimetrica per Clan o Giocatore Singolo
-                    if g_scelto == clan_holder:
-                        try:
-                            p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
-                            p_h = pulisci_valore_totale(r_p_h.iloc[0, 4]) if not r_p_h.empty else 0
-                        except Exception: pass
-                    else:
-                        try: 
-                            p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
-                        except Exception: pass
-                        if not r_p_h.empty:
-                            try: 
-                                p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
-                            except Exception: pass
+                    # Calcolo dei totali per Clan o Giocatore Singolo
+                    p_l = estrai_valore_cella_sicuro(r_p_l)
+                    if not r_p_h.empty:
+                        p_h = estrai_valore_cella_sicuro(r_p_h)
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
