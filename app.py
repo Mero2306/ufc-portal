@@ -1027,10 +1027,16 @@ else:
             with c_admin1:
                 st.markdown(ctx.get('admin_cancel_single_title', '##### ❌ CANCEL SINGLE PLAYER VOTE'))
                 if voti_attuali:
-                    # AGGANCIO COMPLETO AL FILE JSON ITALIANO
+                    # INIZIALIZZAZIONE DEL CONTATORE DI RESET PER LA TENDINA
+                    if "reset_dropdown_counter" not in st.session_state:
+                        st.session_state["reset_dropdown_counter"] = 0
+                        
                     etichetta_rimuovi = ctx.get('admin_cancel_single_select', '-- Select Player to Remove --')
                     lista_votanti = [etichetta_rimuovi] + list(voti_attuali.keys())
-                    player_to_del = st.selectbox(etichetta_rimuovi, lista_votanti, key="del_single_voter_dropdown_official_v12")
+                    
+                    # LA TENDINA CAMBIA CHIAVE DINAMICAMENTE QUANDO SI CLICCA NO, AZZERANDOSI DA SOLA
+                    chiave_dinamica_selectbox = f"del_player_select_v13_{st.session_state['reset_dropdown_counter']}"
+                    player_to_del = st.selectbox(etichetta_rimuovi, lista_votanti, key=chiave_dinamica_selectbox)
                     
                     if player_to_del != etichetta_rimuovi:
                         st.warning(ctx.get('admin_cancel_single_warning', f"⚠️ Are you sure you want to delete the vote for {player_to_del}?"))
@@ -1045,11 +1051,13 @@ else:
                                             json.dump(voti_attuali, file_db, ensure_ascii=False, indent=4)
                                     except Exception:
                                         pass
+                                st.session_state["reset_dropdown_counter"] += 1
                                 st.success(f"💥 Vote removed!")
                                 st.rerun()
                         with col_s2:
-                            # TASTO NO CORRETTO: RICARICA LA PAGINA IN MODO NEUTRO SENZA SOVRASCRIVERE IL WIDGET ATTIVO
+                            # IL TASTO NO ORA FUNZIONA: CAMBIA IL CONTATORE, AZZERA LA TENDINA E CHIUDE L'AVVISO ALL'ISTANTE
                             if st.button(ctx.get('admin_cancel_single_no', '🔴 NO, ABORT'), use_container_width=True, key="btn_confirm_single_no"):
+                                st.session_state["reset_dropdown_counter"] += 1
                                 st.rerun()
                 else:
                     st.caption("No active votes to remove.")
