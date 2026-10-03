@@ -13,7 +13,7 @@ def mostra_trends_e_stats(ctx):
     # Elenco reale dei codici GID fisici dei fogli storici (2, 3, 4, 5) inviati da te
     gids_storici = ["1281719474", "1240125232", "958114297", "676719910"]
     
-    # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale
+    # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale ://google.com
     url_live = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
     try:
         df_live_raw = pd.read_csv(url_live, header=None)
@@ -23,12 +23,14 @@ def mostra_trends_e_stats(ctx):
     except Exception:
         st.warning("⚠️ Waiting for data synchronisation... Please try to reload.")
         return
+
     # --- MOTORE AD ESTRAZIONE TITOLI REALI DA CELLA D2 VIA CSV ---
     mappa_periodi_gid = {}
     label_live = ctx.get("trends_current_period", "Current Observation Period")
     
     for v_gid in gids_storici:
         try:
+            # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale ://google.com
             url_check = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={v_gid}"
             df_check = pd.read_csv(url_check, header=None)
             
@@ -42,35 +44,31 @@ def mostra_trends_e_stats(ctx):
         except Exception:
             # Protezione totale: se un foglio fallisce, assegna un nome generico e NON blocca la pagina
             mappa_periodi_gid[f"Archive Sheet ({v_gid[-4:]})"] = v_gid
-
     nomi_forzieri = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai", "Union of Triumph"]
-    
+    st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>📈 {ctx.get('trends_clan_title', 'Clan Performance Progression')}</h4>", unsafe_allow_html=True)
+
     try:
         col_n = [h for h in headers_live if "name" in h.lower() or "nickname" in h.lower() or "giocatore" in h.lower()]
-        if not col_n:
-            col_n = [headers_live[3]] if len(headers_live) > 3 else [headers_live[0]]
-            
-        g_list = [n for n in df_live[col_n[0]].dropna().astype(str).str.strip().unique() if n and n.lower() not in ["nan", "total", "totale", "union of triumph"]]
+        g_list = [n for n in df_live[col_n].dropna().astype(str).str.strip().unique() if n and n.lower() not in ["nan", "total", "totale", "union of triumph"]]
         
-        if g_list:
+        if g_list and mappa_periodi_gid:
             p_holder = ctx.get("select_name_placeholder", "-- Select Name --")
             c_w1, c_w2 = st.columns(2)
             with c_w1: g_scelto = st.selectbox(ctx.get("select_player_lbl", "Profile:"), [p_holder] + sorted(g_list), key="p_sel_tr")
             with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), list(mappa_periodi_gid.keys()), key="t_p_sel")
                 
             if g_scelto != p_holder:
+                # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale ://google.com
                 url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
                 
                 headers_hist = df_h_raw.iloc[2].astype(str).str.strip().tolist()
                 df_h = df_h_raw.iloc[3:106].copy()
                 df_h.columns = headers_hist
-                
                 col_n_h = [h for h in headers_hist if "name" in h.lower() or "nickname" in h.lower() or "giocatore" in h.lower()]
-                if not col_n_h: col_n_h = [headers_hist[3]] if len(headers_hist) > 3 else [headers_hist[0]]
 
-                r_p_l = df_live[df_live[col_n[0]].astype(str).str.strip().lower() == g_scelto.lower()]
-                r_p_h = df_h[df_h[col_n_h[0]].astype(str).str.strip().lower() == g_scelto.lower()]
+                r_p_l = df_live[df_live[col_n].astype(str).str.strip().lower() == g_scelto.lower()]
+                r_p_h = df_h[df_h[col_n_h].astype(str).str.strip().lower() == g_scelto.lower()]
                 
                 if not r_p_l.empty and not r_p_h.empty:
                     g_data = []
@@ -94,20 +92,17 @@ def mostra_trends_e_stats(ctx):
                     p_l, p_h = 0, 0
                     c_p_l = [h for h in r_p_l.columns if "punti" in h.lower() or "points" in h.lower()]
                     c_p_h = [h for h in r_p_h.columns if "punti" in h.lower() or "points" in h.lower()]
-                    try: p_l = int(str(r_p_l[c_p_l[0]].values[0]).replace('.', '').replace(',', '').strip())
+                    try: p_l = int(str(r_p_l[c_p_l].values[0]).replace('.', '').replace(',', '').strip())
                     except Exception: pass
-                    try: p_h = int(str(r_p_h[c_p_h[0]].values[0]).replace('.', '').replace(',', '').strip())
+                    try: p_h = int(str(r_p_h[c_p_h].values[0]).replace('.', '').replace(',', '').strip())
                     except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     c_g_l = [h for h in r_p_l.columns if "progress" in h.lower() or "goal" in h.lower() or "o_live" in h.lower() or "obiettivo" in h.lower()]
-                    c_g_l_name = c_g_l[0] if c_g_l else r_p_l.columns[7]
                     c_g_h = [h for h in r_p_h.columns if "progress" in h.lower() or "goal" in h.lower() or "o_hist" in h.lower() or "obiettivo" in h.lower()]
-                    c_g_h_name = c_g_h[0] if c_g_h else r_p_h.columns[7]
-                    
-                    o_l = str(r_p_l[c_g_l_name].values[0]).strip()
-                    o_h = str(r_p_h[c_g_h_name].values[0]).strip()
+                    o_l = str(r_p_l[c_g_l].values[0]).strip()
+                    o_h = str(r_p_h[c_g_h].values[0]).strip()
                     
                     st.markdown("<br>", unsafe_allow_html=True)
                     res1, res2 = st.columns(2)
