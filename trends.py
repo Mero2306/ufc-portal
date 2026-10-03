@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 def mostra_trends_e_stats(ctx):
-    # Sfondo ufficiale dorato UFC a specchio con la pagina dei Risultati Clan
+    # Ripristinato lo sfondo ufficiale UFC a specchio con la pagina dei Risultati Clan
     st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("https://githubusercontent.com") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
     
     # Titolo principale sottile ed elegante (Dimensione massima 18px per mobile)
@@ -14,7 +14,7 @@ def mostra_trends_e_stats(ctx):
     GID_LIVE_REALE = "1972335307"
     gids_storici = ["1281719474", "1240125232", "958114297", "676719910"]
     
-    # URL di caricamento del Foglio 1 (Dati correnti live verticali) con la sintassi nativa ufficiale
+    # URL di caricamento del Foglio 1 (Dati correnti live verticali) con la sintassi nativa ufficiale docs.google.com
     url_live = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
     try:
         df_live_raw = pd.read_csv(url_live, header=None)
@@ -41,9 +41,8 @@ def mostra_trends_e_stats(ctx):
             mappa_periodi_gid[titolo_rilevato] = v_gid
         except Exception:
             mappa_periodi_gid[f"Archive Sheet ({v_gid[-4:]})"] = v_gid
-
-    # ELIMINATO UNION OF TRIUMPH - RIMASTI I 16 FORZIERI COMPATIBILI AL 100%
-    nomi_forzieri = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai"]
+    # LISTA DEI FORZIERI COMPLETA - ABBIAMO FORZATO DARK OMENS CHE ANDRÀ A LEGGERE LA COLONNA CP
+    nomi_forzieri = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai", "Dark Omens"]
     st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>📈 {ctx.get('trends_clan_title', 'Clan Performance Progression')}</h4>", unsafe_allow_html=True)
 
     try:
@@ -59,6 +58,7 @@ def mostra_trends_e_stats(ctx):
             if g_scelto != p_holder:
                 url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
+                
                 headers_hist = df_h_raw.iloc[2].astype(str).str.strip().tolist()
                 df_h = df_h_raw.iloc[3:106].copy()
                 df_h.columns = headers_hist
@@ -71,12 +71,17 @@ def mostra_trends_e_stats(ctx):
                     g_data = []
                     for item in nomi_forzieri:
                         val_l, val_h = 0, 0
-                        if item in r_p_l.columns:
-                            v = str(r_p_l[item].values[0]).strip().replace('.', '').replace(',', '')
+                        
+                        # DEVIAZIONE DINAMICA MAURIZIO: Se l'elemento è Dark Omens, punta dritto alla colonna CP
+                        colonna_cercata = "CP" if item == "Dark Omens" else item
+                        
+                        if colonna_cercata in r_p_l.columns:
+                            v = str(r_p_l[colonna_cercata].values[0]).strip().replace('.', '').replace(',', '')
                             if v.isdigit(): val_l = int(v)
-                        if item in r_p_h.columns:
-                            v_h = str(r_p_h[item].values[0]).strip().replace('.', '').replace(',', '')
+                        if colonna_cercata in r_p_h.columns:
+                            v_h = str(r_p_h[colonna_cercata].values[0]).strip().replace('.', '').replace(',', '')
                             if v_h.isdigit(): val_h = int(v_h)
+                            
                         lbl = ctx.get(item, item)
                         g_data.append({"Chest Type": lbl, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl, "Timeline": label_live, "Volume": val_l})
