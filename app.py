@@ -972,25 +972,26 @@ else:
                 # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI EXTRA COMPATTI AFFIANCATI
                 st.markdown(f"<h5 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 11px !important;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 13px; font-weight: bold;'>{numero_votanti_totale}</span></h5>", unsafe_allow_html=True)
                 
-                # OTTIMIZZAZIONE SPAZI AFFIANCATI: ALLARGATA LA COLONNA SINISTRA AL 75% PER FAR STARE PIÙ RIQUADRI INSIEME
-                col_sinistra_riquadri, col_destra_classifica = st.columns([2.25, 0.75])
+                # MASSIMA LARGHEZZA ORIZZONTALE ALLA COLONNA SINISTRA (80%) PER PERMETTERE LE 5 COLONNE AFFIANCATE
+                col_sinistra_riquadri, col_destra_classifica = st.columns([2.4, 0.6])
                 
                 # Ordiniamo gli orari dal più votato al meno votato per numero di voti
-                orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x, reverse=True)
+                orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x[1], reverse=True)
                 
                 with col_sinistra_riquadri:
                     st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #a69e8d; text-align: center;'>📈 TIME COUNTER</p>", unsafe_allow_html=True)
                     
-                    # CREIAMO UNA SOTTO-GRIGLIA A 4 COLONNE PER AFFIANCARE I RIQUADRI CON LA R L'UNO ALL'ALTRO
-                    cols_interne_orari = st.columns(4)
+                    # RICHIESTA SODDISFATTA: CREATA UNA SOTTO-GRIGLIA A 5 COLONNE PER AFFIANCARE I RIQUADRI SU 5 FILE VELOCI
+                    cols_interne_orari = st.columns(5)
                     for idx_o, (fuso, num_voti) in enumerate(orari_ordinati):
-                        with cols_interne_orari[idx_o % 4]:
+                        with cols_interne_orari[idx_o % 5]:
                             fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
+                            # DIMEZZATA LA LARGHEZZA MASSIMA A SOLI 42PX PER COPRIRE 5 FILE ORIZZONTALI COMPATTE
                             st.markdown(
                                 f"""
-                                <div class="chat-box" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1px 2px !important; margin-bottom: 3px !important; border-left: 2px solid #d4b373 !important; border-radius: 2px !important; height: 34px !important; background: transparent !important; box-shadow: none !important; width: 100% !important; max-width: 55px !important; margin-left: auto !important; margin-right: auto !important;">
-                                    <span style="color: #d4b373; font-weight: bold; font-size: 13px !important; font-family: 'Cinzel', serif; line-height: 1.1;">{fuso_etichetta}</span>
-                                    <span style="color: #ffffff; font-weight: bold; font-size: 12px !important; font-family: 'Cinzel', serif; line-height: 1.1;">{num_voti}v</span>
+                                <div class="chat-box" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1px 1px !important; margin-bottom: 3px !important; border-left: 2px solid #d4b373 !important; border-radius: 2px !important; height: 32px !important; background: transparent !important; box-shadow: none !important; width: 100% !important; max-width: 42px !important; margin-left: auto !important; margin-right: auto !important;">
+                                    <span style="color: #d4b373; font-weight: bold; font-size: 11px !important; font-family: 'Cinzel', serif; line-height: 1.0;">{fuso_etichetta}</span>
+                                    <span style="color: #ffffff; font-weight: bold; font-size: 11px !important; font-family: 'Cinzel', serif; line-height: 1.0;">{num_voti}v</span>
                                 </div>
                                 """, 
                                 unsafe_allow_html=True
@@ -1003,9 +1004,9 @@ else:
                         for pos, (fuso, num_voti) in enumerate(orari_ordinati, start=1):
                             fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
                             medaglia = "🥇" if pos == 1 else "🥈" if pos == 2 else "🥉" if pos == 3 else "✨"
-                            testo_classifica += f"<div style='padding: 0px 0; font-size: 10px !important; line-height: 1.2;'>{medaglia} <b>P.{pos}:</b> {fuso_etichetta} ({num_voti}v)</div>"
-                        # DIMEZZATA LA LARGHEZZA DELLA CLASSIFICA DELLA METÀ CON MAX-WIDTH A 55PX PER ALLINEAMENTO PERFETTO
-                        st.markdown(f"<div class='chat-box' style='padding: 3px 5px !important; border-radius: 3px !important; background: rgba(30, 26, 19, 0.4) !important; max-width: 55px !important; margin-left: auto !important; margin-right: auto !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
+                            testo_classifica += f"<div style='padding: 0px 0; font-size: 9px !important; line-height: 1.1;'>{medaglia}<b>{fuso_etichetta}</b>({num_voti})</div>"
+                        # DIMEZZATO IL RIQUADRO CLASSIFICA CON LARGHEZZA MASSIMA A 55PX TOTALI
+                        st.markdown(f"<div class='chat-box' style='padding: 2px 4px !important; border-radius: 2px !important; background: rgba(30, 26, 19, 0.4) !important; max-width: 55px !important; margin-left: auto !important; margin-right: auto !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
                     else:
                         st.info("Empty")
                 
@@ -1081,4 +1082,3 @@ else:
             if st.button(ctx.get("high_btn_logout", "🔒 LOCK AREA & LOGOUT"), key="officer_logout_button"):
                 st.session_state["super_authenticated"] = False
                 st.session_state["confirm_total_reset_wipe"] = False
-                st.rerun()
