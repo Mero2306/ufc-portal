@@ -199,7 +199,7 @@ else:
         ctx.get("menu_disc", "🌐 Discord Server"),
         ctx.get("menu_calc", "⚔️ Troops Calculator"),
         ctx.get("menu_res", "🏆 Clan Results"),
-        "🗳️ Ancient Evocation Time Voting",  # NUOVA VOCE PUBBLICA NATIVA IN INGLESE
+        ctx.get("menu_voting", "🗳️ Ancient Evocation Time Voting"),
         ctx.get("menu_high", "👑 Command")
     ]
 
