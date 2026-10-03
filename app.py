@@ -945,8 +945,8 @@ else:
                 unsafe_allow_html=True
             )
             # --- ZONA MONITORAGGIO VOTAZIONI STRATEGICHE (SALA COMANDO SUPERIORI) ---
-            # INSERITA LINEA CONTINUA DORATA DI SEPARAZIONE DALLA CALCOLATRICE
-            st.markdown("<hr style='border: 1px solid #bd9b53; margin-top: 30px; margin-bottom: 25px; opacity: 0.6;'>", unsafe_allow_html=True)
+            # BARRA DORATA EPICA IN RILIEVO AD ALTA VISIBILITÀ (SPESSORE 4PX CON OMBRA)
+            st.markdown("<hr style='border: none; height: 4px; background: linear-gradient(90deg, transparent, #bd9b53, #d4b373, #bd9b53, transparent); margin-top: 35px; margin-bottom: 30px; box-shadow: 0px 4px 8px #000000; opacity: 0.95;'>", unsafe_allow_html=True)
             
             # FILE DI BACKUP INTERNO DEI VOTI
             FILE_VOTI_SERVER = "voti_interni.json"
