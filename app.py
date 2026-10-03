@@ -684,16 +684,14 @@ else:
         if len(t_valori) > 0:
             fig = px.pie(names=t_nomi, values=t_valori, color=t_nomi, color_discrete_map=colori, hole=0.35)
             fig.update_traces(textposition='auto', textinfo='percent', textfont=dict(color='#f0e6d2', size=13, weight='bold'), marker=dict(line=dict(color='#14120e', width=2)))
-            # MARGINE AL MASSIMO IN BASSO (B=150) PER DARE SPAZIO TOTALE ALLA LEGENDA SU SCHERMI STRETTI
             fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', showlegend=True, legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="center", x=0.5, font=dict(color='#f0e6d2', size=11)), margin=dict(t=10,b=150,l=10,r=10), height=480)
             
-            # AGGIORNATO: Sostituito use_container_width con width='stretch' per rimuovere l'avviso dai log
+            # AGGIORNATO: Sostituito use_container_width con width='stretch'
             st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
-
         else:
             st.warning("⚠️ Waiting for active war log data from Google Sheets... Try to click another menu page and come back.")
 
-# DIVISORIO INVISIBILE MASSIMO DA 60 PIXEL E UN SOLO TITOLO CENTRATO PULITO
+        # DIVISORIO INVISIBILE E TITOLO DETTAGLIATO
         st.markdown("<div style='margin-bottom: 60px;'></div>", unsafe_allow_html=True)
         st.markdown(f"<h4 style='margin: 0; text-align: center; font-family: \"Cinzel\", serif; font-size: 16px; font-weight: bold;'>{ctx.get('📊 Detailed Chest Summary', '📊 Detailed Chest Summary')}</h4>", unsafe_allow_html=True)
 
