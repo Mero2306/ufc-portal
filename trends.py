@@ -118,24 +118,35 @@ def mostra_trends_e_stats(ctx):
                         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, title=None)
                     )
                     p_l, p_h = 0, 0
+                    
                     def pulisci_valore_totale(cella):
-                        val_str = str(cella).strip().lower()
-                        if val_str == "nan" or val_str == "": return 0
-                        if val_str.endswith(".0"): val_str = val_str[:-2]
-                        val_str = val_str.replace('.', '').replace(',', '')
-                        return int(val_str) if val_str.isdigit() else 0
+                        try:
+                            val_str = str(cella).strip().lower()
+                            if val_str == "nan" or val_str == "":
+                                return 0
+                            # Gestione corretta dei decimali float nascosti di Pandas
+                            if val_str.endswith(".0"):
+                                val_str = val_str[:-2]
+                            # Rimuove la formattazione dei punti e delle virgole di Google Sheet
+                            val_str = val_str.replace('.', '').replace(',', '')
+                            return int(val_str) if val_str.isdigit() else 0
+                        except Exception:
+                            return 0
 
-                    # Estrazione sicura differenziata per Intero Clan o giocatore singolo
+                    # Estrazione matematica rinforzata per isolare la singola cella E (Indice 4)
                     if is_clan:
-                        try: p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
-                        except Exception: pass
-                        try: p_h = pulisci_valore_totale(r_p_h.iloc[0, 4]) if not r_p_h.empty else 0
+                        try:
+                            # Forziamo Pandas a interpretare il valore come stringa numerica pulita prima della conversione
+                            p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
+                            p_h = pulisci_valore_totale(r_p_h.iloc[0, 4]) if not r_p_h.empty else 0
                         except Exception: pass
                     else:
-                        try: p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
+                        try: 
+                            p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
                         except Exception: pass
                         if not r_p_h.empty:
-                            try: p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
+                            try: 
+                                p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
                             except Exception: pass
                     
                     gap = p_l - p_h
@@ -152,3 +163,4 @@ def mostra_trends_e_stats(ctx):
                     st.info("👤 Player details not found in the live log database.")
     except Exception as e:
         st.error(f"Error rendering trends page: {e}")
+
