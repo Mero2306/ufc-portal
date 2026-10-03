@@ -72,13 +72,18 @@ def mostra_trends_e_stats(ctx):
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:107].copy()
 
-                # RISOLTO: Indici numerici espliciti fissi sulla riga totali (103) per l'intero clan
+                # LOGICA DI FILTRO RIGHE CORRETTA (Uso di parentesi singole per evitare il bug dello zero extra)
                 if g_scelto == clan_holder:
-                    r_p_l = df_live.iloc[[103]]
-                    r_p_h = df_h_data.iloc[[103]]
+                    r_p_l = df_live.iloc[103]       # Parentesi singole: restituisce una riga pulita (Series)
+                    r_p_h = df_h_data.iloc[103]     # Parentesi singole: restituisce una riga pulita (Series)
+                    is_clan = True
                 else:
-                    r_p_l = df_live.iloc[0:103][df_live.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
-                    r_p_h = df_h_data.iloc[0:103][df_h_data.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
+                    # Per il giocatore singolo prendiamo la prima riga trovata (.iloc[0]) per renderla identica al Clan
+                    df_filtrato_l = df_live.iloc[0:103][df_live.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
+                    df_filtrato_h = df_h_data.iloc[0:103][df_h_data.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
+                    r_p_l = df_filtrato_l.iloc[0] if not df_filtrato_l.empty else pd.Series()
+                    r_p_h = df_filtrato_h.iloc[0] if not df_filtrato_h.empty else pd.Series()
+                    is_clan = False
                 
                 mappa_colonne_forzieri = {
                     "Rare Crypt 30": 32, "Epic Crypt 30": 36, "Epic Crypt 35": 37, "Arachne's Swarm": 44,
@@ -94,13 +99,14 @@ def mostra_trends_e_stats(ctx):
                     lbl_volume = ctx.get("trends_graph_volume", "Volume")
                     lbl_chest_type = ctx.get("trends_graph_chest_type", "Chest Type")
 
+                    # Scansione dei forzieri (Avendo una riga pulita usiamo semplicemente .iloc[idx])
                     for nome_forziere, idx_colonna in mappa_colonne_forzieri.items():
                         val_l, val_h = 0, 0
-                        if idx_colonna < len(r_p_l.columns):
-                            v = str(r_p_l.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
+                        if idx_colonna < len(r_p_l):
+                            v = str(r_p_l.iloc[idx_colonna]).strip().replace('.', '').replace(',', '')
                             if v.isdigit(): val_l = int(v)
-                        if not r_p_h.empty and idx_colonna < len(r_p_h.columns):
-                            v_h = str(r_p_h.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
+                        if not r_p_h.empty and idx_colonna < len(r_p_h):
+                            v_h = str(r_p_h.iloc[idx_colonna]).strip().replace('.', '').replace(',', '')
                             if v_h.isdigit(): val_h = int(v_h)
                             
                         lbl_tradotto = ctx.get(nome_forziere, nome_forziere)
@@ -117,33 +123,32 @@ def mostra_trends_e_stats(ctx):
                         yaxis=dict(title=None, gridcolor='rgba(240, 230, 210, 0.1)', fixedrange=True),
                         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, title=None)
                     )
-                    # INSERITO: Mostra effettivamente il grafico a schermo
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
                     p_l, p_h = 0, 0
                     
-                    def pulisci_valore_totale(cella):
+                    def pulisci_valore_totale(valore_cella):
                         try:
-                            # Convertiamo direttamente in numero float (decimale) e poi in intero.
-                            # Questo elimina matematicamente il .0 finale senza aggiungere zeri!
-                            return int(float(str(cella).strip()))
+                            val_str = str(valore_cella).strip().lower()
+                            if val_str == "nan" or val_str == "":
+                                return 0
+                            # Taglio netto dell'estensione decimale fittizia di Pandas (.0)
+                            if val_str.endswith(".0"):
+                                val_str = val_str[:-2]
+                            val_str = val_str.replace('.', '').replace(',', '')
+                            return int(val_str) if val_str.isdigit() else 0
                         except Exception:
                             return 0
 
-                    # Estrazione e pulizia nativa senza manipolazione di stringhe o punti
-                    if g_scelto == clan_holder:
-                        try:
-                            p_l = pulisci_valore_totale(r_p_l.iloc)
-                            p_h = pulisci_valore_totale(r_p_h.iloc) if not r_p_h.empty else 0
-                        except Exception: pass
-                    else:
+                    # Estrazione pulita e diretta della colonna E (indice 4) senza doppie matrici
+                    try: 
+                        p_l = pulisci_valore_totale(r_p_l.iloc[4])
+                    except Exception: pass
+                    
+                    if not r_p_h.empty:
                         try: 
-                            p_l = pulisci_valore_totale(r_p_l.iloc)
+                            p_h = pulisci_valore_totale(r_p_h.iloc[4])
                         except Exception: pass
-                        if not r_p_h.empty:
-                            try: 
-                                p_h = pulisci_valore_totale(r_p_h.iloc)
-                            except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
