@@ -3,17 +3,18 @@ import pandas as pd
 import plotly.express as px
 
 def mostra_trends_e_stats(ctx):
-    # Ripristinato lo sfondo ufficiale UFC a specchio con la pagina dei Risultati
+    # Sfondo ufficiale dorato UFC a specchio con la pagina dei Risultati Clan
     st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("https://githubusercontent.com") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
+    
+    # Titolo principale sottile ed elegante (Dimensione massima 18px per mobile)
     st.markdown(f"<h4 style='text-align: center; margin: 0 auto 20px auto; font-family: \"Cinzel\", serif; font-size: 18px !important; font-weight: bold; color: #d4b373; border-bottom: 2px solid #bd9b53; padding-bottom: 10px; max-width: 500px;'>{ctx.get('menu_trends', '📊 CLAN TRENDS & STATS')}</h4>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     
     SPREADSHEET_ID = "1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ"
     GID_LIVE_REALE = "1972335307"
-    
-    # Elenco reale dei codici GID fisici dei fogli storici (2, 3, 4, 5) inviati da te
     gids_storici = ["1281719474", "1240125232", "958114297", "676719910"]
     
-    # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale ://google.com
+    # URL di caricamento del Foglio 1 (Dati correnti live verticali) con la sintassi nativa ufficiale
     url_live = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
     try:
         df_live_raw = pd.read_csv(url_live, header=None)
@@ -30,11 +31,8 @@ def mostra_trends_e_stats(ctx):
     
     for v_gid in gids_storici:
         try:
-            # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale ://google.com
             url_check = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={v_gid}"
             df_check = pd.read_csv(url_check, header=None)
-            
-            # Estrazione sicura del testo reale della cella D2 (riga 1, colonna 3)
             titolo_rilevato = f"Period GID {v_gid}"
             if df_check is not None and len(df_check) > 1 and len(df_check.columns) > 3:
                 cella_val = str(df_check.iloc[1, 3]).strip()
@@ -42,9 +40,10 @@ def mostra_trends_e_stats(ctx):
                     titolo_rilevato = cella_val
             mappa_periodi_gid[titolo_rilevato] = v_gid
         except Exception:
-            # Protezione totale: se un foglio fallisce, assegna un nome generico e NON blocca la pagina
             mappa_periodi_gid[f"Archive Sheet ({v_gid[-4:]})"] = v_gid
-    nomi_forzieri = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai", "Union of Triumph"]
+
+    # ELIMINATO UNION OF TRIUMPH - RIMASTI I 16 FORZIERI COMPATIBILI AL 100%
+    nomi_forzieri = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai"]
     st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>📈 {ctx.get('trends_clan_title', 'Clan Performance Progression')}</h4>", unsafe_allow_html=True)
 
     try:
@@ -58,10 +57,8 @@ def mostra_trends_e_stats(ctx):
             with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), list(mappa_periodi_gid.keys()), key="t_p_sel")
                 
             if g_scelto != p_holder:
-                # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale ://google.com
                 url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
-                
                 headers_hist = df_h_raw.iloc[2].astype(str).str.strip().tolist()
                 df_h = df_h_raw.iloc[3:106].copy()
                 df_h.columns = headers_hist
@@ -80,7 +77,6 @@ def mostra_trends_e_stats(ctx):
                         if item in r_p_h.columns:
                             v_h = str(r_p_h[item].values[0]).strip().replace('.', '').replace(',', '')
                             if v_h.isdigit(): val_h = int(v_h)
-                            
                         lbl = ctx.get(item, item)
                         g_data.append({"Chest Type": lbl, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl, "Timeline": label_live, "Volume": val_l})
