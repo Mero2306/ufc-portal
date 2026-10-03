@@ -127,18 +127,24 @@ def mostra_trends_e_stats(ctx):
                             val_str = str(cella).strip().lower()
                             if val_str == "nan" or val_str == "":
                                 return 0
+                            
+                            # Se Pandas aggiunge il .0 decimale finale, lo rimuoviamo subito
                             if val_str.endswith(".0"):
                                 val_str = val_str[:-2]
+                                
+                            # Rimuove la formattazione di punti e virgole del foglio Google
                             val_str = val_str.replace('.', '').replace(',', '')
+                            
+                            # Se la stringa pulita contiene solo cifre, la convertiamo in numero intero
                             return int(val_str) if val_str.isdigit() else 0
                         except Exception:
                             return 0
 
-                    # RISOLTO: Controllo diretto sul nome ed estrazione corretta per riga singola del Clan ed evitare lo zero extra
+                    # RISOLTO: Per l'Intero Clan estraiamo l'indice in modo flessibile per saltare lo zero extra di Pandas
                     if g_scelto == clan_holder:
                         try:
-                            p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
-                            p_h = pulisci_valore_totale(r_p_h.iloc[0, 4]) if not r_p_h.empty else 0
+                            p_l = pulisci_valore_totale(r_p_l.values[0][4])
+                            p_h = pulisci_valore_totale(r_p_h.values[0][4]) if not r_p_h.empty else 0
                         except Exception: pass
                     else:
                         try: 
