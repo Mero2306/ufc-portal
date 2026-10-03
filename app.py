@@ -960,8 +960,8 @@ else:
                 except Exception:
                     voti_attuali = {}
 
-            # IL MENU A SCOMPARSA IN INGLESE NATIVO
-            with st.expander("📊 VIEW VOTING RESULTS"):
+            # IL MENU A SCOMPARSA COLLEGATO AL FILE JSON IN ITALIANO
+            with st.expander(ctx.get('admin_results_title', '📊 VIEW VOTING RESULTS')):
                 # CONTEGGIO DEI VOTI TOTALI PER OGNI FUSO ORARIO
                 conteggio_orari = {}
                 for giocatore, orari_scelti in voti_attuali.items():
@@ -972,7 +972,7 @@ else:
                 numero_votanti_totale = len(voti_attuali)
                         
                 # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI EXTRA COMPATTI AFFIANCATI
-                st.markdown(f"<h5 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 11px !important;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 13px; font-weight: bold;'>{numero_votanti_totale}</span></h5>", unsafe_allow_html=True)
+                st.markdown(f"<h5 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 11px !important;'>{ctx.get('admin_voters_total', '🗳️ TOTAL PLAYERS VOTED:')} <span style='color: #f0e6d2; font-size: 13px; font-weight: bold;'>{numero_votanti_totale}</span></h5>", unsafe_allow_html=True)
                 
                 # MASSIMA LARGHEZZA ORIZZONTALE ALLA COLONNA SINISTRA (80%) PER PERMETTERE LE 5 COLONNE AFFIANCATE
                 col_sinistra_riquadri, col_destra_classifica = st.columns([2.4, 0.6])
@@ -981,14 +981,13 @@ else:
                 orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x[1], reverse=True)
                 
                 with col_sinistra_riquadri:
-                    st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #a69e8d; text-align: center;'>📈 TIME COUNTER</p>", unsafe_allow_html=True)
+                    st.markdown(f"<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #a69e8d; text-align: center;'>{ctx.get('admin_counter_title', '📈 TIME PREFERENCES COUNTER:')}</p>", unsafe_allow_html=True)
                     
-                    # RICHIESTA SODDISFATTA: CREATA UNA SOTTO-GRIGLIA A 5 COLONNE PER AFFIANCARE I RIQUADRI SU 5 FILE VELOCI
+                    # GRIGLIA A 5 COLONNE AFFIANCATE ULTRA RIMPICCIOLITE
                     cols_interne_orari = st.columns(5)
                     for idx_o, (fuso, num_voti) in enumerate(orari_ordinati):
                         with cols_interne_orari[idx_o % 5]:
                             fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
-                            # DIMEZZATA LA LARGHEZZA MASSIMA A SOLI 42PX PER COPRIRE 5 FILE ORIZZONTALI COMPATTE
                             st.markdown(
                                 f"""
                                 <div class="chat-box" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1px 1px !important; margin-bottom: 3px !important; border-left: 2px solid #d4b373 !important; border-radius: 2px !important; height: 32px !important; background: transparent !important; box-shadow: none !important; width: 100% !important; max-width: 42px !important; margin-left: auto !important; margin-right: auto !important;">
@@ -1000,14 +999,13 @@ else:
                             )
                         
                 with col_destra_classifica:
-                    st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #bd9b53; text-align: center;'>🏆 RANKING</p>", unsafe_allow_html=True)
+                    st.markdown(f"<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #bd9b53; text-align: center;'>{ctx.get('admin_ranking_title', '🏆 RANKING')}</p>", unsafe_allow_html=True)
                     if orari_ordinati:
                         testo_classifica = ""
                         for pos, (fuso, num_voti) in enumerate(orari_ordinati, start=1):
                             fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
                             medaglia = "🥇" if pos == 1 else "🥈" if pos == 2 else "🥉" if pos == 3 else "✨"
                             testo_classifica += f"<div style='padding: 0px 0; font-size: 9px !important; line-height: 1.1;'>{medaglia}<b>{fuso_etichetta}</b>({num_voti})</div>"
-                        # DIMEZZATO IL RIQUADRO CLASSIFICA CON LARGHEZZA MASSIMA A 55PX TOTALI
                         st.markdown(f"<div class='chat-box' style='padding: 2px 4px !important; border-radius: 2px !important; background: rgba(30, 26, 19, 0.4) !important; max-width: 55px !important; margin-left: auto !important; margin-right: auto !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
                     else:
                         st.info("Empty")
@@ -1015,26 +1013,26 @@ else:
                 st.markdown("<br>", unsafe_allow_html=True)
                 
                 # SECONDO MENU A SCOMPARSA DEDICATO PER I DETTAGLI DEI NOMINATIVI
-                with st.expander("🔍 VIEW DETAILED PLAYER CHOICES"):
+                with st.expander(ctx.get('admin_detailed_choices', '🔍 VIEW DETAILED PLAYER CHOICES')):
                     for g, o_list in voti_attuali.items():
                         orari_formattati_lista = [orario if "R" in orario else f"R{orario}" for orario in o_list]
                         st.write(f"• **{g}:** {', '.join(orari_formattati_lista)}")
-            
-            # --- PANNELLO STRUMENTI DI CONTROLLO CON SÌ / NO DI SICUREZZA ---
+
+            # --- ZONA STRUMENTI DI CONTROLLO CON SÌ / NO DI SICUREZZA TRADUCIBILI ---
             st.markdown("<br>", unsafe_allow_html=True)
             c_admin1, c_admin2 = st.columns(2)
             
             with c_admin1:
-                st.markdown("##### ❌ CANCEL SINGLE PLAYER VOTE")
+                st.markdown(ctx.get('admin_cancel_single_title', '##### ❌ CANCEL SINGLE PLAYER VOTE'))
                 if voti_attuali:
                     lista_votanti = ["-- Select Player to Remove --"] + list(voti_attuali.keys())
-                    player_to_del = st.selectbox("Select the profile to reset:", lista_votanti, key="del_single_voter_dropdown")
+                    player_to_del = st.selectbox(ctx.get('admin_cancel_single_select', 'Select the profile to reset:'), lista_votanti, key="del_single_voter_dropdown")
                     if player_to_del != "-- Select Player to Remove --":
-                        st.warning(f"⚠️ Are you sure you want to delete the vote for {player_to_del}?")
+                        st.warning(ctx.get('admin_cancel_single_warning', f"⚠️ Are you sure you want to delete the vote for {player_to_del}?"))
                         
                         col_s1, col_s2 = st.columns(2)
                         with col_s1:
-                            if st.button("🟢 YES, DELETE", use_container_width=True, key="btn_confirm_single_yes"):
+                            if st.button(ctx.get('admin_cancel_single_yes', '🟢 YES, DELETE'), use_container_width=True, key="btn_confirm_single_yes"):
                                 if player_to_del in voti_attuali:
                                     del voti_attuali[player_to_del]
                                     try:
@@ -1045,28 +1043,28 @@ else:
                                     st.success(f"💥 Vote for {player_to_del} removed!")
                                     st.rerun()
                         with col_s2:
-                            if st.button("🔴 NO, ABORT", use_container_width=True, key="btn_confirm_single_no"):
+                            if st.button(ctx.get('admin_cancel_single_no', '🔴 NO, ABORT'), use_container_width=True, key="btn_confirm_single_no"):
                                 st.rerun()
                 else:
                     st.caption("No active votes to remove.")
                     
             with c_admin2:
-                st.markdown("##### ♻️ RESET ALL SESSIONS")
-                st.write("Click below to clear all entries and start a fresh voting session.")
+                st.markdown(ctx.get('admin_reset_all_title', '##### ♻️ RESET ALL SESSIONS'))
+                st.write(ctx.get('admin_reset_all_text', 'Click below to clear all entries and start a fresh voting session.'))
                 
                 if "confirm_total_reset_wipe" not in st.session_state:
                     st.session_state["confirm_total_reset_wipe"] = False
                     
                 if not st.session_state["confirm_total_reset_wipe"]:
-                    if st.button("♻️ RESET ALL VOTES", use_container_width=True, key="btn_total_reset_votes_key"):
+                    if st.button(ctx.get('admin_reset_all_btn', '♻️ RESET ALL VOTES'), use_container_width=True, key="btn_total_reset_votes_key"):
                         st.session_state["confirm_total_reset_wipe"] = True
                         st.rerun()
                 
                 if st.session_state["confirm_total_reset_wipe"]:
-                    st.error("🚨 CRITICAL: Are you sure you want to wipe ALL clan votes? This action is irreversible!")
+                    st.error(ctx.get('admin_reset_all_critical', "🚨 CRITICAL: Are you sure you want to wipe ALL clan votes? This action is irreversible!"))
                     col_r1, col_r2 = st.columns(2)
                     with col_r1:
-                        if st.button("🟢 YES, WIPE ALL", use_container_width=True, key="btn_confirm_total_yes"):
+                        if st.button(ctx.get('admin_reset_all_yes', '🟢 YES, WIPE ALL'), use_container_width=True, key="btn_confirm_total_yes"):
                             if os.path.exists(FILE_VOTI_SERVER):
                                 try:
                                     os.remove(FILE_VOTI_SERVER)
@@ -1076,7 +1074,7 @@ else:
                             st.success("♻️ Complete database wiped successfully!")
                             st.rerun()
                     with col_r2:
-                        if st.button("🔴 NO, CANCEL", use_container_width=True, key="btn_confirm_total_no"):
+                        if st.button(ctx.get('admin_reset_all_no', '🔴 NO, CANCEL'), use_container_width=True, key="btn_confirm_total_no"):
                             st.session_state["confirm_total_reset_wipe"] = False
                             st.rerun()
             
@@ -1084,3 +1082,5 @@ else:
             if st.button(ctx.get("high_btn_logout", "🔒 LOCK AREA & LOGOUT"), key="officer_logout_button"):
                 st.session_state["super_authenticated"] = False
                 st.session_state["confirm_total_reset_wipe"] = False
+                st.rerun()
+            
