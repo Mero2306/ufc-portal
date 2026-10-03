@@ -79,7 +79,7 @@
   "high_btn_unlock": "SBLOCCA CENTRO DI COMANDO",
   "high_access_granted": "🔓 ACCESSO CONSENTITO - BENVENUTO SUPERIORE",
   "high_calc_title": "Calcolatore punti uccisione antichi",
-  "high_calc_subtitle": "Configura i parametri per calcolare i punti totali necesarios per uccisioni.",
+  "high_calc_subtitle": "Configura i parametri per calcolare i punti totali necessari per uccisioni.",
   "high_input_bonus": "Livello del Bonus (0 - 100):",
   "high_input_players": "Numero di Giocatori / Account (1 - 100):",
   "high_input_summons": "Numero di Evocazioni (1 - 6):",
@@ -116,7 +116,7 @@
   "admin_reset_all_critical": "🚨 CRITICO: Sei sicuro di voler azzerare COMPLETAMENTE il sondaggio del clan? Questa azione è irreversibile!",
   "admin_reset_all_yes": "🟢 SÌ, AZZERA TUTTO SONDAGGIO",
   "admin_reset_all_no": "🔴 NO, ANNULLA",
-  "menu_trends": "📊 Statistiche & Trend Clan",
+  "menu_trends": "📊 Statistiche e Tendenze del Clan",
   "trends_current_period": "Periodo di Osservazione Corrente",
   "trends_clan_title": "Progressione delle Prestazioni del Clan",
   "trends_select_period_lbl": "Seleziona Periodo:",
@@ -128,5 +128,6 @@
   "trends_graph_chest_type": "Tipo Forziere",
   "trends_box_title": "EVOLUZIONE PUNTI FORZIERI",
   "trends_box_live": "Corrente",
-  "trends_box_past": "Passato"
+  "trends_box_past": "Passato",
+  "trends_box_gap": "Differenza"
 }
