@@ -46,8 +46,7 @@ def mostra_trends_e_stats(ctx):
     st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>📈 {ctx.get('trends_clan_title', 'Clan Performance Progression')}</h4>", unsafe_allow_html=True)
 
     try:
-        # Estrazione della lista giocatori reali dalla colonna D (Indice 3) del foglio Live
-        # Rimuoviamo i valori non validi, i totali e i nan
+        # Estrazione pulita dei nomi dei giocatori dalla colonna D (Indice 3)
         df_live_names = df_live.iloc[:, 3].dropna().astype(str).str.strip()
         g_list = [n for n in df_live_names.unique() if n and n.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
         g_list = sorted(g_list)
@@ -55,25 +54,21 @@ def mostra_trends_e_stats(ctx):
         if g_list and mappa_periodi_gid:
             p_holder = ctx.get("select_name_placeholder", "-- Select Name --")
             
-            # Generiamo i due menu a tendina affiancati (Profilo e Periodo di confronto)
             c_w1, c_w2 = st.columns(2)
             with c_w1: g_scelto = st.selectbox(ctx.get("select_player_lbl", "Profile:"), [p_holder] + g_list, key="p_sel_tr")
             with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), list(mappa_periodi_gid.keys()), key="t_p_sel")
                 
-            # Mostriamo i grafici solo se l'utente seleziona un giocatore valido
             if g_scelto != p_holder:
-                # Carichiamo il foglio storico selezionato dall'utente
+                # Caricamento del foglio storico selezionato
                 url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:106].copy()
 
-                # LOGICA VLOOKUP: Cerchiamo le righe corrispondenti al giocatore in modo indipendente dalla posizione
-                r_p_l = df_live[df_live.iloc[:, 3].astype(str).str.strip().lower() == g_scelto.lower()]
-                r_p_h = df_h_data[df_h_data.iloc[:, 3].astype(str).str.strip().lower() == g_scelto.lower()]
+                # RISOLTO: Estrazione delle righe convertendo esplicitamente i valori in stringhe confrontabili
+                r_p_l = df_live[df_live.iloc[:, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
+                r_p_h = df_h_data[df_h_data.iloc[:, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                 
-                # Mappatura dei forzieri con gli indici numerici delle colonne per evitare conflitti con le intestazioni di testo
-                # Colonna 4 = E (Punti), Colonna 8 = I (Armageddon), Colonna 9 = J (Dark Omens)
-                # Forzieri dettagliati mappati in base alla loro colonna numerica progressiva (A=0, B=1, ecc.)
+                # Mappatura numerica fissa delle colonne dei forzieri
                 mappa_colonne_forzieri = {
                     "Rare Crypt 30": 32, "Epic Crypt 30": 36, "Epic Crypt 35": 37, "Arachne's Swarm": 44,
                     "Epic Undead Squad": 45, "Shadow City": 46, "Armageddon": 47, "Hellforge": 48,
@@ -87,12 +82,12 @@ def mostra_trends_e_stats(ctx):
                     for nome_forziere, idx_colonna in mappa_colonne_forzieri.items():
                         val_l, val_h = 0, 0
                         
-                        # Estrazione dato Live
+                        # Estrazione sicura del dato Live (cella singola)
                         if idx_colonna < len(r_p_l.columns):
                             v = str(r_p_l.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
                             if v.isdigit(): val_l = int(v)
                         
-                        # Estrazione dato Storico (Se il giocatore esisteva in questo archivio)
+                        # Estrazione sicura del dato Storico (cella singola)
                         if not r_p_h.empty and idx_colonna < len(r_p_h.columns):
                             v_h = str(r_p_h.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
                             if v_h.isdigit(): val_h = int(v_h)
@@ -101,13 +96,13 @@ def mostra_trends_e_stats(ctx):
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": label_live, "Volume": val_l})
                     
-                    # Generazione del grafico lineare di confronto trend
+                    # Generazione del grafico lineare
                     df_grafico = pd.DataFrame(g_data)
                     fig = px.line(df_grafico, x="Chest Type", y="Volume", color="Timeline", markers=True, color_discrete_sequence=["#bd9b53", "#f0e6d2"])
                     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), margin=dict(t=20,b=10,l=10,r=10), height=280)
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
-                    # Sezione confronto sintetico dei punti totali (Colonna E -> Indice 4)
+                    # Ripristino confronto punti totali (Colonna E -> Indice 4)
                     p_l, p_h = 0, 0
                     try: p_l = int(str(r_p_l.iloc[0, 4]).replace('.', '').replace(',', '').strip())
                     except Exception: pass
