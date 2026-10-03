@@ -70,9 +70,12 @@ def mostra_trends_e_stats(ctx):
                 
 # ATTIVAZIONE SOLO SE ENTRAMBI I FILTRI SONO SELEZIONATI CORRETTAMENTE
             if g_scelto != p_holder and p_scelto != period_holder:
-                url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
+                url_h = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:106].copy()
+
+                # PROTEZIONE: Definiamo la variabile qui dentro così eviti l'errore di definizione
+                clan_holder = ctx.get("select_entire_clan_lbl", "-- Entire Clan --")
 
                 # LOGICA DINAMICA: Controllo singolo profilo o Intero Clan
                 if g_scelto == clan_holder:
@@ -172,10 +175,10 @@ def mostra_trends_e_stats(ctx):
                         p_l = sum(r_p_l.iloc[:, 4].apply(puliisci_valore_totale))
                         p_h = sum(r_p_h.iloc[:, 4].apply(puliisci_valore_totale)) if not r_p_h.empty else 0
                     else:
-                        try: p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
+                        try: p_l = pulisci_valore_totale(r_p_l.iloc)
                         except Exception: pass
                         if not r_p_h.empty:
-                            try: p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
+                            try: p_h = pulisci_valore_totale(r_p_h.iloc)
                             except Exception: pass
                     
                     gap = p_l - p_h
