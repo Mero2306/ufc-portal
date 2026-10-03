@@ -131,7 +131,8 @@ def mostra_trends_e_stats(ctx):
                         yaxis=dict(title=None, gridcolor='rgba(240, 230, 210, 0.1)', fixedrange=True),
                         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, title=None)
                     )
-                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+                    # MODIFICATO: Sostituito use_container_width con width='stretch' per eliminare l'avviso nei log
+                    st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
                     
                     # ESTRAZIONE PULITA E DIRETTA DEL TESTO ORIGINALE DAL FOGLIO GOOGLE
                     p_l_testo, p_h_testo = "0", "0"
@@ -169,7 +170,3 @@ def mostra_trends_e_stats(ctx):
                     
                     st.markdown("<br>", unsafe_allow_html=True)
                     st.markdown(f"""<div class="chat-box" style="padding: 12px !important; border-left: 5px solid #d4b373 !important; max-width: 600px; margin: 0 auto;"><span style="color: #a69e8d; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;">{lbl_box_title}</span><br><span style="font-size: 14px; color: #f0e6d2;">{lbl_box_live}: <b>{mostra_l}</b> | {lbl_box_past}: {mostra_h}</span><br><span style="font-size: 14px; color: {col_g}; font-weight: bold;">{lbl_box_gap}: {"+" if gap_val > 0 else ""}{mostra_g}</span></div>""", unsafe_allow_html=True)
-                else:
-                    st.info("👤 Player details not found in the live log database.")
-    except Exception as e:
-        st.error(f"Error rendering trends page: {e}")
