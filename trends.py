@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 def mostra_trends_e_stats(ctx):
-    # Ripristinato lo sfondo corretto collegato a specchio con i Risultati Clan
+    # Ripristinato lo sfondo ufficiale UFC a specchio con la pagina dei Risultati
     st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("https://githubusercontent.com") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
     st.markdown(f"<h4 style='text-align: center; margin: 0 auto 20px auto; font-family: \"Cinzel\", serif; font-size: 18px !important; font-weight: bold; color: #d4b373; border-bottom: 2px solid #bd9b53; padding-bottom: 10px; max-width: 500px;'>{ctx.get('menu_trends', '📊 CLAN TRENDS & STATS')}</h4>", unsafe_allow_html=True)
     
@@ -20,7 +20,7 @@ def mostra_trends_e_stats(ctx):
         "Periodo 4": "1940986756"
     }
     
-    # URL di esportazione pulito e ricostruito senza interruzioni di sintassi
+    # URL di esportazione Google Sheet ricostruito con la sintassi nativa corretta
     url_live = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_DASHBOARD_LIVE}"
     try: 
         df_live = pd.read_csv(url_live, header=None)
