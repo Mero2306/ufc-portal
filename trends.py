@@ -73,13 +73,6 @@ def mostra_trends_e_stats(ctx):
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:107].copy()
 
-                if g_scelto == clan_holder:
-                    r_p_l = df_live.iloc[[103]]
-                    r_p_h = df_h_data.iloc[[103]]
-                else:
-                    r_p_l = df_live.iloc[0:103][df_live.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
-                    r_p_h = df_h_data.iloc[0:103][df_h_data.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
-                
                 if not r_p_l.empty:
                     g_data = []
                     # Recupero traduzioni assi e legende dal file JSON
@@ -137,11 +130,11 @@ def mostra_trends_e_stats(ctx):
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     
-                    # Recupero scritte box tradotte dinamicamente dal JSON
+                    # Recupero scritte box tradotte dinamicamente dal JSON delle lingue
                     lbl_box_title = ctx.get("trends_box_title", "EVOLUZIONE PUNTI FORZIERI")
                     lbl_box_live = ctx.get("trends_box_live", "Corrente")
                     lbl_box_past = ctx.get("trends_box_past", "Passato")
-                    lbl_box_gap = ctx.get("trends_box_gap", "Differenza") # <-- CORREZIONE TRADUZIONE GAP
+                    lbl_box_gap = ctx.get("trends_box_gap", "Differenza")
                     
                     st.markdown("<br>", unsafe_allow_html=True)
                     st.markdown(f"""<div class="chat-box" style="padding: 12px !important; border-left: 5px solid #d4b373 !important; max-width: 600px; margin: 0 auto;"><span style="color: #a69e8d; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;">{lbl_box_title}</span><br><span style="font-size: 14px; color: #f0e6d2;">{lbl_box_live}: <b>{p_l:,}</b> | {lbl_box_past}: {p_h:,}</span><br><span style="font-size: 14px; color: {col_g}; font-weight: bold;">{lbl_box_gap}: {"+" if gap > 0 else ""}{gap:,}</span></div>""".replace(',', '.'), unsafe_allow_html=True)
