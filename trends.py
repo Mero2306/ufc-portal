@@ -60,11 +60,16 @@ def mostra_trends_e_stats(ctx):
         if g_list and mappa_periodi_gid:
             p_holder = ctx.get("select_name_placeholder", "-- Select Name --")
             
+            # AGGIUNTA SELEZIONE VUOTA PER IL PERIODO (TRADUCIBILE)
+            period_holder = ctx.get("select_period_placeholder", "-- Choose Period --")
+            lista_periodi = [period_holder] + list(mappa_periodi_gid.keys())
+            
             c_w1, c_w2 = st.columns(2)
             with c_w1: g_scelto = st.selectbox(ctx.get("select_player_lbl", "Profile:"), [p_holder] + g_list, key="p_sel_tr")
-            with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), list(mappa_periodi_gid.keys()), key="t_p_sel")
+            with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), lista_periodi, key="t_p_sel")
                 
-            if g_scelto != p_holder:
+            # ATTIVAZIONE SOLO SE ENTRAMBI I FILTRI SONO SELEZIONATI CORRETTAMENTE
+            if g_scelto != p_holder and p_scelto != period_holder:
                 url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:106].copy()
@@ -94,8 +99,8 @@ def mostra_trends_e_stats(ctx):
                         lbl_tradotto = ctx.get(nome_forziere, nome_forziere)
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": label_live, "Volume": val_l})
-                    
-                    # FORZATURA NUOVO GRAFICO: Struttura a barre raggruppate e affiancate (Ultra leggibile)
+
+                    # NUOVO GRAFICO: Struttura a barre raggruppate e affiancate (Ultra leggibile)
                     df_grafico = pd.DataFrame(g_data)
                     fig = px.bar(
                         df_grafico, 
@@ -119,7 +124,7 @@ def mostra_trends_e_stats(ctx):
                         margin=dict(t=10, b=80, l=10, r=10), 
                         height=350, 
                         xaxis=dict(
-                            tickangle=-45,  # Ruota i testi di 45 gradi in diagonale per evitare accavallamenti
+                            tickangle=-45,  # Ruota i testi in diagonale per evitare accavallamenti
                             title=None
                         ),
                         yaxis=dict(
@@ -164,10 +169,5 @@ def mostra_trends_e_stats(ctx):
                         st.markdown(f"""<div class="chat-box" style="padding: 10px !important; border-left: 3px solid #d4b373 !important;"><span style="color: #a69e8d; font-size: 10px;">GOAL PROGRESS COMPARISON</span><br><span style="font-size: 12px; color: #f0e6d2;">Current: <b>{o_l}</b></span><br><span style="font-size: 12px; color: #bd9b53;">Previous: <b>{o_h}</b></span></div>""", unsafe_allow_html=True)
                 else:
                     st.info("👤 Player details not found in the live log database.")
-            else:
-                # Schermata di cortesia se manca la selezione di un profilo o del periodo
-                st.markdown("<br>", unsafe_allow_html=True)
-                text_trends_info = ctx.get("trends_select_info_lbl", "💡 **Notice:** Please select both a player profile and an archive period to display the progression graphs.")
-                st.markdown(f"""<div style="background-color: rgba(28, 142, 230, 0.1); border-left: 5px solid rgb(28, 142, 230); padding: 16px 20px; border-radius: 4px; margin-bottom: 15px;"><p style="color: #f0e6d2; margin: 0; font-size: 16px; font-weight: 500; line-height: 1.6; letter-spacing: 0.3px;">{text_trends_info}</p></div>""", unsafe_allow_html=True)
     except Exception as e:
         st.error(f"Error rendering trends page: {e}")
