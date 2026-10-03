@@ -192,7 +192,7 @@ else:
         st.session_state["selected_language_state"] = lang_choice
         st.rerun()
 
-    # 6. MENU LATERALE DELLA NAVIGAZIONE AGGIORNATO CON LA VOTAZIONE INTERNA
+    # 6. MENU LATERALE DELLA NAVIGAZIONE AGGIORNATO CON TREND E VOTAZIONE
     options = [
         ctx.get("menu_home", "🏠 Home Dashboard"),
         ctx.get("menu_info", "📋 Clan Info & Chats"),
@@ -200,11 +200,11 @@ else:
         ctx.get("menu_disc", "🌐 Discord Server"),
         ctx.get("menu_calc", "⚔️ Troops Calculator"),
         ctx.get("menu_res", "🏆 Clan Results"),
+        ctx.get("menu_trends", "📊 Clan Trends & Stats"),
         ctx.get("menu_voting", "🗳️ Ancient Evocation Time Voting"),
         ctx.get("menu_high", "👑 Command")
     ]
 
-     
     page = st.sidebar.radio(ctx.get("sidebar_nav_lbl", "NAVIGATION:"), options)
     st.sidebar.markdown("---")
 
