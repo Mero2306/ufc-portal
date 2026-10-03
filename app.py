@@ -750,13 +750,15 @@ else:
                 lista_giocatori_reali = [nome for nome in df_players.unique() if nome and nome.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
 
                 if lista_giocatori_reali:
-                    lista_con_placeholder = ["-- Select Player --"] + lista_giocatori_reali
+                    # RIMOZIONE DI "-- Select Player --" FISSO - AGGANCIO AL FILE DELLE LINGUE JSON
+                    etichetta_placeholder = ctx.get("select_name_placeholder", "-- Select Name --")
+                    lista_con_placeholder = [etichetta_placeholder] + lista_giocatori_reali
                     
                     col_v1, col_v2, col_v3 = st.columns([1, 1.5, 1])
                     with col_v2:
                         voter_name = st.selectbox(ctx.get('voting_select_player', 'Select Player:'), lista_con_placeholder, key="voting_player_selector_native")
                     
-                    if voter_name != "-- Select Player --":
+                    if voter_name != etichetta_placeholder:
                         st.markdown("<br>", unsafe_allow_html=True)
                         
                         orari_disponibili = [
