@@ -1027,9 +1027,12 @@ else:
             with c_admin1:
                 st.markdown(ctx.get('admin_cancel_single_title', '##### ❌ CANCEL SINGLE PLAYER VOTE'))
                 if voti_attuali:
-                    lista_votanti = ["-- Select Player to Remove --"] + list(voti_attuali.keys())
-                    player_to_del = st.selectbox(ctx.get('admin_cancel_single_select', 'Select the profile to reset:'), lista_votanti, key="del_single_voter_dropdown")
-                    if player_to_del != "-- Select Player to Remove --":
+                    # RIMOZIONE STRINGA FISSA - AGGANCIO COMPLETO AL FILE JSON ITALIANO
+                    etichetta_rimuovi = ctx.get('admin_cancel_single_select', '-- Select Player to Remove --')
+                    lista_votanti = [etichetta_rimuovi] + list(voti_attuali.keys())
+                    player_to_del = st.selectbox(etichetta_rimuovi, lista_votanti, key="del_single_voter_dropdown_official_v10")
+                    
+                    if player_to_del != etichetta_rimuovi:
                         st.warning(ctx.get('admin_cancel_single_warning', f"⚠️ Are you sure you want to delete the vote for {player_to_del}?"))
                         
                         col_s1, col_s2 = st.columns(2)
@@ -1042,9 +1045,10 @@ else:
                                             json.dump(voti_attuali, file_db, ensure_ascii=False, indent=4)
                                     except Exception:
                                         pass
-                                    st.success(f"💥 Vote for {player_to_del} removed!")
-                                    st.rerun()
+                                st.success(f"💥 Vote removed!")
+                                st.rerun()
                         with col_s2:
+                            # RIPARATO IL TASTO NO: ORA RESETTA E CHIUDE LA RICHIESTA ALL'ISTANTE
                             if st.button(ctx.get('admin_cancel_single_no', '🔴 NO, ABORT'), use_container_width=True, key="btn_confirm_single_no"):
                                 st.rerun()
                 else:
@@ -1085,4 +1089,3 @@ else:
                 st.session_state["super_authenticated"] = False
                 st.session_state["confirm_total_reset_wipe"] = False
                 st.rerun()
-            
