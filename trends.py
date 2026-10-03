@@ -5,7 +5,6 @@ import os
 import base64
 
 def mostra_trends_e_stats(ctx):
-    # 1. FUNZIONE LOCALE PER CARICARE LO SFONDO IN BASE64
     def applica_sfondo_locale(image_path):
         if os.path.exists(image_path):
             with open(image_path, "rb") as img_file:
@@ -15,10 +14,8 @@ def mostra_trends_e_stats(ctx):
         else:
             st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("bg_info.jpg") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
 
-    # Attivazione immediata dello sfondo
     applica_sfondo_locale("bg_info.jpg")
     
-    # Titolo della pagina
     st.markdown(f"<h4 style='text-align: center; margin: 0 auto 20px auto; font-family: \"Cinzel\", serif; font-size: 18px !important; font-weight: bold; color: #d4b373; border-bottom: 2px solid #bd9b53; padding-bottom: 10px; max-width: 500px;'>{ctx.get('menu_trends', '📊 CLAN TRENDS & STATS')}</h4>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -29,7 +26,6 @@ def mostra_trends_e_stats(ctx):
     url_live = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
     try:
         df_live_raw = pd.read_csv(url_live, header=None)
-        # Leggiamo fino alla riga 108 per includere la riga dei totali 107 (indice 106)
         df_live = df_live_raw.iloc[3:107].copy()
     except Exception:
         st.warning("⚠️ Waiting for data synchronisation... Please try to reload.")
@@ -44,7 +40,7 @@ def mostra_trends_e_stats(ctx):
             df_check = pd.read_csv(url_check, header=None)
             titolo_rilevato = f"Archive Period ({v_gid[-4:]})"
             if df_check is not None and len(df_check) > 1 and len(df_check.columns) > 3:
-                cella_val = str(df_check.iloc).strip()
+                cella_val = str(df_check.iloc[1, 3]).strip()
                 if cella_val and cella_val.lower() != "nan" and cella_val != "":
                     titolo_rilevato = cella_val
             mappa_periodi_gid[titolo_rilevato] = v_gid
@@ -54,7 +50,6 @@ def mostra_trends_e_stats(ctx):
     st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>📈 {ctx.get('trends_clan_title', 'Clan Performance Progression')}</h4>", unsafe_allow_html=True)
 
     try:
-        # Estraiamo i singoli giocatori escludendo la riga totale 107 (indice 106) per l'elenco alfabetico
         df_solo_giocatori = df_live.iloc[0:103, 3].dropna().astype(str).str.strip()
         g_list = [n for n in df_solo_giocatori.unique() if n and n.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
         g_list = sorted(g_list)
@@ -63,10 +58,8 @@ def mostra_trends_e_stats(ctx):
             p_holder = ctx.get("select_name_placeholder", "-- Select Name --")
             clan_holder = ctx.get("select_entire_clan_lbl", "-- Entire Clan --")
             period_holder = ctx.get("select_period_placeholder", "-- Choose Period --")
-            
             lista_periodi = [period_holder] + list(mappa_periodi_gid.keys())
             
-            # Menu a tendina coordinati con opzione intero clan inserita in alto
             c_w1, c_w2 = st.columns(2)
             with c_w1: g_scelto = st.selectbox(ctx.get("select_player_lbl", "Profile:"), [p_holder, clan_holder] + g_list, key="p_sel_tr")
             with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), lista_periodi, key="t_p_sel")
@@ -76,15 +69,14 @@ def mostra_trends_e_stats(ctx):
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:107].copy()
 
-                # Logica righe: intero clan legge l'indice 103 (riga 107 del foglio)
+                # FIX: Inserito l'indice 103 per puntare correttamente alla riga totali del clan
                 if g_scelto == clan_holder:
-                    r_p_l = df_live.iloc[]
-                    r_p_h = df_h_data.iloc[]
+                    r_p_l = df_live.iloc[[103]]
+                    r_p_h = df_h_data.iloc[[103]]
                 else:
                     r_p_l = df_live.iloc[0:103][df_live.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                     r_p_h = df_h_data.iloc[0:103][df_h_data.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                 
-                # MAPPATURA FORZIERI: RIMOSSA LA VOCE DOPPIONE DARK OMENS
                 mappa_colonne_forzieri = {
                     "Rare Crypt 30": 32, "Epic Crypt 30": 36, "Epic Crypt 35": 37, "Arachne's Swarm": 44,
                     "Epic Undead Squad": 45, "Shadow City": 46, "Armageddon": 47, "Hellforge": 48,
@@ -108,7 +100,6 @@ def mostra_trends_e_stats(ctx):
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": label_live, "Volume": val_l})
 
-                    # Grafico a Barre raggruppate senza zoom fastidioso su mobile
                     df_grafico = pd.DataFrame(g_data)
                     fig = px.bar(df_grafico, x="Chest Type", y="Volume", color="Timeline", barmode="group", color_discrete_sequence=["#bd9b53", "#f0e6d2"])
                     fig.update_traces(marker_line_color='#14120e', marker_line_width=1.5, opacity=0.95)
@@ -121,9 +112,7 @@ def mostra_trends_e_stats(ctx):
                     )
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
-                    # Logica di conversione numerica per i totali (Colonna E, Indice 4)
                     p_l, p_h = 0, 0
-                    
                     def pulisci_valore_totale(cella):
                         val_str = str(cella).strip().lower()
                         if val_str == "nan" or val_str == "": return 0
@@ -131,17 +120,15 @@ def mostra_trends_e_stats(ctx):
                         val_str = val_str.replace('.', '').replace(',', '')
                         return int(val_str) if val_str.isdigit() else 0
 
-                    try: p_l = pulisci_valore_totale(r_p_l.iloc)
+                    try: p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
                     except Exception: pass
-                    
                     if not r_p_h.empty:
-                        try: p_h = pulisci_valore_totale(r_p_h.iloc)
+                        try: p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
                         except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     
-                    # Box riassuntivo pulito
                     st.markdown("<br>", unsafe_allow_html=True)
                     st.markdown(f"""<div class="chat-box" style="padding: 12px !important; border-left: 5px solid #d4b373 !important; max-width: 600px; margin: 0 auto;"><span style="color: #a69e8d; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;">CHEST POINTS EVOLUTION</span><br><span style="font-size: 14px; color: #f0e6d2;">Live: <b>{p_l:,}</b> | Past: {p_h:,}</span><br><span style="font-size: 14px; color: {col_g}; font-weight: bold;">Gap: {"+" if gap > 0 else ""}{gap:,}</span></div>""".replace(',', '.'), unsafe_allow_html=True)
                 else:
