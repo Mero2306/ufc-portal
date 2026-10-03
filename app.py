@@ -971,40 +971,44 @@ else:
                     # CONTEGGIO DEL NUMERO TOTALI DI GIOCATORI REALI CHE HANNO ESPRESSO IL VOTO
                     numero_votanti_totale = len(voti_attuali)
                             
-                    # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI EXTRA COMPATTI
+                    # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI EXTRA COMPATTI AFFIANCATI
                     st.markdown(f"<h5 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 11px !important;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 13px; font-weight: bold;'>{numero_votanti_totale}</span></h5>", unsafe_allow_html=True)
                     
-                    # CREAZIONE DELLA GRIGLIA DOPPIA: RIQUADRI A SINISTRA E CLASSIFICA RAPIDA A DESTRA (ULTRA RIMPICCIOLITI)
-                    col_sinistra_riquadri, col_destra_classifica = st.columns([1.1, 1.9])
+                    # DISTRIBUZIONE SPAZI: 70% A SINISTRA PER I RIQUADRI AFFIANCATI, 30% A DESTRA PER LA CLASSIFICA STRETTA
+                    col_sinistra_riquadri, col_destra_classifica = st.columns([2.1, 0.9])
                     
-                    # Ordiniamo gli orari dal più votato al meno votato per numero di voti (x[1])
+                    # Ordiniamo gli orari dal più votato al meno votato per numero di voti
                     orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x[1], reverse=True)
                     
                     with col_sinistra_riquadri:
                         st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #a69e8d; text-align: center;'>📈 TIME COUNTER</p>", unsafe_allow_html=True)
-                        for fuso, num_voti in orari_ordinati:
-                            fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
-                            st.markdown(
-                                f"""
-                                <div class="chat-box" style="display: flex; justify-content: space-between; align-items: center; padding: 0px 5px !important; margin-bottom: 2px !important; border-left: 2px solid #d4b373 !important; border-radius: 2px !important; height: 20px !important; background: transparent !important; box-shadow: none !important;">
-                                    <span style="color: #d4b373; font-weight: bold; font-size: 15px !important; font-family: 'Cinzel', serif; line-height: 1;">{fuso_etichetta}</span>
-                                    <span style="color: #ffffff; font-weight: bold; font-size: 15px !important; font-family: 'Cinzel', serif; line-height: 1;">{num_voti} v</span>
-                                </div>
-                                """, 
-                                unsafe_allow_html=True
-                            )
+                        
+                        # CREIAMO UNA SOTTO-GRIGLIA A 4 COLONNE PER AFFIANCARE I RIQUADRI CON LA R L'UNO ALL'ALTRO
+                        cols_interne_orari = st.columns(4)
+                        for idx_o, (fuso, num_voti) in enumerate(orari_ordinati):
+                            with cols_interne_orari[idx_o % 4]:
+                                fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
+                                st.markdown(
+                                    f"""
+                                    <div class="chat-box" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1px 2px !important; margin-bottom: 3px !important; border-left: 2px solid #d4b373 !important; border-radius: 2px !important; height: 34px !important; background: transparent !important; box-shadow: none !important; width: 100% !important;">
+                                        <span style="color: #d4b373; font-weight: bold; font-size: 13px !important; font-family: 'Cinzel', serif; line-height: 1.1;">{fuso_etichetta}</span>
+                                        <span style="color: #ffffff; font-weight: bold; font-size: 12px !important; font-family: 'Cinzel', serif; line-height: 1.1;">{num_voti}v</span>
+                                    </div>
+                                    """, 
+                                    unsafe_allow_html=True
+                                )
                             
                     with col_destra_classifica:
-                        st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #bd9b53; text-align: center;'>🏆 WINNING PREFERENCES</p>", unsafe_allow_html=True)
+                        st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #bd9b53; text-align: center;'>🏆 RANKING</p>", unsafe_allow_html=True)
                         if orari_ordinati:
                             testo_classifica = ""
                             for pos, (fuso, num_voti) in enumerate(orari_ordinati, start=1):
                                 fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
                                 medaglia = "🥇" if pos == 1 else "🥈" if pos == 2 else "🥉" if pos == 3 else "✨"
-                                testo_classifica += f"<div style='padding: 0px 0; font-size: 11px !important; line-height: 1.3;'>{medaglia} <b>P.{pos}:</b> {fuso_etichetta} — <span style='color:#bd9b53; font-weight:bold;'>{num_voti} v</span></div>"
-                            st.markdown(f"<div class='chat-box' style='padding: 4px 6px !important; border-radius: 3px !important; background: rgba(30, 26, 19, 0.4) !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
+                                testo_classifica += f"<div style='padding: 0px 0; font-size: 10px !important; line-height: 1.2;'>{medaglia} <b>P.{pos}:</b> {fuso_etichetta} ({num_voti}v)</div>"
+                            st.markdown(f"<div class='chat-box' style='padding: 3px 5px !important; border-radius: 3px !important; background: rgba(30, 26, 19, 0.4) !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
                         else:
-                            st.info("No active preferences.")
+                            st.info("Empty")
                     
                     st.markdown("<br>", unsafe_allow_html=True)
                     
