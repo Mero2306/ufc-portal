@@ -125,42 +125,43 @@ def mostra_trends_e_stats(ctx):
                     )
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
-                    # NUOVA LOGICA NUMERICA PURA (Risolve il crash dello 0 e lo sfasamento dei totali)
-                    p_l, p_h = 0, 0
+                    # ESTRAZIONE PULITA E DIRETTA DEL TESTO ORIGINALE DAL FOGLIO GOOGLE
+                    p_l_testo, p_h_testo = "0", "0"
                     
-                    def estrai_valore_cella_sicuro(riga_selezionata):
-                        try:
-                            if riga_selezionata.empty:
-                                return 0
-                            # Estraiamo la cella E (indice 4) garantendo la lettura del primo elemento
-                            valore_cella = riga_selezionata.iloc[0, 4]
-                            
-                            # Se Pandas ha letto la cella come numero float (es: 37344450.0 o 194800.0)
-                            # la conversione matematica int(float(...)) elimina il decimale senza aggiungere zeri
-                            return int(float(str(valore_cella).strip()))
-                        except Exception:
-                            try:
-                                # Fallback testuale se la cella contiene formattazioni non standard
-                                s = str(riga_selezionata.iloc[0, 4]).strip().split('.')[0].replace(',', '')
-                                return int(s) if s.isdigit() else 0
-                            except Exception:
-                                return 0
-
-                    # Calcolo dei totali per Clan o Giocatore Singolo
-                    p_l = estrai_valore_cella_sicuro(r_p_l)
+                    try:
+                        # Se è una tabella (DataFrame) prendiamo il primo elemento, altrimenti prendiamo la cella della Series
+                        p_l_testo = str(r_p_l.iloc[0, 4]) if len(r_p_l.shape) > 1 else str(r_p_l.iloc[4])
+                    except Exception: 
+                        p_l_testo = "0"
+                        
                     if not r_p_h.empty:
-                        p_h = estrai_valore_cella_sicuro(r_p_h)
+                        try:
+                            p_h_testo = str(r_p_h.iloc[0, 4]) if len(r_p_h.shape) > 1 else str(r_p_h.iloc[4])
+                        except Exception: 
+                            p_h_testo = "0"
                     
-                    gap = p_l - p_h
-                    col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
+                    # Calcolo matematico del Gap pulito dai decimali .0 fittizi di Pandas
+                    def converti_in_numero_puro(testo_cella):
+                        s = testo_cella.strip().split('.')[0].replace(',', '')
+                        return int(s) if s.isdigit() else 0
+
+                    n_l = converti_in_numero_puro(p_l_testo)
+                    n_h = converti_in_numero_puro(p_h_testo)
+                    gap_val = n_l - n_h
+                    col_g = "#4CAF50" if gap_val > 0 else "#F44336" if gap_val < 0 else "#a69e8d"
                     
+                    # Formattazione visiva con i punti reali italiani
+                    mostra_l = f"{n_l:,}".replace(',', '.')
+                    mostra_h = f"{n_h:,}".replace(',', '.')
+                    mostra_g = f"{gap_val:,}".replace(',', '.')
+
                     lbl_box_title = ctx.get("trends_box_title", "EVOLUZIONE PUNTI FORZIERI")
                     lbl_box_live = ctx.get("trends_box_live", "Corrente")
                     lbl_box_past = ctx.get("trends_box_past", "Passato")
                     lbl_box_gap = ctx.get("trends_box_gap", "Differenza")
                     
                     st.markdown("<br>", unsafe_allow_html=True)
-                    st.markdown(f"""<div class="chat-box" style="padding: 12px !important; border-left: 5px solid #d4b373 !important; max-width: 600px; margin: 0 auto;"><span style="color: #a69e8d; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;">{lbl_box_title}</span><br><span style="font-size: 14px; color: #f0e6d2;">{lbl_box_live}: <b>{p_l:,}</b> | {lbl_box_past}: {p_h:,}</span><br><span style="font-size: 14px; color: {col_g}; font-weight: bold;">{lbl_box_gap}: {"+" if gap > 0 else ""}{gap:,}</span></div>""".replace(',', '.'), unsafe_allow_html=True)
+                    st.markdown(f"""<div class="chat-box" style="padding: 12px !important; border-left: 5px solid #d4b373 !important; max-width: 600px; margin: 0 auto;"><span style="color: #a69e8d; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;">{lbl_box_title}</span><br><span style="font-size: 14px; color: #f0e6d2;">{lbl_box_live}: <b>{mostra_l}</b> | {lbl_box_past}: {mostra_h}</span><br><span style="font-size: 14px; color: {col_g}; font-weight: bold;">{lbl_box_gap}: {"+" if gap_val > 0 else ""}{mostra_g}</span></div>""", unsafe_allow_html=True)
                 else:
                     st.info("👤 Player details not found in the live log database.")
     except Exception as e:
