@@ -5,6 +5,7 @@ import os
 import base64
 
 def mostra_trends_e_stats(ctx):
+    # 1. FUNZIONE LOCALE PER CARICARE LO SFONDO IN BASE64
     def applica_sfondo_locale(image_path):
         if os.path.exists(image_path):
             with open(image_path, "rb") as img_file:
@@ -14,9 +15,12 @@ def mostra_trends_e_stats(ctx):
         else:
             st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("bg_info.jpg") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
 
+    # Attivazione immediata dello sfondo
     applica_sfondo_locale("bg_info.jpg")
     
-    st.markdown(f"<h4 style='text-align: center; margin: 0 auto 20px auto; font-family: \"Cinzel\", serif; font-size: 18px !important; font-weight: bold; color: #d4b373; border-bottom: 2px solid #bd9b53; padding-bottom: 10px; max-width: 500px;'>{ctx.get('menu_trends', '📊 CLAN TRENDS & STATS')}</h4>", unsafe_allow_html=True)
+    # Titolo della pagina tradotto dinamicamente
+    titolo_pagina = ctx.get('menu_trends', '📊 CLAN TRENDS & STATS')
+    st.markdown(f"<h4 style='text-align: center; margin: 0 auto 20px auto; font-family: \"Cinzel\", serif; font-size: 18px !important; font-weight: bold; color: #d4b373; border-bottom: 2px solid #bd9b53; padding-bottom: 10px; max-width: 500px;'>{titolo_pagina}</h4>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     
     SPREADSHEET_ID = "1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ"
@@ -69,7 +73,6 @@ def mostra_trends_e_stats(ctx):
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:107].copy()
 
-                # FIX: Inserito l'indice 103 per puntare correttamente alla riga totali del clan
                 if g_scelto == clan_holder:
                     r_p_l = df_live.iloc[[103]]
                     r_p_h = df_h_data.iloc[[103]]
@@ -87,6 +90,11 @@ def mostra_trends_e_stats(ctx):
                 
                 if not r_p_l.empty:
                     g_data = []
+                    # Recupero traduzioni assi e legende dal file JSON
+                    lbl_timeline = ctx.get("trends_graph_timeline", "Timeline")
+                    lbl_volume = ctx.get("trends_graph_volume", "Volume")
+                    lbl_chest_type = ctx.get("trends_graph_chest_type", "Chest Type")
+
                     for nome_forziere, idx_colonna in mappa_colonne_forzieri.items():
                         val_l, val_h = 0, 0
                         if idx_colonna < len(r_p_l.columns):
@@ -97,18 +105,26 @@ def mostra_trends_e_stats(ctx):
                             if v_h.isdigit(): val_h = int(v_h)
                             
                         lbl_tradotto = ctx.get(nome_forziere, nome_forziere)
-                        g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
-                        g_data.append({"Chest Type": lbl_tradotto, "Timeline": label_live, "Volume": val_l})
+                        g_data.append({lbl_chest_type: lbl_tradotto, lbl_timeline: p_scelto, lbl_volume: val_h})
+                        g_data.append({lbl_chest_type: lbl_tradotto, lbl_timeline: label_live, lbl_volume: val_l})
 
                     df_grafico = pd.DataFrame(g_data)
-                    fig = px.bar(df_grafico, x="Chest Type", y="Volume", color="Timeline", barmode="group", color_discrete_sequence=["#bd9b53", "#f0e6d2"])
+                    fig = px.bar(
+                        df_grafico, 
+                        x=lbl_chest_type, 
+                        y=lbl_volume, 
+                        color=lbl_timeline, 
+                        barmode="group", 
+                        color_discrete_sequence=["#bd9b53", "#f0e6d2"]
+                    )
+                    
                     fig.update_traces(marker_line_color='#14120e', marker_line_width=1.5, opacity=0.95)
                     fig.update_layout(
                         paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), 
                         margin=dict(t=10, b=80, l=10, r=10), height=350, dragmode=False,
                         xaxis=dict(tickangle=-45, title=None, fixedrange=True),
                         yaxis=dict(title=None, gridcolor='rgba(240, 230, 210, 0.1)', fixedrange=True),
-                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
+                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, title=None)
                     )
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
@@ -129,8 +145,13 @@ def mostra_trends_e_stats(ctx):
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     
+                    # Recupero scritte box tradotte dinamicamente dal JSON
+                    lbl_box_title = ctx.get("trends_box_title", "EVOLUZIONE PUNTI FORZIERI")
+                    lbl_box_live = ctx.get("trends_box_live", "Corrente")
+                    lbl_box_past = ctx.get("trends_box_past", "Passato")
+                    
                     st.markdown("<br>", unsafe_allow_html=True)
-                    st.markdown(f"""<div class="chat-box" style="padding: 12px !important; border-left: 5px solid #d4b373 !important; max-width: 600px; margin: 0 auto;"><span style="color: #a69e8d; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;">CHEST POINTS EVOLUTION</span><br><span style="font-size: 14px; color: #f0e6d2;">Live: <b>{p_l:,}</b> | Past: {p_h:,}</span><br><span style="font-size: 14px; color: {col_g}; font-weight: bold;">Gap: {"+" if gap > 0 else ""}{gap:,}</span></div>""".replace(',', '.'), unsafe_allow_html=True)
+                    st.markdown(f"""<div class="chat-box" style="padding: 12px !important; border-left: 5px solid #d4b373 !important; max-width: 600px; margin: 0 auto;"><span style="color: #a69e8d; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;">{lbl_box_title}</span><br><span style="font-size: 14px; color: #f0e6d2;">{lbl_box_live}: <b>{p_l:,}</b> | {lbl_box_past}: {p_h:,}</span><br><span style="font-size: 14px; color: {col_g}; font-weight: bold;">Gap: {"+" if gap > 0 else ""}{gap:,}</span></div>""".replace(',', '.'), unsafe_allow_html=True)
                 else:
                     st.info("👤 Player details not found in the live log database.")
     except Exception as e:
