@@ -971,38 +971,38 @@ else:
                     # CONTEGGIO DEL NUMERO TOTALI DI GIOCATORI REALI CHE HANNO ESPRESSO IL VOTO
                     numero_votanti_totale = len(voti_attuali)
                             
-                    # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI RIMPICCIOLITI DELLA METÀ
-                    st.markdown(f"<h5 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 12px !important;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 14px; font-weight: bold;'>{numero_votanti_totale}</span></h5>", unsafe_allow_html=True)
+                    # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI EXTRA COMPATTI
+                    st.markdown(f"<h5 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 11px !important;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 13px; font-weight: bold;'>{numero_votanti_totale}</span></h5>", unsafe_allow_html=True)
                     
-                    # CREAZIONE DELLA GRIGLIA DOPPIA: RIQUADRI A SINISTRA E CLASSIFICA RAPIDA A DESTRA (DIMEZZATI DELLA METÀ)
+                    # CREAZIONE DELLA GRIGLIA DOPPIA: RIQUADRI A SINISTRA E CLASSIFICA RAPIDA A DESTRA (ULTRA RIMPICCIOLITI)
                     col_sinistra_riquadri, col_destra_classifica = st.columns([1.1, 1.9])
                     
-                    # Ordiniamo gli orari dal più votato al meno votato
+                    # Ordiniamo gli orari dal più votato al meno votato per numero di voti (x[1])
                     orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x[1], reverse=True)
                     
                     with col_sinistra_riquadri:
-                        st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 4px; font-size: 10px !important; color: #a69e8d; text-align: center;'>📈 TIME COUNTER</p>", unsafe_allow_html=True)
+                        st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #a69e8d; text-align: center;'>📈 TIME COUNTER</p>", unsafe_allow_html=True)
                         for fuso, num_voti in orari_ordinati:
                             fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
                             st.markdown(
                                 f"""
-                                <div class="chat-box" style="display: flex; justify-content: space-between; align-items: center; padding: 1px 6px !important; margin-bottom: 3px !important; border-left: 2px solid #d4b373 !important; border-radius: 3px !important; height: 24px !important;">
-                                    <span style="color: #d4b373; font-weight: bold; font-size: 12px !important; font-family: 'Cinzel', serif;">{fuso_etichetta}</span>
-                                    <span style="color: #f0e6d2; font-size: 10px; font-weight: normal;"><b style="color: #ffffff; font-size: 11px;">{num_voti}</b> v</span>
+                                <div class="chat-box" style="display: flex; justify-content: space-between; align-items: center; padding: 0px 5px !important; margin-bottom: 2px !important; border-left: 2px solid #d4b373 !important; border-radius: 2px !important; height: 20px !important; background: transparent !important; box-shadow: none !important;">
+                                    <span style="color: #d4b373; font-weight: bold; font-size: 15px !important; font-family: 'Cinzel', serif; line-height: 1;">{fuso_etichetta}</span>
+                                    <span style="color: #ffffff; font-weight: bold; font-size: 15px !important; font-family: 'Cinzel', serif; line-height: 1;">{num_voti} v</span>
                                 </div>
                                 """, 
                                 unsafe_allow_html=True
                             )
                             
                     with col_destra_classifica:
-                        st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 4px; font-size: 10px !important; color: #bd9b53; text-align: center;'>🏆 WINNING PREFERENCES</p>", unsafe_allow_html=True)
+                        st.markdown("<p style='font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 9px !important; color: #bd9b53; text-align: center;'>🏆 WINNING PREFERENCES</p>", unsafe_allow_html=True)
                         if orari_ordinati:
                             testo_classifica = ""
                             for pos, (fuso, num_voti) in enumerate(orari_ordinati, start=1):
                                 fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
                                 medaglia = "🥇" if pos == 1 else "🥈" if pos == 2 else "🥉" if pos == 3 else "✨"
-                                testo_classifica += f"<div style='padding: 1px 0; font-size: 11px !important;'>{medaglia} <b>P.{pos}:</b> {fuso_etichetta} — <span style='color:#bd9b53; font-weight:bold;'>{num_voti} v</span></div>"
-                            st.markdown(f"<div class='chat-box' style='padding: 6px 10px !important; border-radius: 4px !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
+                                testo_classifica += f"<div style='padding: 0px 0; font-size: 11px !important; line-height: 1.3;'>{medaglia} <b>P.{pos}:</b> {fuso_etichetta} — <span style='color:#bd9b53; font-weight:bold;'>{num_voti} v</span></div>"
+                            st.markdown(f"<div class='chat-box' style='padding: 4px 6px !important; border-radius: 3px !important; background: rgba(30, 26, 19, 0.4) !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
                         else:
                             st.info("No active preferences.")
                     
@@ -1026,7 +1026,6 @@ else:
                     if player_to_del != "-- Select Player to Remove --":
                         st.warning(f"⚠️ Are you sure you want to delete the vote for {player_to_del}?")
                         
-                        # PULSANTI AFFIANCATI SÌ / NO PER IL GIOCATORE SINGOLO
                         col_s1, col_s2 = st.columns(2)
                         with col_s1:
                             if st.button("🟢 YES, DELETE", use_container_width=True, key="btn_confirm_single_yes"):
@@ -1049,7 +1048,6 @@ else:
                 st.markdown("##### ♻️ RESET ALL SESSIONS")
                 st.write("Click below to clear all entries and start a fresh voting session.")
                 
-                # Attivazione della richiesta di wipe totale
                 if "confirm_total_reset_wipe" not in st.session_state:
                     st.session_state["confirm_total_reset_wipe"] = False
                     
@@ -1058,7 +1056,6 @@ else:
                         st.session_state["confirm_total_reset_wipe"] = True
                         st.rerun()
                 
-                # BLOCCO SÌ / NO DI SICUREZZA PER IL RESET DEL SONDAGGIO TOTALE
                 if st.session_state["confirm_total_reset_wipe"]:
                     st.error("🚨 CRITICAL: Are you sure you want to wipe ALL clan votes? This action is irreversible!")
                     col_r1, col_r2 = st.columns(2)
