@@ -1027,10 +1027,10 @@ else:
             with c_admin1:
                 st.markdown(ctx.get('admin_cancel_single_title', '##### ❌ CANCEL SINGLE PLAYER VOTE'))
                 if voti_attuali:
-                    # RIMOZIONE STRINGA FISSA - AGGANCIO COMPLETO AL FILE JSON ITALIANO
+                    # AGGANCIO COMPLETO AL FILE JSON ITALIANO
                     etichetta_rimuovi = ctx.get('admin_cancel_single_select', '-- Select Player to Remove --')
                     lista_votanti = [etichetta_rimuovi] + list(voti_attuali.keys())
-                    player_to_del = st.selectbox(etichetta_rimuovi, lista_votanti, key="del_single_voter_dropdown_official_v10")
+                    player_to_del = st.selectbox(etichetta_rimuovi, lista_votanti, key="del_single_voter_dropdown_official_v11")
                     
                     if player_to_del != etichetta_rimuovi:
                         st.warning(ctx.get('admin_cancel_single_warning', f"⚠️ Are you sure you want to delete the vote for {player_to_del}?"))
@@ -1045,11 +1045,16 @@ else:
                                             json.dump(voti_attuali, file_db, ensure_ascii=False, indent=4)
                                     except Exception:
                                         pass
+                                # Svuota la tendina dalla memoria prima di ricaricare
+                                if "del_single_voter_dropdown_official_v11" in st.session_state:
+                                    st.session_state["del_single_voter_dropdown_official_v11"] = etichetta_rimuovi
                                 st.success(f"💥 Vote removed!")
                                 st.rerun()
                         with col_s2:
-                            # RIPARATO IL TASTO NO: ORA RESETTA E CHIUDE LA RICHIESTA ALL'ISTANTE
+                            # TASTO NO RIPARATO: FORZA IL RESET DELLA TENDINA IN MEMORIA PRIMA DEL RERUN
                             if st.button(ctx.get('admin_cancel_single_no', '🔴 NO, ABORT'), use_container_width=True, key="btn_confirm_single_no"):
+                                if "del_single_voter_dropdown_official_v11" in st.session_state:
+                                    st.session_state["del_single_voter_dropdown_official_v11"] = etichetta_rimuovi
                                 st.rerun()
                 else:
                     st.caption("No active votes to remove.")
@@ -1088,4 +1093,6 @@ else:
             if st.button(ctx.get("high_btn_logout", "🔒 LOCK AREA & LOGOUT"), key="officer_logout_button"):
                 st.session_state["super_authenticated"] = False
                 st.session_state["confirm_total_reset_wipe"] = False
+                if "del_single_voter_dropdown_official_v11" in st.session_state:
+                    st.session_state["del_single_voter_dropdown_official_v11"] = etichetta_rimuovi
                 st.rerun()
