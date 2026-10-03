@@ -3,8 +3,11 @@ import pandas as pd
 import plotly.express as px
 
 def mostra_trends_e_stats(ctx):
-    # Sfondo dorato immediato per evitare schermate nere
-    st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("https://githubusercontent.com") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
+    # Ripristino dello sfondo ufficiale bg_info.jpg usato nella pagina risultati clan
+    if "apply_custom_style" in globals():
+        globals()["apply_custom_style"]("bg_info.jpg")
+    else:
+        st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("bg_info.jpg") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
     
     # Titolo principale della pagina (Max 18px per mobile)
     st.markdown(f"<h4 style='text-align: center; margin: 0 auto 20px auto; font-family: \"Cinzel\", serif; font-size: 18px !important; font-weight: bold; color: #d4b373; border-bottom: 2px solid #bd9b53; padding-bottom: 10px; max-width: 500px;'>{ctx.get('menu_trends', '📊 CLAN TRENDS & STATS')}</h4>", unsafe_allow_html=True)
@@ -44,7 +47,6 @@ def mostra_trends_e_stats(ctx):
             mappa_periodi_gid[f"Archive Sheet ({v_gid[-4:]})"] = v_gid
     # Sottotitolo della sezione
     st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>📈 {ctx.get('trends_clan_title', 'Clan Performance Progression')}</h4>", unsafe_allow_html=True)
-
     try:
         # Estrazione pulita dei nomi dei giocatori dalla colonna D (Indice 3)
         df_live_names = df_live.iloc[:, 3].dropna().astype(str).str.strip()
@@ -64,11 +66,11 @@ def mostra_trends_e_stats(ctx):
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:106].copy()
 
-                # RISOLTO: Estrazione delle righe convertendo esplicitamente i valori in stringhe confrontabili
+                # Estrazione righe con verifica stringhe indipendentemente dall'ordine alfabetico
                 r_p_l = df_live[df_live.iloc[:, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                 r_p_h = df_h_data[df_h_data.iloc[:, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                 
-                # Mappatura numerica fissa delle colonne dei forzieri
+                # Mappatura delle colonne dei forzieri
                 mappa_colonne_forzieri = {
                     "Rare Crypt 30": 32, "Epic Crypt 30": 36, "Epic Crypt 35": 37, "Arachne's Swarm": 44,
                     "Epic Undead Squad": 45, "Shadow City": 46, "Armageddon": 47, "Hellforge": 48,
@@ -82,12 +84,12 @@ def mostra_trends_e_stats(ctx):
                     for nome_forziere, idx_colonna in mappa_colonne_forzieri.items():
                         val_l, val_h = 0, 0
                         
-                        # Estrazione sicura del dato Live (cella singola)
+                        # Estrazione dato Live
                         if idx_colonna < len(r_p_l.columns):
                             v = str(r_p_l.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
                             if v.isdigit(): val_l = int(v)
                         
-                        # Estrazione sicura del dato Storico (cella singola)
+                        # Estrazione dato Storico
                         if not r_p_h.empty and idx_colonna < len(r_p_h.columns):
                             v_h = str(r_p_h.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
                             if v_h.isdigit(): val_h = int(v_h)
@@ -96,27 +98,28 @@ def mostra_trends_e_stats(ctx):
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": label_live, "Volume": val_l})
                     
-                    # Generazione del grafico lineare
+                    # NUOVO GRAFICO AD AREA SFUMATA (Sostituisce le linee semplici)
                     df_grafico = pd.DataFrame(g_data)
-                    fig = px.line(df_grafico, x="Chest Type", y="Volume", color="Timeline", markers=True, color_discrete_sequence=["#bd9b53", "#f0e6d2"])
-                    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), margin=dict(t=20,b=10,l=10,r=10), height=280)
+                    fig = px.area(df_grafico, x="Chest Type", y="Volume", color="Timeline", markers=True, color_discrete_sequence=["#bd9b53", "#f0e6d2"])
+                    fig.update_traces(line=dict(width=3), marker=dict(size=6))
+                    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), margin=dict(t=20,b=10,l=10,r=10), height=300, legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
-                    # Ripristino confronto punti totali (Colonna E -> Indice 4)
+                    # Confronto punti totali (Colonna E -> Indice 4)
                     p_l, p_h = 0, 0
-                    try: p_l = int(str(r_p_l.iloc[0, 4]).replace('.', '').replace(',', '').strip())
+                    try: p_l = int(str(r_p_l.iloc).replace('.', '').replace(',', '').strip())
                     except Exception: pass
                     
                     if not r_p_h.empty:
-                        try: p_h = int(str(r_p_h.iloc[0, 4]).replace('.', '').replace(',', '').strip())
+                        try: p_h = int(str(r_p_h.iloc).replace('.', '').replace(',', '').strip())
                         except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     
                     # Estrazione Obiettivi (Colonna G -> Indice 6)
-                    o_l = str(r_p_l.iloc[0, 6]).strip() if len(r_p_l.columns) > 6 else "N/A"
-                    o_h = str(r_p_h.iloc[0, 6]).strip() if not r_p_h.empty and len(r_p_h.columns) > 6 else "N/A"
+                    o_l = str(r_p_l.iloc).strip() if len(r_p_l.columns) > 6 else "N/A"
+                    o_h = str(r_p_h.iloc).strip() if not r_p_h.empty and len(r_p_h.columns) > 6 else "N/A"
                     
                     st.markdown("<br>", unsafe_allow_html=True)
                     res1, res2 = st.columns(2)
