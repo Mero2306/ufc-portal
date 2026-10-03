@@ -127,28 +127,37 @@ def mostra_trends_e_stats(ctx):
                     
                     p_l, p_h = 0, 0
                     
-                    def pulisci_valore_totale(valore_cella):
+                    # FUNZIONE DI PULIZIA BLINDATA CONTRO IL BUG DEL .0 DI PANDAS
+                    def pulisci_valore_totale(cella_input):
                         try:
-                            val_str = str(valore_cella).strip().lower()
+                            val_str = str(cella_input).strip().lower()
                             if val_str == "nan" or val_str == "":
                                 return 0
-                            # Taglio netto dell'estensione decimale fittizia di Pandas (.0)
+                            
+                            # INTERCETTAZIONE CRITICA: Se finisce con .0 lo tronca per evitare il moltiplicatore x10
                             if val_str.endswith(".0"):
                                 val_str = val_str[:-2]
+                                
+                            # Ora rimuove in totale sicurezza i punti e le virgole residui
                             val_str = val_str.replace('.', '').replace(',', '')
                             return int(val_str) if val_str.isdigit() else 0
                         except Exception:
                             return 0
 
-                    # Estrazione pulita e diretta della colonna E (indice 4) senza doppie matrici
-                    try: 
-                        p_l = pulisci_valore_totale(r_p_l.iloc[4])
-                    except Exception: pass
-                    
-                    if not r_p_h.empty:
-                        try: 
-                            p_h = pulisci_valore_totale(r_p_h.iloc[4])
+                    # Estrazione e pulizia millimetrica per Clan o Giocatore Singolo
+                    if g_scelto == clan_holder:
+                        try:
+                            p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
+                            p_h = pulisci_valore_totale(r_p_h.iloc[0, 4]) if not r_p_h.empty else 0
                         except Exception: pass
+                    else:
+                        try: 
+                            p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
+                        except Exception: pass
+                        if not r_p_h.empty:
+                            try: 
+                                p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
+                            except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
