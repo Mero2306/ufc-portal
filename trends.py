@@ -40,11 +40,11 @@ def mostra_trends_e_stats(ctx):
     
     for v_gid in gids_storici:
         try:
-            url_check = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={v_gid}"
+            url_check = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={v_gid}"
             df_check = pd.read_csv(url_check, header=None)
             titolo_rilevato = f"Archive Period ({v_gid[-4:]})"
             if df_check is not None and len(df_check) > 1 and len(df_check.columns) > 3:
-                cella_val = str(df_check.iloc[1, 3]).strip()
+                cella_val = str(df_check.iloc).strip()
                 if cella_val and cella_val.lower() != "nan" and cella_val != "":
                     titolo_rilevato = cella_val
             mappa_periodi_gid[titolo_rilevato] = v_gid
@@ -73,14 +73,23 @@ def mostra_trends_e_stats(ctx):
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:107].copy()
 
-                # RIPRISTINO LOGICA DI FILTRO RIGHE (Risolve l'errore r_p_l is not defined)
+                # LOGICA DI FILTRO RIGHE 
                 if g_scelto == clan_holder:
-                    r_p_l = df_live.iloc[[103]]
-                    r_p_h = df_h_data.iloc[[103]]
+                    r_p_l = df_live.iloc[]
+                    r_p_h = df_h_data.iloc[]
                 else:
                     r_p_l = df_live.iloc[0:103][df_live.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                     r_p_h = df_h_data.iloc[0:103][df_h_data.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                 
+                # RISOLTO: Definiamo la mappa qui dentro così non fallisce mai l'importazione
+                mappa_colonne_forzieri = {
+                    "Rare Crypt 30": 32, "Epic Crypt 30": 36, "Epic Crypt 35": 37, "Arachne's Swarm": 44,
+                    "Epic Undead Squad": 45, "Shadow City": 46, "Armageddon": 47, "Hellforge": 48,
+                    "Epic Fenrir Squad": 49, "Jormungandr Squad": 50, "Epic Chimera Squad": 51,
+                    "Epic Basilisk Squad": 52, "Epic Briareus Squad": 53, "Sands of Eternity": 92,
+                    "Arcanomancer squad": 93, "Yokai": 94
+                }
+
                 if not r_p_l.empty:
                     g_data = []
                     lbl_timeline = ctx.get("trends_graph_timeline", "Timeline")
@@ -128,10 +137,10 @@ def mostra_trends_e_stats(ctx):
                         val_str = val_str.replace('.', '').replace(',', '')
                         return int(val_str) if val_str.isdigit() else 0
 
-                    try: p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
+                    try: p_l = pulisci_valore_totale(r_p_l.iloc)
                     except Exception: pass
                     if not r_p_h.empty:
-                        try: p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
+                        try: p_h = pulisci_valore_totale(r_p_h.iloc)
                         except Exception: pass
                     
                     gap = p_l - p_h
