@@ -3,99 +3,50 @@ import pandas as pd
 import plotly.express as px
 
 def mostra_trends_e_stats(ctx):
-    # Sfondo epico coerente con la pagina dei Risultati Clan
+    # Sfondo epico a specchio con la pagina dei Risultati Clan
     st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("https://githubusercontent.com") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
     st.markdown(f"<h4 style='text-align: center; margin: 0 auto 20px auto; font-family: \"Cinzel\", serif; font-size: 18px !important; font-weight: bold; color: #d4b373; border-bottom: 2px solid #bd9b53; padding-bottom: 10px; max-width: 500px;'>{ctx.get('menu_trends', '📊 CLAN TRENDS & STATS')}</h4>", unsafe_allow_html=True)
     
     SPREADSHEET_ID = "1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ"
+    GID_LIVE_REALE = "1972335307"  # Foglio 1 (Dati in tempo reale)
     
-    # DATI CORRENTI REALI: Collegati al primo foglio principale (gid=0) come nella Home
-    GID_LIVE_VERTICALE = "0"
-    
-    # MAPPATURA DEI PERIODI STORICI SUCCESSIVI (Hanno la stessa identica struttura verticale del gid=0)
     MAPPA_P = {
-        "Periodo 1": "1482810444",
-        "Periodo 2": "1738740307",
-        "Periodo 3": "349323133",
-        "Periodo 4": "1940986756"
+        "21/09 - 27/09 (Foglio 2)": "1281719474",
+        "Foglio 3": "1240125232",
+        "Foglio 4": "958114297",
+        "28/09 - 05/10 (Foglio 5)": "676719910"
     }
     
-    # FUNZIONE DI CARICAMENTO SICURA ED EVOLUTA SULL'URL CORRETTO DI GOOGLE
-    url_live = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_VERTICALE}"
-    
-    try: 
-        df_live = pd.read_csv(url_live, header=None)
-    except Exception: 
+    # Caricamento pulito del Foglio 1 (Tempo reale corrent)
+    url_live = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
+    try:
+        # Usiamo la riga delle intestazioni (riga 2 nel tuo modello standard) come nomi di colonna reali
+        df_live_raw = pd.read_csv(url_live, header=None)
+        # Normalizziamo le intestazioni per la ricerca
+        headers_live = df_live_raw.iloc[2].astype(str).str.strip().tolist()
+        df_live = df_live_raw.iloc[3:106].copy()
+        df_live.columns = headers_live
+    except Exception:
         st.warning("⚠️ Waiting for data synchronisation... Please try to reload.")
         return
 
-    cripte = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai", "Union of Triumph"]
-    st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>📈 {ctx.get('trends_clan_title', 'Clan Performance Progression')}</h4>", unsafe_allow_html=True)
-    
-    c_s1, c_s2, c_s3 = st.columns([0.5, 2.0, 0.5])
-    with c_s2: 
-        p_clan = st.selectbox(ctx.get("trends_select_period", "Select Period:"), list(MAPPA_P.keys()), key="c_p_sel")
-    
-    try:
-        url_h = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={MAPPA_P[p_clan]}"
-        df_h = pd.read_csv(url_h, header=None)
-        g_data = []
-        
-        # MAPPATURA LETTERE COLONNE DEL FOGLIO VERTICALE (MODELLO HOME DASHBOARD)
-        def converti_lettera_indice(let):
-            index = 0
-            for char in let.upper().strip():
-                index = index * 26 + (ord(char) - ord('A') + 1)
-            return index - 1
+    # Lista dei forzieri e delle colonne in comune tra tutte le schede
+    nomi_forzieri = [
+        "Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", 
+        "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", 
+        "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", 
+        "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", 
+        "Arcanomancer squad", "Yokai", "Union of Triumph"
+    ]
 
-        mappatura_forzieri = [
-            {"let": "AG", "name": "Rare Crypt 30"}, {"let": "AK", "name": "Epic Crypt 30"},
-            {"let": "AL", "name": "Epic Crypt 35"}, {"let": "AS", "name": "Arachne's Swarm"},
-            {"let": "AT", "name": "Epic Undead Squad"}, {"let": "AU", "name": "Shadow City"},
-            {"let": "AV", "name": "Armageddon"}, {"let": "AW", "name": "Hellforge"},
-            {"let": "AX", "name": "Epic Fenrir Squad"}, {"let": "AY", "name": "Jormungandr Squad"},
-            {"let": "AZ", "name": "Epic Chimera Squad"}, {"let": "BA", "name": "Epic Basilisk Squad"},
-            {"let": "BB", "name": "Epic Briareus Squad"}, {"let": "CO", "name": "Sands of Eternity"},
-            {"let": "CP", "name": "Arcanomancer squad"}, {"let": "CQ", "name": "Yokai"},
-            {"let": "CR", "name": "Union of Triumph"}
-        ]
-
-        # Estrazione delle righe 'Total' da entrambi i fogli verticali
-        riga_totale_l = df_live[df_live.iloc[:, 3].astype(str).str.strip().lower() == 'total']
-        riga_totale_h = df_h[df_h.iloc[:, 3].astype(str).str.strip().lower() == 'total']
-        
-        if riga_totale_l.empty: riga_totale_l = df_live[df_live.iloc[:, 0].astype(str).str.strip().lower() == 'total']
-        if riga_totale_h.empty: riga_totale_h = df_h[df_h.iloc[:, 0].astype(str).str.strip().lower() == 'total']
-
-        for item in mappatura_forzieri:
-            idx_colonna = converti_lettera_indice(item["let"])
-            val_l, val_l_num, val_h = 0, 0, 0
-            
-            if not riga_totale_l.empty and idx_colonna < len(df_live.columns):
-                v_str = str(riga_totale_l.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
-                if v_str.endswith(".0"): v_str = v_str[:-2]
-                if v_str.isdigit(): val_l = int(v_str)
-                
-            if not riga_totale_h.empty and idx_colonna < len(df_h.columns):
-                v_str_h = str(riga_totale_h.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
-                if v_str_h.endswith(".0"): v_str_h = v_str_h[:-2]
-                if v_str_h.isdigit(): val_h = int(v_str_h)
-                
-            lbl = ctx.get(item["name"], item["name"])
-            g_data.append({"Type": lbl, "Timeline": "Historical", "Volume": val_h})
-            g_data.append({"Type": lbl, "Timeline": "Current Live", "Volume": val_l})
-            
-        fig = px.line(pd.DataFrame(g_data), x="Type", y="Volume", color="Timeline", markers=True, color_discrete_sequence=["#bd9b53", "#f0e6d2"])
-        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), margin=dict(t=20,b=10,l=10,r=10), height=280)
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-    except Exception: 
-        pass
-        
-    st.markdown("<br><hr style='border:1px solid #bd9b53; opacity:0.15;'><br>", unsafe_allow_html=True)
     st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>👤 {ctx.get('trends_player_title', 'Player Historical Comparison')}</h4>", unsafe_allow_html=True)
-
+    st.markdown("<div style='margin-bottom: 12px;'></div>", unsafe_allow_html=True)
+    
     try:
-        df_p = df_live.iloc[3:106, 3].dropna().astype(str).str.strip()
+        # Identifichiamo dinamicamente la colonna dei Nickname cercando tra le intestazioni in comune
+        col_nome_chiave = [h for h in headers_live if "name" in h.lower() or "nickname" in h.lower() or "giocatore" in h.lower()][0]
+        
+        df_p = df_live[col_nome_chiave].dropna().astype(str).str.strip()
         g_list = [n for n in df_p.unique() if n and n.lower() not in ["nan", "total", "totale", "union of triumph"]]
         
         if g_list:
@@ -105,25 +56,78 @@ def mostra_trends_e_stats(ctx):
             with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), list(MAPPA_P.keys()), key="t_p_sel")
                 
             if g_scelto != p_holder:
-                url_player_h = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={MAPPA_P[p_scelto]}"
-                df_p_h = pd.read_csv(url_player_h, header=None)
-                v_live, o_live, v_hist, o_hist = 0, "0%", 0, "0%"
+                # Caricamento e normalizzazione dinamica del Foglio Storico selezionato (2, 3, 4 o 5)
+                url_h = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={MAPPA_P[p_scelto]}"
+                df_h_raw = pd.read_csv(url_h, header=None)
                 
-                for r in range(3, 106):
-                    if str(df_live.iloc[r, 3]).strip().lower() == g_scelto.lower():
-                        v_live = int(str(df_live.iloc[r, 4]).replace('.', '').replace(',', '').strip()) if pd.notna(df_live.iloc[r, 4]) else 0
-                        o_live = str(df_live.iloc[r, 7]).strip() if pd.notna(df_live.iloc[r, 7]) else "0%"
+                # Cerchiamo in quale riga si trovano le intestazioni nel foglio storico (flessibilità totale)
+                riga_headers_h = 2
+                for r in range(5):
+                    row_vals = df_h_raw.iloc[r].astype(str).str.lower().tolist()
+                    if any("crypt" in val or "punti" in val or "points" in val for val in row_vals):
+                        riga_headers_h = r
                         break
-                for r in range(3, 106):
-                    if str(df_p_h.iloc[r, 3]).strip().lower() == g_scelto.lower():
-                        v_hist = int(str(df_p_h.iloc[r, 4]).replace('.', '').replace(',', '').strip()) if pd.notna(df_p_h.iloc[r, 4]) else 0
-                        o_hist = str(df_p_h.iloc[r, 7]).strip() if pd.notna(df_p_h.iloc[r, 7]) else "0%"
-                        break
+                        
+                headers_hist = df_h_raw.iloc[riga_headers_h].astype(str).str.strip().tolist()
+                df_h = df_h_raw.iloc[riga_headers_h+1:106].copy()
+                df_h.columns = headers_hist
                 
-                gap = v_live - v_hist
-                col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
-                st.markdown("<br>", unsafe_allow_html=True)
-                res1, res2 = st.columns(2)
-                with res1: st.markdown(f"""<div class="chat-box" style="padding: 10px !important; border-left: 3px solid #d4b373 !important;"><span style="color: #a69e8d; font-size: 10px;">CHEST POINTS EVOLUTION</span><br><span style="font-size: 12px; color: #f0e6d2;">Live: <b>{v_live}</b> | Past: {v_hist}</span><br><span style="font-size: 13px; color: {col_g}; font-weight: bold;">Gap: {"+" if gap > 0 else ""}{gap}</span></div>""", unsafe_allow_html=True)
-                with res2: st.markdown(f"""<div class="chat-box" style="padding: 10px !important; border-left: 3px solid #d4b373 !important;"><span style="color: #a69e8d; font-size: 10px;">GOAL PROGRESS COMPARISON</span><br><span style="font-size: 12px; color: #f0e6d2;">Current: <b>{o_live}</b></span><br><span style="font-size: 12px; color: #bd9b53;">Previous: <b>{o_hist}</b></span></div>""", unsafe_allow_html=True)
+                col_nome_hist = [h for h in headers_hist if "name" in h.lower() or "nickname" in h.lower() or "giocatore" in h.lower()][0]
+
+                # --- METODO DATABASE LOOKUP (BATTAGLIA NAVALE SUI NOMI COLONNA IN COMUNE) ---
+                riga_player_live = df_live[df_live[col_nome_chiave].astype(str).str.strip().lower() == g_scelto.lower()]
+                riga_player_hist = df_h[df_h[col_nome_hist].astype(str).str.strip().lower() == g_scelto.lower()]
+                
+                if not riga_player_live.empty and not riga_player_hist.empty:
+                    g_data_lineare = []
+                    
+                    for item in nomi_forzieri:
+                        val_l, val_h = 0, 0
+                        
+                        # Estrazione dal Live tramite nome colonna in comune
+                        if item in riga_player_live.columns:
+                            v_str = str(riga_player_live[item].values[0]).strip().replace('.', '').replace(',', '')
+                            if v_str.endswith(".0"): v_str = v_str[:-2]
+                            if v_str.isdigit(): val_l = int(v_str)
+                            
+                        # Estrazione dallo Storico tramite nome colonna in comune (Indipendente dalla posizione fisica!)
+                        if item in riga_player_hist.columns:
+                            v_str_h = str(riga_player_hist[item].values[0]).strip().replace('.', '').replace(',', '')
+                            if v_str_h.endswith(".0"): v_str_h = v_str_h[:-2]
+                            if v_str_h.isdigit(): val_h = int(v_str_h)
+                            
+                        lbl_forziere = ctx.get(item, item)
+                        g_data_lineare.append({"Chest Type": lbl_forziere, "Timeline": "Historical Stats", "Chests Volume": val_h})
+                        g_data_lineare.append({"Chest Type": lbl_forziere, "Timeline": "Current Live", "Chests Volume": val_l})
+                    
+                    # GRAFICO LINEARE CONTINUO PER IL GIOCATORE SELEZIONATO
+                    df_plot = pd.DataFrame(g_data_lineare)
+                    fig = px.line(df_plot, x="Chest Type", y="Chests Volume", color="Timeline", markers=True, color_discrete_sequence=["#bd9b53", "#f0e6d2"])
+                    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), margin=dict(t=20,b=10,l=10,r=10), height=290)
+                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+                    
+                    # estrazione dei totali punti ed obiettivi basata sui nomi colonna
+                    punti_live, punti_hist = 0, 0
+                    col_pts_l = [h for h in riga_player_live.columns if "punti" in h.lower() or "points" in h.lower()][0]
+                    col_pts_h = [h for h in riga_player_hist.columns if "punti" in h.lower() or "points" in h.lower()][0]
+                    
+                    try: punti_live = int(str(riga_player_live[col_pts_l].values[0]).replace('.', '').replace(',', '').strip())
+                    except Exception: pass
+                    try: punti_hist = int(str(riga_player_hist[col_pts_h].values[0]).replace('.', '').replace(',', '').strip())
+                    except Exception: pass
+                    
+                    gap = punti_live - punti_hist
+                    col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
+                    
+                    col_prg_l = [h for h in riga_player_live.columns if "progress" in h.lower() or "goal" in h.lower() or "obiettivo" in h.lower()][0]
+                    col_prg_h = [h for h in riga_player_hist.columns if "progress" in h.lower() or "goal" in h.lower() or "obiettivo" in h.lower()][0]
+                    o_live = str(riga_player_live[col_prg_l].values[0]).strip()
+                    o_hist = str(riga_player_hist[col_prg_h].values[0]).strip()
+                    
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    res1, res2 = st.columns(2)
+                    with res1: st.markdown(f"""<div class="chat-box" style="padding: 10px !important; border-left: 3px solid #d4b373 !important;"><span style="color: #a69e8d; font-size: 10px;">CHEST POINTS EVOLUTION</span><br><span style="font-size: 12px; color: #f0e6d2;">Live: <b>{punti_live:,}</b> | Past: {punti_hist:,}</span><br><span style="font-size: 13px; color: {col_g}; font-weight: bold;">Gap: {"+" if gap > 0 else ""}{gap:,}</span></div>""".replace(',', '.'), unsafe_allow_html=True)
+                    with res2: st.markdown(f"""<div class="chat-box" style="padding: 10px !important; border-left: 3px solid #d4b373 !important;"><span style="color: #a69e8d; font-size: 10px;">GOAL PROGRESS COMPARISON</span><br><span style="font-size: 12px; color: #f0e6d2;">Current: <b>{o_live}</b></span><br><span style="font-size: 12px; color: #bd9b53;">Previous: <b>{o_hist}</b></span></div>""", unsafe_allow_html=True)
+                else:
+                    st.info("ℹ️ Profile data not available in the selected historical sheet.")
     except Exception: pass
