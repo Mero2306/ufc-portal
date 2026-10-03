@@ -1104,3 +1104,22 @@ else:
                 st.session_state["super_authenticated"] = False
                 st.session_state["confirm_total_reset_wipe"] = False
                 st.rerun()
+
+    # ==========================================
+    # 7. MOTORE DI CARICAMENTO PAGINE MULTILINGUA
+    # ==========================================
+    
+    # CONTROLLO PAGINA 0: HOME DASHBOARD
+    if page in ["🏠 Home Dashboard", ctx.get("menu_home")]:
+        apply_custom_style("bg_home.jpg")
+        st.markdown(f"<div style='max-width: 500px; margin: 0 auto; text-align: center;'><h1 style='font-size: 22px !important; margin-bottom: 8px !important; border-bottom: none; padding-bottom: 0;'>{ctx.get('home_h1', '🏠 UFC Raiders of Chaos')}</h1><p style='font-size: 13px !important; margin-bottom: 12px !important; color: #a69e8d;'>{ctx.get('home_write', 'Check the official chest leaderboard updated in real-time.')}</p></div>", unsafe_allow_html=True)
+        text_home_info = ctx.get("home_info", "💡 **Notice for UFC Members:** By clicking the button below, the official leaderboard will open safely in a new browser tab in View-Only mode.")
+        st.markdown(f"<div style='background-color: rgba(28, 142, 230, 0.1); border-left: 4px solid rgb(28, 142, 230); padding: 8px 12px; border-radius: 4px; max-width: 500px; margin: 0 auto 12px auto; text-align: left;'><p style='color: #f0e6d2; margin: 0; font-size: 13px; line-height: 1.4; letter-spacing: 0.2px;'>{text_home_info}</p></div>", unsafe_allow_html=True)
+        col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
+        with col_btn2:
+            st.link_button(ctx.get("home_btn", "⚔️ CLICK HERE TO OPEN UFC CHESTS LEADERBOARD ⚔️"), GOOGLE_SHEET_LINK, use_container_width=True)
+
+    # CONTROLLO PAGINA STATISTICHE E TREND (Risolve il tuo problema di traduzione del menu)
+    elif page in ["📊 Clan Trends & Stats", ctx.get("menu_trends")]:
+        import trends
+        trends.mostra_trends_e_stats(ctx)
