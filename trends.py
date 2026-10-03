@@ -14,7 +14,7 @@ def mostra_trends_e_stats(ctx):
     gids_storici = ["1281719474", "1240125232", "958114297", "676719910"]
     
     # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale
-    url_live = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
+    url_live = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
     try:
         df_live_raw = pd.read_csv(url_live, header=None)
         headers_live = df_live_raw.iloc[2].astype(str).str.strip().tolist()
@@ -30,7 +30,7 @@ def mostra_trends_e_stats(ctx):
     for v_gid in gids_storici:
         try:
             # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale
-            url_check = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={v_gid}"
+            url_check = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={v_gid}"
             df_check = pd.read_csv(url_check, header=None)
             
             # Estrazione sicura del testo reale della cella D2 (riga 1, colonna 3 di Pandas)
@@ -58,7 +58,7 @@ def mostra_trends_e_stats(ctx):
                 
             if g_scelto != p_holder:
                 # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale
-                url_h = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
+                url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
                 
                 headers_hist = df_h_raw.iloc[2].astype(str).str.strip().tolist()
