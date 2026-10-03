@@ -68,14 +68,21 @@ def mostra_trends_e_stats(ctx):
             with c_w1: g_scelto = st.selectbox(ctx.get("select_player_lbl", "Profile:"), [p_holder] + g_list, key="p_sel_tr")
             with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), lista_periodi, key="t_p_sel")
                 
-            # ATTIVAZIONE SOLO SE ENTRAMBI I FILTRI SONO SELEZIONATI CORRETTAMENTE
+# ATTIVAZIONE SOLO SE ENTRAMBI I FILTRI SONO SELEZIONATI CORRETTAMENTE
             if g_scelto != p_holder and p_scelto != period_holder:
                 url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:106].copy()
 
-                r_p_l = df_live[df_live.iloc[:, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
-                r_p_h = df_h_data[df_h_data.iloc[:, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
+                # LOGICA DINAMICA: Controllo singolo profilo o Intero Clan
+                if g_scelto == clan_holder:
+                    r_p_l = df_live[df_live.iloc[:, 3].astype(str).str.strip().str.lower().isin([x.lower() for x in g_list])]
+                    r_p_h = df_h_data[df_h_data.iloc[:, 3].astype(str).str.strip().str.lower().isin([x.lower() for x in g_list])]
+                    is_clan = True
+                else:
+                    r_p_l = df_live[df_live.iloc[:, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
+                    r_p_h = df_h_data[df_h_data.iloc[:, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
+                    is_clan = False
                 
                 mappa_colonne_forzieri = {
                     "Rare Crypt 30": 32, "Epic Crypt 30": 36, "Epic Crypt 35": 37, "Arachne's Swarm": 44,
@@ -90,11 +97,18 @@ def mostra_trends_e_stats(ctx):
                     for nome_forziere, idx_colonna in mappa_colonne_forzieri.items():
                         val_l, val_h = 0, 0
                         if idx_colonna < len(r_p_l.columns):
-                            v = str(r_p_l.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
-                            if v.isdigit(): val_l = int(v)
-                        if not r_p_h.empty and idx_colonna < len(r_p_h.columns):
-                            v_h = str(r_p_h.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
-                            if v_h.isdigit(): val_h = int(v_h)
+                            if is_clan:
+                                val_l = sum(pd.to_numeric(r_p_l.iloc[:, idx_colonna].astype(str).str.replace('.', '').str.replace(',', ''), errors='coerce').fillna(0).astype(int))
+                            else:
+                                v = str(r_p_l.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
+                                if v.isdigit(): val_l = int(v)
+                        if idx_colonna < len(r_p_h.columns):
+                            if is_clan:
+                                val_h = sum(pd.to_numeric(r_p_h.iloc[:, idx_colonna].astype(str).str.replace('.', '').str.replace(',', ''), errors='coerce').fillna(0).astype(int))
+                            else:
+                                if not r_p_h.empty:
+                                    v_h = str(r_p_h.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
+                                    if v_h.isdigit(): val_h = int(v_h)
                             
                         lbl_tradotto = ctx.get(nome_forziere, nome_forziere)
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
@@ -123,17 +137,16 @@ def mostra_trends_e_stats(ctx):
                         font=dict(color='#f0e6d2'), 
                         margin=dict(t=10, b=80, l=10, r=10), 
                         height=350, 
-                        # DISATTIVA LO ZOOM E IL TRASCINAMENTO SULLE BARRE (Risolve il problema su mobile)
                         dragmode=False,
                         xaxis=dict(
                             tickangle=-45,
                             title=None,
-                            fixedrange=True # Blocca lo zoom sull'asse X
+                            fixedrange=True
                         ),
                         yaxis=dict(
                             title=None,
                             gridcolor='rgba(240, 230, 210, 0.1)',
-                            fixedrange=True # Blocca lo zoom sull'asse Y
+                            fixedrange=True
                         ),
                         legend=dict(
                             orientation="h", 
@@ -150,41 +163,27 @@ def mostra_trends_e_stats(ctx):
                     
                     def pulisci_valore_totale(cella):
                         val_str = str(cella).strip().lower()
-                        if val_str == "nan" or val_str == "":
-                            return 0
-                        if val_str.endswith(".0"):
-                            val_str = val_str[:-2]
+                        if val_str == "nan" or val_str == "": return 0
+                        if val_str.endswith(".0"): val_str = val_str[:-2]
                         val_str = val_str.replace('.', '').replace(',', '')
                         return int(val_str) if val_str.isdigit() else 0
 
-                    try:
-                        p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
-                    except Exception: pass
-                    
-                    if not r_p_h.empty:
-                        try:
-                            p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
+                    if is_clan:
+                        p_l = sum(r_p_l.iloc[:, 4].apply(puliisci_valore_totale))
+                        p_h = sum(r_p_h.iloc[:, 4].apply(puliisci_valore_totale)) if not r_p_h.empty else 0
+                    else:
+                        try: p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
                         except Exception: pass
+                        if not r_p_h.empty:
+                            try: p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
+                            except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     
-                    # CORREZIONE VALORI NAN PER GLI OBIETTIVI
-                    def pulisci_obiettivo(cella):
-                        val_str = str(cella).strip()
-                        if val_str.lower() == "nan" or val_str == "":
-                            return "In Progress"
-                        return val_str
-
-                    o_l = pulisci_obiettivo(r_p_l.iloc[0, 6]) if len(r_p_l.columns) > 6 else "In Progress"
-                    o_h = pulisci_obiettivo(r_p_h.iloc[0, 6]) if not r_p_h.empty and len(r_p_h.columns) > 6 else "In Progress"
-                    
+                    # BOX UNICO PULITO (RIMOSSO IL BOX OBIETTIVI)
                     st.markdown("<br>", unsafe_allow_html=True)
-                    res1, res2 = st.columns(2)
-                    with res1: 
-                        st.markdown(f"""<div class="chat-box" style="padding: 10px !important; border-left: 3px solid #d4b373 !important;"><span style="color: #a69e8d; font-size: 10px;">CHEST POINTS EVOLUTION</span><br><span style="font-size: 12px; color: #f0e6d2;">Live: <b>{p_l:,}</b> | Past: {p_h:,}</span><br><span style="font-size: 13px; color: {col_g}; font-weight: bold;">Gap: {"+" if gap > 0 else ""}{gap:,}</span></div>""".replace(',', '.'), unsafe_allow_html=True)
-                    with res2: 
-                        st.markdown(f"""<div class="chat-box" style="padding: 10px !important; border-left: 3px solid #d4b373 !important;"><span style="color: #a69e8d; font-size: 10px;">GOAL PROGRESS COMPARISON</span><br><span style="font-size: 12px; color: #f0e6d2;">Current: <b>{o_l}</b></span><br><span style="font-size: 12px; color: #bd9b53;">Previous: <b>{o_h}</b></span></div>""", unsafe_allow_html=True)
+                    st.markdown(f"""<div class="chat-box" style="padding: 12px !important; border-left: 5px solid #d4b373 !important; max-width: 600px; margin: 0 auto;"><span style="color: #a69e8d; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;">CHEST POINTS EVOLUTION</span><br><span style="font-size: 14px; color: #f0e6d2;">Live: <b>{p_l:,}</b> | Past: {p_h:,}</span><br><span style="font-size: 14px; color: {col_g}; font-weight: bold;">Gap: {"+" if gap > 0 else ""}{gap:,}</span></div>""".replace(',', '.'), unsafe_allow_html=True)
                 else:
                     st.info("👤 Player details not found in the live log database.")
     except Exception as e:
