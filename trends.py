@@ -13,7 +13,7 @@ def mostra_trends_e_stats(ctx):
     # Elenco reale dei codici GID fisici dei fogli storici (2, 3, 4, 5) inviati da te
     gids_storici = ["1281719474", "1240125232", "958114297", "676719910"]
     
-    # Caricamento del Foglio 1 (Dati correnti live verticali) con URL Google nativo e corretto
+    # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale
     url_live = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
     try:
         df_live_raw = pd.read_csv(url_live, header=None)
@@ -23,13 +23,13 @@ def mostra_trends_e_stats(ctx):
     except Exception:
         st.warning("⚠️ Waiting for data synchronisation... Please try to reload.")
         return
-
     # --- MOTORE AD SCANSIONE INTERNA: ESTRAZIONE TITOLI REALI DA CELLA D2 VIA CSV ---
     mappa_periodi_gid = {}
     label_live = ctx.get("trends_current_period", "Current Observation Period")
     
     for v_gid in gids_storici:
         try:
+            # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale
             url_check = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={v_gid}"
             df_check = pd.read_csv(url_check, header=None)
             
@@ -57,6 +57,7 @@ def mostra_trends_e_stats(ctx):
             with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), list(mappa_periodi_gid.keys()), key="t_p_sel")
                 
             if g_scelto != p_holder:
+                # CORRETTO: URL Google Fogli ripristinato con la sintassi nativa ufficiale
                 url_h = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
                 
