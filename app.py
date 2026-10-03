@@ -972,8 +972,8 @@ else:
                 # RIPARTO DI ANTEPRIMA: TOTAL VOTERS E CONTATORI ORARI EXTRA COMPATTI AFFIANCATI
                 st.markdown(f"<h5 style='text-align: center; color: #bd9b53; font-family: \"Cinzel\", serif; margin-bottom: 2px; font-size: 11px !important;'>🗳️ TOTAL PLAYERS VOTED: <span style='color: #f0e6d2; font-size: 13px; font-weight: bold;'>{numero_votanti_totale}</span></h5>", unsafe_allow_html=True)
                 
-                # DISTRIBUZIONE SPAZI AFFIANCATI
-                col_sinistra_riquadri, col_destra_classifica = st.columns([1.8, 1.2])
+                # OTTIMIZZAZIONE SPAZI AFFIANCATI: ALLARGATA LA COLONNA SINISTRA AL 75% PER FAR STARE PIÙ RIQUADRI INSIEME
+                col_sinistra_riquadri, col_destra_classifica = st.columns([2.25, 0.75])
                 
                 # Ordiniamo gli orari dal più votato al meno votato per numero di voti
                 orari_ordinati = sorted(conteggio_orari.items(), key=lambda x: x, reverse=True)
@@ -986,7 +986,6 @@ else:
                     for idx_o, (fuso, num_voti) in enumerate(orari_ordinati):
                         with cols_interne_orari[idx_o % 4]:
                             fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
-                            # RIDOTTA LA LARGHEZZA DEI RIQUADRI CON MAX-WIDTH A 55PX
                             st.markdown(
                                 f"""
                                 <div class="chat-box" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1px 2px !important; margin-bottom: 3px !important; border-left: 2px solid #d4b373 !important; border-radius: 2px !important; height: 34px !important; background: transparent !important; box-shadow: none !important; width: 100% !important; max-width: 55px !important; margin-left: auto !important; margin-right: auto !important;">
@@ -1005,8 +1004,8 @@ else:
                             fuso_etichetta = fuso if "R" in fuso else f"R{fuso}"
                             medaglia = "🥇" if pos == 1 else "🥈" if pos == 2 else "🥉" if pos == 3 else "✨"
                             testo_classifica += f"<div style='padding: 0px 0; font-size: 10px !important; line-height: 1.2;'>{medaglia} <b>P.{pos}:</b> {fuso_etichetta} ({num_voti}v)</div>"
-                        # RIDOTTA LA LARGHEZZA DELLA CLASSIFICA CON MAX-WIDTH A 110PX
-                        st.markdown(f"<div class='chat-box' style='padding: 3px 5px !important; border-radius: 3px !important; background: rgba(30, 26, 19, 0.4) !important; max-width: 110px !important; margin-left: auto !important; margin-right: auto !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
+                        # DIMEZZATA LA LARGHEZZA DELLA CLASSIFICA DELLA METÀ CON MAX-WIDTH A 55PX PER ALLINEAMENTO PERFETTO
+                        st.markdown(f"<div class='chat-box' style='padding: 3px 5px !important; border-radius: 3px !important; background: rgba(30, 26, 19, 0.4) !important; max-width: 55px !important; margin-left: auto !important; margin-right: auto !important;'>{testo_classifica}</div>", unsafe_allow_html=True)
                     else:
                         st.info("Empty")
                 
