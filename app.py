@@ -699,10 +699,8 @@ else:
             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
             
-    # --- NUOVA PAGINA: VOTAZIONE ORARIO ANTICHI DIALETTO DINAMICO ---
+    # --- NUOVA PAGINA: VOTAZIONE ORARIO ANTICHI CON TRADUZIONI DINAMICHE ---
     elif page in ["🗳️ Ancient Evocation Time Voting", ctx.get("menu_voting")]:
-        apply_custom_style("bg_home.jpg")
-
         apply_custom_style("bg_home.jpg")
         
         FILE_VOTI_SERVER = "voti_interni.json"
@@ -728,19 +726,18 @@ else:
         import pandas as pd
         dati_freschi_home = None
         try:
-            url_prima_pagina_clan = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=0"
+            url_prima_pagina_clan = "https://google.com"
             dati_freschi_home = pd.read_csv(url_prima_pagina_clan, header=None)
         except Exception:
             dati_freschi_home = None
 
-        st.markdown(f"<h1>ANCIENT EVOCATION TIME VOTING</h1>", unsafe_allow_html=True)
+        st.markdown(f"<h1>{ctx.get('voting_h1', 'ANCIENT EVOCATION TIME VOTING')}</h1>", unsafe_allow_html=True)
         
         st.markdown(
-            """
+            f"""
             <div style="background-color: rgba(212, 179, 115, 0.05); border: 1px solid #bd9b53; border-left: 5px solid #bd9b53; padding: 12px 15px; border-radius: 4px; margin-bottom: 20px; text-align: center;">
                 <p style="color: #f0e6d2; margin: 0; font-size: 13px; line-height: 1.5;">
-                    💡 <b>Notice:</b> Please vote only for your own nickname. Maximum 6 preferences allowed. <br>
-                    In case of selection error, contact a clan Superior immediately to adjust your entry.
+                    {ctx.get('voting_notice', '💡 <b>Notice:</b> Please vote only for your own nickname. Maximum 6 preferences allowed. <br> In case of selection error, contact a clan Superior immediately to adjust your entry.')}
                 </p>
             </div>
             """,
@@ -757,7 +754,7 @@ else:
                     
                     col_v1, col_v2, col_v3 = st.columns([1, 1.5, 1])
                     with col_v2:
-                        voter_name = st.selectbox("Select Player:", lista_con_placeholder, key="voting_player_selector_native")
+                        voter_name = st.selectbox(ctx.get('voting_select_player', 'Select Player:'), lista_con_placeholder, key="voting_player_selector_native")
                     
                     if voter_name != "-- Select Player --":
                         st.markdown("<br>", unsafe_allow_html=True)
@@ -767,7 +764,7 @@ else:
                             "-11", "-10", "-9", "-8", "-7", "-6", "-5", "-4", "-3", "-2", "-1"
                         ]
                         
-                        st.markdown("<h4 style='text-align: center; font-family: \"Cinzel\", serif;'>📅 Select your preferred times:</h4>", unsafe_allow_html=True)
+                        st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif;'>{ctx.get('voting_select_times', '📅 Select your preferred times:')}</h4>", unsafe_allow_html=True)
                         st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
                         
                         scelte_effettuate = []
@@ -777,30 +774,28 @@ else:
                                 gia_votato = voter_name in voti_totali_memoria
                                 default_val = orario in voti_totali_memoria.get(voter_name, []) if gia_votato else False
                                 
-                                # FORZA IL PREFISSO R DAVANTI ALL'ORARIO SE NON È GIÀ PRESENTE (ES. "+1" DIVENTA "R+1")
                                 etichetta_checkbox = orario if "R" in orario else f"R{orario}"
                                 
                                 checked = st.checkbox(f"Time {etichetta_checkbox}", value=default_val, disabled=gia_votato, key=f"chk_{voter_name}_{orario}")
                                 if checked:
                                     scelte_effettuate.append(orario)
-
                         
                         st.markdown("<br>", unsafe_allow_html=True)
                         
                         if len(scelte_effettuate) > 6:
-                            st.error(f"❌ You have selected {len(scelte_effettuate)} preferences! Maximum 6 allowed. Please uncheck some boxes to proceed.")
+                            st.error(ctx.get('voting_max_error', f"❌ You have selected {len(scelte_effettuate)} preferences! Maximum 6 allowed. Please uncheck some boxes to proceed."))
                         elif voter_name in voti_totali_memoria:
-                            st.info(f"ℹ️ {voter_name}, you have already submitted your votes for this session. To change it, please contact an Officer.")
+                            st.info(ctx.get('voting_already_submitted', f"ℹ️ {voter_name}, you have already submitted your votes for this session. To change it, please contact a Superior."))
                         else:
                             col_sub1, col_sub2, col_sub3 = st.columns([1, 1.5, 1])
                             with col_sub2:
-                                if st.button("🗳️ SUBMIT VOTING", use_container_width=True):
+                                if st.button(ctx.get('voting_submit_btn', '🗳️ SUBMIT VOTING'), use_container_width=True):
                                     if len(scelte_effettuate) == 0:
-                                        st.warning("⚠️ Please select at least 1 time preference before submitting!")
+                                        st.warning(ctx.get('voting_warning_empty', "⚠️ Please select at least 1 time preference before submitting!"))
                                     else:
                                         voti_totali_memoria[voter_name] = scelte_effettuate
                                         salva_voti_locali(voti_totali_memoria)
-                                        st.success("🎯 Voting submitted successfully! Your choices are now locked.")
+                                        st.success(ctx.get('voting_success', "🎯 Voting submitted successfully! Your choices are now locked."))
                                         st.rerun()
             except Exception as e:
                 st.error(f"Error loading player list for voting: {e}")
