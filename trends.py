@@ -3,16 +3,13 @@ import pandas as pd
 import plotly.express as px
 
 def mostra_trends_e_stats(ctx):
-    # Ripristinato lo sfondo ufficiale UFC a specchio con la pagina dei Risultati
+    # Sfondo epico coerente con i Risultati Clan
     st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("https://githubusercontent.com") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
     st.markdown(f"<h4 style='text-align: center; margin: 0 auto 20px auto; font-family: \"Cinzel\", serif; font-size: 18px !important; font-weight: bold; color: #d4b373; border-bottom: 2px solid #bd9b53; padding-bottom: 10px; max-width: 500px;'>{ctx.get('menu_trends', '📊 CLAN TRENDS & STATS')}</h4>", unsafe_allow_html=True)
     
     SPREADSHEET_ID = "1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ"
+    GID_DASHBOARD_LIVE = "432024066"  # ID esatto della tua scheda Dashboard
     
-    # Sintonizzato sul secondo foglio reale (la Dashboard)
-    GID_DASHBOARD_LIVE = "432024066"
-    
-    # Mappatura dei codici GID reali estratti dal tuo file Google Sheet
     MAPPA_P = {
         "Periodo 1": "1482810444",
         "Periodo 2": "1738740307",
@@ -20,7 +17,7 @@ def mostra_trends_e_stats(ctx):
         "Periodo 4": "1940986756"
     }
     
-    # URL di esportazione Google Sheet ricostruito con la sintassi nativa corretta
+    # Caricamento sicuro della Dashboard Live corrente
     url_live = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_DASHBOARD_LIVE}"
     try: 
         df_live = pd.read_csv(url_live, header=None)
@@ -39,16 +36,26 @@ def mostra_trends_e_stats(ctx):
         url_h = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={MAPPA_P[p_clan]}"
         df_h = pd.read_csv(url_h, header=None)
         g_data = []
+        
         for item in cripte:
             v_l, v_h = 0, 0
+            
+            # Scansione a tappeto su tutta la griglia del foglio Live (Cerca nome e prende valore affianco)
             for r in range(len(df_live)):
-                if item.lower() in str(df_live.iloc[r, 0]).lower(): 
-                    v_l = int(str(df_live.iloc[r, 1]).replace('.', '').strip()) if str(df_live.iloc[r, 1]).strip().isdigit() else 0
-                    break
+                for c in range(len(df_live.columns) - 1):
+                    if item.lower() in str(df_live.iloc[r, c]).lower():
+                        val_str = str(df_live.iloc[r, c+1]).replace('.', '').replace(',', '').strip()
+                        if val_str.isdigit(): v_l = int(val_str)
+                        break
+            
+            # Scansione a tappeto su tutta la griglia del foglio Storico
             for r in range(len(df_h)):
-                if item.lower() in str(df_h.iloc[r, 0]).lower(): 
-                    v_h = int(str(df_h.iloc[r, 1]).replace('.', '').strip()) if str(df_h.iloc[r, 1]).strip().isdigit() else 0
-                    break
+                for c in range(len(df_h.columns) - 1):
+                    if item.lower() in str(df_h.iloc[r, c]).lower():
+                        val_str = str(df_h.iloc[r, c+1]).replace('.', '').replace(',', '').strip()
+                        if val_str.isdigit(): v_h = int(val_str)
+                        break
+                        
             lbl = ctx.get(item, item)
             g_data.append({"Type": lbl, "Timeline": "Historical", "Volume": v_h})
             g_data.append({"Type": lbl, "Timeline": "Current Live", "Volume": v_l})
@@ -63,8 +70,12 @@ def mostra_trends_e_stats(ctx):
     st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>👤 {ctx.get('trends_player_title', 'Player Historical Comparison')}</h4>", unsafe_allow_html=True)
 
     try:
-        df_p = df_live.iloc[3:106, 3].dropna().astype(str).str.strip()
+        # Estrazione sicura dei 100 giocatori reali (usiamo lo stesso motore funzionante della pagina voti)
+        url_giocatori = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=0"
+        df_g_source = pd.read_csv(url_giocatori, header=None)
+        df_p = df_g_source.iloc[3:106, 3].dropna().astype(str).str.strip()
         g_list = [n for n in df_p.unique() if n and n.lower() not in ["nan", "total", "totale", "union of triumph"]]
+        
         if g_list:
             p_holder = ctx.get("select_name_placeholder", "-- Select Name --")
             c_w1, c_w2 = st.columns(2)
@@ -74,11 +85,15 @@ def mostra_trends_e_stats(ctx):
             if g_scelto != p_holder:
                 df_p_h = pd.read_csv(f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={MAPPA_P[p_scelto]}", header=None)
                 v_live, o_live, v_hist, o_hist = 0, "0%", 0, "0%"
+                
+                # Estrazione dati personali live
                 for r in range(3, 106):
-                    if str(df_live.iloc[r, 3]).strip().lower() == g_scelto.lower():
-                        v_live = int(str(df_live.iloc[r, 4]).replace('.', '').strip()) if pd.notna(df_live.iloc[r, 4]) else 0
-                        o_live = str(df_live.iloc[r, 7]).strip() if pd.notna(df_live.iloc[r, 7]) else "0%"
+                    if str(df_g_source.iloc[r, 3]).strip().lower() == g_scelto.lower():
+                        v_live = int(str(df_g_source.iloc[r, 4]).replace('.', '').strip()) if pd.notna(df_g_source.iloc[r, 4]) else 0
+                        o_live = str(df_g_source.iloc[r, 7]).strip() if pd.notna(df_g_source.iloc[r, 7]) else "0%"
                         break
+                        
+                # Estrazione dati personali storici
                 for r in range(3, 106):
                     if str(df_p_h.iloc[r, 3]).strip().lower() == g_scelto.lower():
                         v_hist = int(str(df_p_h.iloc[r, 4]).replace('.', '').strip()) if pd.notna(df_p_h.iloc[r, 4]) else 0
