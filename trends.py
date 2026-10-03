@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 def mostra_trends_e_stats(ctx):
-    # Ripristinato lo sfondo ufficiale UFC a specchio con la pagina dei Risultati Clan
+    # Sfondo ufficiale dorato UFC a specchio con la pagina dei Risultati Clan
     st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("https://githubusercontent.com") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
     
     # Titolo principale sottile ed elegante (Dimensione massima 18px per mobile)
@@ -14,7 +14,7 @@ def mostra_trends_e_stats(ctx):
     GID_LIVE_REALE = "1972335307"
     gids_storici = ["1281719474", "1240125232", "958114297", "676719910"]
     
-    # URL di caricamento del Foglio 1 (Dati correnti live verticali) con la sintassi nativa ufficiale docs.google.com
+    # URL di caricamento del Foglio 1 (Dati correnti live verticali) con la sintassi nativa ufficiale ://google.com
     url_live = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
     try:
         df_live_raw = pd.read_csv(url_live, header=None)
@@ -41,7 +41,8 @@ def mostra_trends_e_stats(ctx):
             mappa_periodi_gid[titolo_rilevato] = v_gid
         except Exception:
             mappa_periodi_gid[f"Archive Sheet ({v_gid[-4:]})"] = v_gid
-    # LISTA DEI FORZIERI COMPLETA - ABBIAMO FORZATO DARK OMENS CHE ANDRÀ A LEGGERE LA COLONNA CP
+
+    # LISTA DEI FORZIERI CON LA DEVIAZIONE SU DARK OMENS (COLONNA CP) E SENZA TRIUMPHAL
     nomi_forzieri = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai", "Dark Omens"]
     st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>📈 {ctx.get('trends_clan_title', 'Clan Performance Progression')}</h4>", unsafe_allow_html=True)
 
@@ -71,15 +72,14 @@ def mostra_trends_e_stats(ctx):
                     g_data = []
                     for item in nomi_forzieri:
                         val_l, val_h = 0, 0
+                        colonna_vera = "CP" if item == "Dark Omens" else item
                         
-                        # DEVIAZIONE DINAMICA MAURIZIO: Se l'elemento è Dark Omens, punta dritto alla colonna CP
-                        colonna_cercata = "CP" if item == "Dark Omens" else item
-                        
-                        if colonna_cercata in r_p_l.columns:
-                            v = str(r_p_l[colonna_cercata].values[0]).strip().replace('.', '').replace(',', '')
+                        # RISOLTO: L'uso di .iloc[0] garantisce l'estrazione di un numero singolo pulito senza parentesi quadre
+                        if colonna_vera in r_p_l.columns:
+                            v = str(r_p_l[colonna_vera].iloc[0]).strip().replace('.', '').replace(',', '')
                             if v.isdigit(): val_l = int(v)
-                        if colonna_cercata in r_p_h.columns:
-                            v_h = str(r_p_h[colonna_cercata].values[0]).strip().replace('.', '').replace(',', '')
+                        if colonna_vera in r_p_h.columns:
+                            v_h = str(r_p_h[colonna_vera].iloc[0]).strip().replace('.', '').replace(',', '')
                             if v_h.isdigit(): val_h = int(v_h)
                             
                         lbl = ctx.get(item, item)
@@ -93,17 +93,17 @@ def mostra_trends_e_stats(ctx):
                     p_l, p_h = 0, 0
                     c_p_l = [h for h in r_p_l.columns if "punti" in h.lower() or "points" in h.lower()]
                     c_p_h = [h for h in r_p_h.columns if "punti" in h.lower() or "points" in h.lower()]
-                    try: p_l = int(str(r_p_l[c_p_l].values[0]).replace('.', '').replace(',', '').strip())
+                    try: p_l = int(str(r_p_l[c_p_l].iloc[0]).replace('.', '').replace(',', '').strip())
                     except Exception: pass
-                    try: p_h = int(str(r_p_h[c_p_h].values[0]).replace('.', '').replace(',', '').strip())
+                    try: p_h = int(str(r_p_h[c_p_h].iloc[0]).replace('.', '').replace(',', '').strip())
                     except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     c_g_l = [h for h in r_p_l.columns if "progress" in h.lower() or "goal" in h.lower() or "o_live" in h.lower() or "obiettivo" in h.lower()]
                     c_g_h = [h for h in r_p_h.columns if "progress" in h.lower() or "goal" in h.lower() or "o_hist" in h.lower() or "obiettivo" in h.lower()]
-                    o_l = str(r_p_l[c_g_l].values[0]).strip()
-                    o_h = str(r_p_h[c_g_h].values[0]).strip()
+                    o_l = str(r_p_l[c_g_l].iloc[0]).strip()
+                    o_h = str(r_p_h[c_g_h].iloc[0]).strip()
                     
                     st.markdown("<br>", unsafe_allow_html=True)
                     res1, res2 = st.columns(2)
