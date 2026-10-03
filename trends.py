@@ -95,10 +95,45 @@ def mostra_trends_e_stats(ctx):
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": label_live, "Volume": val_l})
                     
+                    # NUOVO GRAFICO: Barre affiancate chiare, pulite e leggibili su smartphone
                     df_grafico = pd.DataFrame(g_data)
-                    fig = px.area(df_grafico, x="Chest Type", y="Volume", color="Timeline", markers=True, color_discrete_sequence=["#bd9b53", "#f0e6d2"])
-                    fig.update_traces(line=dict(width=3), marker=dict(size=6))
-                    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), margin=dict(t=20,b=10,l=10,r=10), height=300, legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+                    fig = px.bar(
+                        df_grafico, 
+                        x="Chest Type", 
+                        y="Volume", 
+                        color="Timeline", 
+                        barmode="group",
+                        color_discrete_sequence=["#bd9b53", "#f0e6d2"]
+                    )
+                    
+                    fig.update_traces(
+                        marker_line_color='#14120e', 
+                        marker_line_width=1.5, 
+                        opacity=0.95
+                    )
+                    
+                    fig.update_layout(
+                        paper_bgcolor='rgba(0,0,0,0)', 
+                        plot_bgcolor='rgba(0,0,0,0)', 
+                        font=dict(color='#f0e6d2'), 
+                        margin=dict(t=10, b=80, l=10, r=10), 
+                        height=350, 
+                        xaxis=dict(
+                            tickangle=-45,  # Ruota i testi in diagonale per non accavallarli
+                            title=None
+                        ),
+                        yaxis=dict(
+                            title=None,
+                            gridcolor='rgba(240, 230, 210, 0.1)'
+                        ),
+                        legend=dict(
+                            orientation="h", 
+                            yanchor="bottom", 
+                            y=1.02, 
+                            xanchor="center", 
+                            x=0.5
+                        )
+                    )
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
                     # CORREZIONE FILTRO SUI VALORI TOTALI (PUNTI -> COLONNA E, INDICE 4)
