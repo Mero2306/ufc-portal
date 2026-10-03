@@ -73,9 +73,16 @@ def mostra_trends_e_stats(ctx):
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:107].copy()
 
+                # RIPRISTINO LOGICA DI FILTRO RIGHE (Risolve l'errore r_p_l is not defined)
+                if g_scelto == clan_holder:
+                    r_p_l = df_live.iloc[[103]]
+                    r_p_h = df_h_data.iloc[[103]]
+                else:
+                    r_p_l = df_live.iloc[0:103][df_live.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
+                    r_p_h = df_h_data.iloc[0:103][df_h_data.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
+                
                 if not r_p_l.empty:
                     g_data = []
-                    # Recupero traduzioni assi e legende dal file JSON
                     lbl_timeline = ctx.get("trends_graph_timeline", "Timeline")
                     lbl_volume = ctx.get("trends_graph_volume", "Volume")
                     lbl_chest_type = ctx.get("trends_graph_chest_type", "Chest Type")
@@ -130,7 +137,6 @@ def mostra_trends_e_stats(ctx):
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     
-                    # Recupero scritte box tradotte dinamicamente dal JSON delle lingue
                     lbl_box_title = ctx.get("trends_box_title", "EVOLUZIONE PUNTI FORZIERI")
                     lbl_box_live = ctx.get("trends_box_live", "Corrente")
                     lbl_box_past = ctx.get("trends_box_past", "Passato")
