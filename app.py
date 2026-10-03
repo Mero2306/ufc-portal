@@ -2,6 +2,7 @@ import base64
 import json
 import os
 import streamlit as st
+import trends
 
 # 1. PAGE SETTINGS & WAR DESIGN
 st.set_page_config(
