@@ -100,7 +100,7 @@ def mostra_trends_e_stats(ctx):
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": label_live, "Volume": val_l})
 
-                    # NUOVO GRAFICO: Struttura a barre raggruppate e affiancate (Ultra leggibile)
+                    # NUOVO GRAFICO A BARRE CON BLOCCO ZOOM PER CELLULARI
                     df_grafico = pd.DataFrame(g_data)
                     fig = px.bar(
                         df_grafico, 
@@ -123,13 +123,17 @@ def mostra_trends_e_stats(ctx):
                         font=dict(color='#f0e6d2'), 
                         margin=dict(t=10, b=80, l=10, r=10), 
                         height=350, 
+                        # DISATTIVA LO ZOOM E IL TRASCINAMENTO SULLE BARRE (Risolve il problema su mobile)
+                        dragmode=False,
                         xaxis=dict(
-                            tickangle=-45,  # Ruota i testi in diagonale per evitare accavallamenti
-                            title=None
+                            tickangle=-45,
+                            title=None,
+                            fixedrange=True # Blocca lo zoom sull'asse X
                         ),
                         yaxis=dict(
                             title=None,
-                            gridcolor='rgba(240, 230, 210, 0.1)'
+                            gridcolor='rgba(240, 230, 210, 0.1)',
+                            fixedrange=True # Blocca lo zoom sull'asse Y
                         ),
                         legend=dict(
                             orientation="h", 
@@ -141,25 +145,39 @@ def mostra_trends_e_stats(ctx):
                     )
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
-                    # CORREZIONE FILTRO SUI VALORI TOTALI (PUNTI -> COLONNA E, INDICE 4)
+                    # LOGICA DI CONVERSIONE NUMERICA ULTRA-SICURA PER I TOTALI
                     p_l, p_h = 0, 0
+                    
+                    def pulisci_valore_totale(cella):
+                        val_str = str(cella).strip().lower()
+                        if val_str == "nan" or val_str == "":
+                            return 0
+                        if val_str.endswith(".0"):
+                            val_str = val_str[:-2]
+                        val_str = val_str.replace('.', '').replace(',', '')
+                        return int(val_str) if val_str.isdigit() else 0
+
                     try:
-                        v_total_l = str(r_p_l.iloc[0, 4]).strip().replace('.', '').replace(',', '')
-                        if v_total_l.isdigit(): p_l = int(v_total_l)
+                        p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
                     except Exception: pass
                     
                     if not r_p_h.empty:
                         try:
-                            v_total_h = str(r_p_h.iloc[0, 4]).strip().replace('.', '').replace(',', '')
-                            if v_total_h.isdigit(): p_h = int(v_total_h)
+                            p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
                         except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     
-                    # CORREZIONE FILTRO SUL PROGRESSO OBIETTIVI (GOAL -> COLONNA G, INDICE 6)
-                    o_l = str(r_p_l.iloc[0, 6]).strip() if len(r_p_l.columns) > 6 else "N/A"
-                    o_h = str(r_p_h.iloc[0, 6]).strip() if not r_p_h.empty and len(r_p_h.columns) > 6 else "N/A"
+                    # CORREZIONE VALORI NAN PER GLI OBIETTIVI
+                    def pulisci_obiettivo(cella):
+                        val_str = str(cella).strip()
+                        if val_str.lower() == "nan" or val_str == "":
+                            return "In Progress"
+                        return val_str
+
+                    o_l = pulisci_obiettivo(r_p_l.iloc[0, 6]) if len(r_p_l.columns) > 6 else "In Progress"
+                    o_h = pulisci_obiettivo(r_p_h.iloc[0, 6]) if not r_p_h.empty and len(r_p_h.columns) > 6 else "In Progress"
                     
                     st.markdown("<br>", unsafe_allow_html=True)
                     res1, res2 = st.columns(2)
