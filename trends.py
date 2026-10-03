@@ -18,6 +18,7 @@ def mostra_trends_e_stats(ctx):
     url_live = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
     try:
         df_live_raw = pd.read_csv(url_live, header=None)
+        # CORRETTO: Estrazione pulita della riga 2 (la terza riga con le intestazioni dei forzieri)
         headers_live = df_live_raw.iloc[2].astype(str).str.strip().tolist()
         df_live = df_live_raw.iloc[3:106].copy()
         df_live.columns = headers_live
@@ -48,7 +49,7 @@ def mostra_trends_e_stats(ctx):
 
     try:
         col_n = [h for h in headers_live if "name" in h.lower() or "nickname" in h.lower() or "giocatore" in h.lower()]
-        g_list = [n for n in df_live[col_n].dropna().astype(str).str.strip().unique() if n and n.lower() not in ["nan", "total", "totale", "union of triumph"]]
+        g_list = [n for n in df_live[col_n[0]].dropna().astype(str).str.strip().unique() if n and n.lower() not in ["nan", "total", "totale", "union of triumph"]]
         
         if g_list and mappa_periodi_gid:
             p_holder = ctx.get("select_name_placeholder", "-- Select Name --")
@@ -65,8 +66,8 @@ def mostra_trends_e_stats(ctx):
                 df_h.columns = headers_hist
                 col_n_h = [h for h in headers_hist if "name" in h.lower() or "nickname" in h.lower() or "giocatore" in h.lower()]
 
-                r_p_l = df_live[df_live[col_n].astype(str).str.strip().lower() == g_scelto.lower()]
-                r_p_h = df_h[df_h[col_n_h].astype(str).str.strip().lower() == g_scelto.lower()]
+                r_p_l = df_live[df_live[col_n[0]].astype(str).str.strip().lower() == g_scelto.lower()]
+                r_p_h = df_h[df_h[col_n_h[0]].astype(str).str.strip().lower() == g_scelto.lower()]
                 
                 if not r_p_l.empty and not r_p_h.empty:
                     g_data = []
@@ -74,7 +75,6 @@ def mostra_trends_e_stats(ctx):
                         val_l, val_h = 0, 0
                         colonna_vera = "CP" if item == "Dark Omens" else item
                         
-                        # RISOLTO: L'uso di .iloc[0] garantisce l'estrazione di un numero singolo pulito senza parentesi quadre
                         if colonna_vera in r_p_l.columns:
                             v = str(r_p_l[colonna_vera].iloc[0]).strip().replace('.', '').replace(',', '')
                             if v.isdigit(): val_l = int(v)
@@ -93,17 +93,17 @@ def mostra_trends_e_stats(ctx):
                     p_l, p_h = 0, 0
                     c_p_l = [h for h in r_p_l.columns if "punti" in h.lower() or "points" in h.lower()]
                     c_p_h = [h for h in r_p_h.columns if "punti" in h.lower() or "points" in h.lower()]
-                    try: p_l = int(str(r_p_l[c_p_l].iloc[0]).replace('.', '').replace(',', '').strip())
+                    try: p_l = int(str(r_p_l[c_p_l[0]].iloc[0]).replace('.', '').replace(',', '').strip())
                     except Exception: pass
-                    try: p_h = int(str(r_p_h[c_p_h].iloc[0]).replace('.', '').replace(',', '').strip())
+                    try: p_h = int(str(r_p_h[c_p_h[0]].iloc[0]).replace('.', '').replace(',', '').strip())
                     except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     c_g_l = [h for h in r_p_l.columns if "progress" in h.lower() or "goal" in h.lower() or "o_live" in h.lower() or "obiettivo" in h.lower()]
                     c_g_h = [h for h in r_p_h.columns if "progress" in h.lower() or "goal" in h.lower() or "o_hist" in h.lower() or "obiettivo" in h.lower()]
-                    o_l = str(r_p_l[c_g_l].iloc[0]).strip()
-                    o_h = str(r_p_h[c_g_h].iloc[0]).strip()
+                    o_l = str(r_p_l[c_g_l[0]].iloc[0]).strip()
+                    o_h = str(r_p_h[c_g_h[0]].iloc[0]).strip()
                     
                     st.markdown("<br>", unsafe_allow_html=True)
                     res1, res2 = st.columns(2)
