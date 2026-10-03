@@ -99,15 +99,23 @@ def mostra_trends_e_stats(ctx):
                     lbl_volume = ctx.get("trends_graph_volume", "Volume")
                     lbl_chest_type = ctx.get("trends_graph_chest_type", "Chest Type")
 
-                    # Scansione dei forzieri (Avendo una riga pulita usiamo semplicemente .iloc[idx])
+                    # Scansione dei forzieri (Risolto lo zero extra sul grafico tramite split del punto decimale)
                     for nome_forziere, idx_colonna in mappa_colonne_forzieri.items():
                         val_l, val_h = 0, 0
+                        
                         if idx_colonna < len(r_p_l):
-                            v = str(r_p_l.iloc[idx_colonna]).strip().replace('.', '').replace(',', '')
-                            if v.isdigit(): val_l = int(v)
+                            v_raw = str(r_p_l.iloc[idx_colonna]).strip()
+                            # Tronca via il .0 decimale prima di pulire la stringa
+                            v_puro = v_raw.split('.')[0].replace(',', '')
+                            if v_puro.isdigit(): 
+                                val_l = int(v_puro)
+                                
                         if not r_p_h.empty and idx_colonna < len(r_p_h):
-                            v_h = str(r_p_h.iloc[idx_colonna]).strip().replace('.', '').replace(',', '')
-                            if v_h.isdigit(): val_h = int(v_h)
+                            v_h_raw = str(r_p_h.iloc[idx_colonna]).strip()
+                            # Tronca via il .0 decimale prima di pulire la stringa
+                            v_h_puro = v_h_raw.split('.')[0].replace(',', '')
+                            if v_h_puro.isdigit(): 
+                                val_h = int(v_h_puro)
                             
                         lbl_tradotto = ctx.get(nome_forziere, nome_forziere)
                         g_data.append({lbl_chest_type: lbl_tradotto, lbl_timeline: p_scelto, lbl_volume: val_h})
@@ -129,7 +137,6 @@ def mostra_trends_e_stats(ctx):
                     p_l_testo, p_h_testo = "0", "0"
                     
                     try:
-                        # Se è una tabella (DataFrame) prendiamo il primo elemento, altrimenti prendiamo la cella della Series
                         p_l_testo = str(r_p_l.iloc[0, 4]) if len(r_p_l.shape) > 1 else str(r_p_l.iloc[4])
                     except Exception: 
                         p_l_testo = "0"
