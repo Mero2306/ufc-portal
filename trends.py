@@ -44,7 +44,7 @@ def mostra_trends_e_stats(ctx):
             df_check = pd.read_csv(url_check, header=None)
             titolo_rilevato = f"Archive Period ({v_gid[-4:]})"
             if df_check is not None and len(df_check) > 1 and len(df_check.columns) > 3:
-                cella_val = str(df_check.iloc[1, 3]).strip()
+                cella_val = str(df_check.iloc).strip()
                 if cella_val and cella_val.lower() != "nan" and cella_val != "":
                     titolo_rilevato = cella_val
             mappa_periodi_gid[titolo_rilevato] = v_gid
@@ -66,7 +66,7 @@ def mostra_trends_e_stats(ctx):
             
             lista_periodi = [period_holder] + list(mappa_periodi_gid.keys())
             
-            # CORRETTO: Inseriamo "-- Entire Clan --" come prima opzione subito sotto lo strumento di selezione vuoto
+            # Menu a tendina coordinati con opzione intero clan inserita in alto
             c_w1, c_w2 = st.columns(2)
             with c_w1: g_scelto = st.selectbox(ctx.get("select_player_lbl", "Profile:"), [p_holder, clan_holder] + g_list, key="p_sel_tr")
             with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), lista_periodi, key="t_p_sel")
@@ -74,22 +74,23 @@ def mostra_trends_e_stats(ctx):
             if g_scelto != p_holder and p_scelto != period_holder:
                 url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
-                df_h_data = df_h_raw.iloc[3:107].copy() # Leggiamo fino a 107 per i totali storici
+                df_h_data = df_h_raw.iloc[3:107].copy()
 
-                # LOGICA RIGHE: Se selezioni Entire Clan legge l'indice 103 (riga 107 del foglio, dato che partiamo dalla riga 3)
+                # Logica righe: intero clan legge l'indice 103 (riga 107 del foglio)
                 if g_scelto == clan_holder:
-                    r_p_l = df_live.iloc[[103]] # Riga Totale Clan Live
-                    r_p_h = df_h_data.iloc[[103]] # Riga Totale Clan Storico
+                    r_p_l = df_live.iloc[]
+                    r_p_h = df_h_data.iloc[]
                 else:
                     r_p_l = df_live.iloc[0:103][df_live.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                     r_p_h = df_h_data.iloc[0:103][df_h_data.iloc[0:103, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                 
+                # MAPPATURA FORZIERI: RIMOSSA LA VOCE DOPPIONE DARK OMENS
                 mappa_colonne_forzieri = {
                     "Rare Crypt 30": 32, "Epic Crypt 30": 36, "Epic Crypt 35": 37, "Arachne's Swarm": 44,
                     "Epic Undead Squad": 45, "Shadow City": 46, "Armageddon": 47, "Hellforge": 48,
                     "Epic Fenrir Squad": 49, "Jormungandr Squad": 50, "Epic Chimera Squad": 51,
                     "Epic Basilisk Squad": 52, "Epic Briareus Squad": 53, "Sands of Eternity": 92,
-                    "Arcanomancer squad": 93, "Yokai": 94, "Dark Omens": 9
+                    "Arcanomancer squad": 93, "Yokai": 94
                 }
                 
                 if not r_p_l.empty:
@@ -107,7 +108,7 @@ def mostra_trends_e_stats(ctx):
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": label_live, "Volume": val_l})
 
-                    # GRAFICO A BARRE CON BLOCCO ZOOM PER CELLULARI
+                    # Grafico a Barre raggruppate senza zoom fastidioso su mobile
                     df_grafico = pd.DataFrame(g_data)
                     fig = px.bar(df_grafico, x="Chest Type", y="Volume", color="Timeline", barmode="group", color_discrete_sequence=["#bd9b53", "#f0e6d2"])
                     fig.update_traces(marker_line_color='#14120e', marker_line_width=1.5, opacity=0.95)
@@ -120,7 +121,7 @@ def mostra_trends_e_stats(ctx):
                     )
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
-                    # LOGICA DI CONVERSIONE NUMERICA ULTRA-SICURA PER I TOTALI
+                    # Logica di conversione numerica per i totali (Colonna E, Indice 4)
                     p_l, p_h = 0, 0
                     
                     def pulisci_valore_totale(cella):
@@ -130,17 +131,17 @@ def mostra_trends_e_stats(ctx):
                         val_str = val_str.replace('.', '').replace(',', '')
                         return int(val_str) if val_str.isdigit() else 0
 
-                    try: p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
+                    try: p_l = pulisci_valore_totale(r_p_l.iloc)
                     except Exception: pass
                     
                     if not r_p_h.empty:
-                        try: p_h = pulisci_valore_totale(r_p_h.iloc[0, 4])
+                        try: p_h = pulisci_valore_totale(r_p_h.iloc)
                         except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     
-                    # BOX UNICO PULITO SENZA GLI OBIETTIVI
+                    # Box riassuntivo pulito
                     st.markdown("<br>", unsafe_allow_html=True)
                     st.markdown(f"""<div class="chat-box" style="padding: 12px !important; border-left: 5px solid #d4b373 !important; max-width: 600px; margin: 0 auto;"><span style="color: #a69e8d; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;">CHEST POINTS EVOLUTION</span><br><span style="font-size: 14px; color: #f0e6d2;">Live: <b>{p_l:,}</b> | Past: {p_h:,}</span><br><span style="font-size: 14px; color: {col_g}; font-weight: bold;">Gap: {"+" if gap > 0 else ""}{gap:,}</span></div>""".replace(',', '.'), unsafe_allow_html=True)
                 else:
