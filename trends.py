@@ -1,15 +1,24 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import os
+import base64
 
 def mostra_trends_e_stats(ctx):
-    # Ripristino dello sfondo ufficiale bg_info.jpg usato nella pagina risultati clan
-    if "apply_custom_style" in globals():
-        globals()["apply_custom_style"]("bg_info.jpg")
-    else:
-        st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("bg_info.jpg") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
+    # 1. FUNZIONE LOCALE PER CARICARE LO SFONDO IN BASE64
+    def applica_sfondo_locale(image_path):
+        if os.path.exists(image_path):
+            with open(image_path, "rb") as img_file:
+                bin_str = base64.b64encode(img_file.read()).decode()
+            bg_src = f"data:image/jpeg;base64,{bin_str}"
+            st.markdown(f"""<style>.stApp {{ background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("{bg_src}") no-repeat center center fixed !important; background-size: cover !important; }}</style>""", unsafe_allow_html=True)
+        else:
+            st.markdown("""<style>.stApp { background: linear-gradient(rgba(14,11,6,0.93), rgba(20,16,9,0.93)), url("bg_info.jpg") no-repeat center center fixed !important; background-size: cover !important; }</style>""", unsafe_allow_html=True)
+
+    # Attivazione immediata dello sfondo
+    applica_sfondo_locale("bg_info.jpg")
     
-    # Titolo principale della pagina (Max 18px per mobile)
+    # Titolo della pagina
     st.markdown(f"<h4 style='text-align: center; margin: 0 auto 20px auto; font-family: \"Cinzel\", serif; font-size: 18px !important; font-weight: bold; color: #d4b373; border-bottom: 2px solid #bd9b53; padding-bottom: 10px; max-width: 500px;'>{ctx.get('menu_trends', '📊 CLAN TRENDS & STATS')}</h4>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -17,17 +26,14 @@ def mostra_trends_e_stats(ctx):
     GID_LIVE_REALE = "1972335307"
     gids_storici = ["1281719474", "1240125232", "958114297", "676719910"]
     
-    # Caricamento del database Live (Foglio 1)
     url_live = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={GID_LIVE_REALE}"
     try:
         df_live_raw = pd.read_csv(url_live, header=None)
-        # Estrazione dati reali giocatori (Righe 3-106)
         df_live = df_live_raw.iloc[3:106].copy()
     except Exception:
         st.warning("⚠️ Waiting for data synchronisation... Please try to reload.")
         return
 
-    # --- MOTORE SICURO ESTRAZIONE TITOLI PERIODI DA CELLA D2 ---
     mappa_periodi_gid = {}
     label_live = ctx.get("trends_current_period", "Current Observation Period")
     
@@ -36,8 +42,6 @@ def mostra_trends_e_stats(ctx):
             url_check = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={v_gid}"
             df_check = pd.read_csv(url_check, header=None)
             titolo_rilevato = f"Archive Period ({v_gid[-4:]})"
-            
-            # Lettura protetta della cella D2 (Indice riga 1, colonna 3)
             if df_check is not None and len(df_check) > 1 and len(df_check.columns) > 3:
                 cella_val = str(df_check.iloc[1, 3]).strip()
                 if cella_val and cella_val.lower() != "nan" and cella_val != "":
@@ -45,10 +49,10 @@ def mostra_trends_e_stats(ctx):
             mappa_periodi_gid[titolo_rilevato] = v_gid
         except Exception:
             mappa_periodi_gid[f"Archive Sheet ({v_gid[-4:]})"] = v_gid
-    # Sottotitolo della sezione
+
     st.markdown(f"<h4 style='text-align: center; font-family: \"Cinzel\", serif; font-size: 14px !important; font-weight: bold; color: #bd9b53;'>📈 {ctx.get('trends_clan_title', 'Clan Performance Progression')}</h4>", unsafe_allow_html=True)
+
     try:
-        # Estrazione pulita dei nomi dei giocatori dalla colonna D (Indice 3)
         df_live_names = df_live.iloc[:, 3].dropna().astype(str).str.strip()
         g_list = [n for n in df_live_names.unique() if n and n.lower() not in ["nan", "", "total", "totale", "union of triumph"]]
         g_list = sorted(g_list)
@@ -61,16 +65,13 @@ def mostra_trends_e_stats(ctx):
             with c_w2: p_scelto = st.selectbox(ctx.get("trends_select_period_lbl", "Period:"), list(mappa_periodi_gid.keys()), key="t_p_sel")
                 
             if g_scelto != p_holder:
-                # Caricamento del foglio storico selezionato
                 url_h = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={mappa_periodi_gid[p_scelto]}"
                 df_h_raw = pd.read_csv(url_h, header=None)
                 df_h_data = df_h_raw.iloc[3:106].copy()
 
-                # Estrazione righe con verifica stringhe indipendentemente dall'ordine alfabetico
                 r_p_l = df_live[df_live.iloc[:, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                 r_p_h = df_h_data[df_h_data.iloc[:, 3].astype(str).str.strip().str.lower() == g_scelto.lower()]
                 
-                # Mappatura delle colonne dei forzieri
                 mappa_colonne_forzieri = {
                     "Rare Crypt 30": 32, "Epic Crypt 30": 36, "Epic Crypt 35": 37, "Arachne's Swarm": 44,
                     "Epic Undead Squad": 45, "Shadow City": 46, "Armageddon": 47, "Hellforge": 48,
@@ -83,13 +84,9 @@ def mostra_trends_e_stats(ctx):
                     g_data = []
                     for nome_forziere, idx_colonna in mappa_colonne_forzieri.items():
                         val_l, val_h = 0, 0
-                        
-                        # Estrazione dato Live
                         if idx_colonna < len(r_p_l.columns):
                             v = str(r_p_l.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
                             if v.isdigit(): val_l = int(v)
-                        
-                        # Estrazione dato Storico
                         if not r_p_h.empty and idx_colonna < len(r_p_h.columns):
                             v_h = str(r_p_h.iloc[0, idx_colonna]).strip().replace('.', '').replace(',', '')
                             if v_h.isdigit(): val_h = int(v_h)
@@ -98,28 +95,31 @@ def mostra_trends_e_stats(ctx):
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": p_scelto, "Volume": val_h})
                         g_data.append({"Chest Type": lbl_tradotto, "Timeline": label_live, "Volume": val_l})
                     
-                    # NUOVO GRAFICO AD AREA SFUMATA (Sostituisce le linee semplici)
                     df_grafico = pd.DataFrame(g_data)
                     fig = px.area(df_grafico, x="Chest Type", y="Volume", color="Timeline", markers=True, color_discrete_sequence=["#bd9b53", "#f0e6d2"])
                     fig.update_traces(line=dict(width=3), marker=dict(size=6))
                     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#f0e6d2'), margin=dict(t=20,b=10,l=10,r=10), height=300, legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                     
-                    # Confronto punti totali (Colonna E -> Indice 4)
+                    # CORREZIONE FILTRO SUI VALORI TOTALI (PUNTI -> COLONNA E, INDICE 4)
                     p_l, p_h = 0, 0
-                    try: p_l = int(str(r_p_l.iloc).replace('.', '').replace(',', '').strip())
+                    try:
+                        v_total_l = str(r_p_l.iloc[0, 4]).strip().replace('.', '').replace(',', '')
+                        if v_total_l.isdigit(): p_l = int(v_total_l)
                     except Exception: pass
                     
                     if not r_p_h.empty:
-                        try: p_h = int(str(r_p_h.iloc).replace('.', '').replace(',', '').strip())
+                        try:
+                            v_total_h = str(r_p_h.iloc[0, 4]).strip().replace('.', '').replace(',', '')
+                            if v_total_h.isdigit(): p_h = int(v_total_h)
                         except Exception: pass
                     
                     gap = p_l - p_h
                     col_g = "#4CAF50" if gap > 0 else "#F44336" if gap < 0 else "#a69e8d"
                     
-                    # Estrazione Obiettivi (Colonna G -> Indice 6)
-                    o_l = str(r_p_l.iloc).strip() if len(r_p_l.columns) > 6 else "N/A"
-                    o_h = str(r_p_h.iloc).strip() if not r_p_h.empty and len(r_p_h.columns) > 6 else "N/A"
+                    # CORREZIONE FILTRO SUL PROGRESSO OBIETTIVI (GOAL -> COLONNA G, INDICE 6)
+                    o_l = str(r_p_l.iloc[0, 6]).strip() if len(r_p_l.columns) > 6 else "N/A"
+                    o_h = str(r_p_h.iloc[0, 6]).strip() if not r_p_h.empty and len(r_p_h.columns) > 6 else "N/A"
                     
                     st.markdown("<br>", unsafe_allow_html=True)
                     res1, res2 = st.columns(2)
