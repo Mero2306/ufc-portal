@@ -29,7 +29,7 @@ def mostra_trends_e_stats(ctx):
     
     for v_gid in gids_storici:
         try:
-            url_check = f"https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={v_gid}"
+            url_check = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid={v_gid}"
             df_check = pd.read_csv(url_check, header=None)
             
             # Estrazione sicura del testo reale della cella D2 (riga 1, colonna 3)
