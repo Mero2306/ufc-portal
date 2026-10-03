@@ -117,6 +117,9 @@ def mostra_trends_e_stats(ctx):
                         yaxis=dict(title=None, gridcolor='rgba(240, 230, 210, 0.1)', fixedrange=True),
                         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, title=None)
                     )
+                    # INSERITO: Mostra effettivamente il grafico a schermo
+                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+                    
                     p_l, p_h = 0, 0
                     
                     def pulisci_valore_totale(cella):
@@ -124,20 +127,18 @@ def mostra_trends_e_stats(ctx):
                             val_str = str(cella).strip().lower()
                             if val_str == "nan" or val_str == "":
                                 return 0
-                            # Gestione corretta dei decimali float nascosti di Pandas
                             if val_str.endswith(".0"):
                                 val_str = val_str[:-2]
-                            # Rimuove la formattazione dei punti e delle virgole di Google Sheet
                             val_str = val_str.replace('.', '').replace(',', '')
                             return int(val_str) if val_str.isdigit() else 0
                         except Exception:
                             return 0
 
-                    # RISOLTO: Controllo diretto sul nome ed estrazione corretta per riga singola del Clan
+                    # RISOLTO: Controllo diretto sul nome ed estrazione corretta per riga singola del Clan ed evitare lo zero extra
                     if g_scelto == clan_holder:
                         try:
-                            p_l = pulisci_valore_totale(r_p_l.iloc[4])
-                            p_h = pulisci_valore_totale(r_p_h.iloc[4]) if not r_p_h.empty else 0
+                            p_l = pulisci_valore_totale(r_p_l.iloc[0, 4])
+                            p_h = pulisci_valore_totale(r_p_h.iloc[0, 4]) if not r_p_h.empty else 0
                         except Exception: pass
                     else:
                         try: 
