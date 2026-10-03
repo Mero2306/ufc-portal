@@ -774,9 +774,13 @@ else:
                                 gia_votato = voter_name in voti_totali_memoria
                                 default_val = orario in voti_totali_memoria.get(voter_name, []) if gia_votato else False
                                 
-                                checked = st.checkbox(f"Time {orario}", value=default_val, disabled=gia_votato, key=f"chk_{voter_name}_{orario}")
+                                # FORZA IL PREFISSO R DAVANTI ALL'ORARIO SE NON È GIÀ PRESENTE (ES. "+1" DIVENTA "R+1")
+                                etichetta_checkbox = orario if "R" in orario else f"R{orario}"
+                                
+                                checked = st.checkbox(f"Time {etichetta_checkbox}", value=default_val, disabled=gia_votato, key=f"chk_{voter_name}_{orario}")
                                 if checked:
                                     scelte_effettuate.append(orario)
+
                         
                         st.markdown("<br>", unsafe_allow_html=True)
                         
