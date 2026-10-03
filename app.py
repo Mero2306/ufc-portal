@@ -624,7 +624,7 @@ else:
             width='stretch',
         )
 
-         # --- PAGINA 5: CLAN RESULTS (VERSIONE COMPLETA E OTTIMIZZATA) ---
+    # --- PAGINA 5: CLAN RESULTS (VERSIONE COMPLETA E OTTIMIZZATA) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
         apply_custom_style("bg_info.jpg")
         st.markdown(f"<h1>{ctx.get('res_h1', '🏆 Clan Real-Time Results')}</h1>", unsafe_allow_html=True)
@@ -637,7 +637,7 @@ else:
         nomi = ["Rare Crypt 30", "Epic Crypt 30", "Epic Crypt 35", "Arachne's Swarm", "Epic Undead Squad", "Shadow City", "Armageddon", "Hellforge", "Epic Fenrir Squad", "Jormungandr Squad", "Epic Chimera Squad", "Epic Basilisk Squad", "Epic Briareus Squad", "Sands of Eternity", "Arcanomancer squad", "Yokai"]
         dettagli_forzieri = [{"Chest Name": n, "Total Chests": "0"} for n in nomi]
 
-        CSV_URL_DASHBOARD = "https://docs.google.com/spreadsheets/d/1yfJe8DyYX5QQmIBeXeW0BDfyv7A9FEw_mdDLmo3_VOQ/gviz/tq?tqx=out:csv&gid=432024066"
+        CSV_URL_DASHBOARD = "https://google.com"
         results_data_dashboard = load_clan_results(CSV_URL_DASHBOARD)
 
         if results_data_dashboard is not None:
@@ -686,6 +686,8 @@ else:
             fig.update_traces(textposition='auto', textinfo='percent', textfont=dict(color='#f0e6d2', size=13, weight='bold'), marker=dict(line=dict(color='#14120e', width=2)))
             # MARGINE AL MASSIMO IN BASSO (B=150) PER DARE SPAZIO TOTALE ALLA LEGENDA SU SCHERMI STRETTI
             fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', showlegend=True, legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="center", x=0.5, font=dict(color='#f0e6d2', size=11)), margin=dict(t=10,b=150,l=10,r=10), height=480)
+            
+            # AGGIORNATO: Sostituito use_container_width con width='stretch' per rimuovere l'avviso dai log
             st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
 
         else:
@@ -699,7 +701,7 @@ else:
         for item in dettagli_forzieri:
             nome_tradotto = ctx.get(item["Chest Name"], item["Chest Name"])
             st.markdown(f'<div class="chat-box" style="display:flex;justify-content:space-between;padding:10px 16px!important;margin-bottom:8px!important;"><span style="color:#f0e6d2;">{nome_tradotto}</span><span style="color:#bd9b53;font-weight:bold;font-size:18px;">{item["Total Chests"]}</span></div>', unsafe_allow_html=True)
-            
+
     # --- NUOVA PAGINA ESTERNA: CONFRONTO TREND STORICI CLAN & GIOCATORI ---
     elif page in ["📊 Clan Trends & Stats", ctx.get("menu_trends")]:
         import trends
