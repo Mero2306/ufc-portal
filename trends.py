@@ -163,13 +163,13 @@ def mostra_trends_e_stats(ctx):
                     mostra_h = f"{n_h:,}".replace(',', '.')
                     mostra_g = f"{gap_val:,}".replace(',', '.')
 
-                    lbl_box_title = ctx.get("trends_box_title", "EVOLUZIONE PUNTI FORZIERI")
-                    lbl_box_live = ctx.get("trends_box_live", "Corrente")
-                    lbl_box_past = ctx.get("trends_box_past", "Passato")
-                    lbl_box_gap = ctx.get("trends_box_gap", "Differenza")
+                    # RISOLTO: Impostata la lingua madre inglese come valore predefinito di riserva
+                    lbl_box_title = ctx.get("trends_box_title", "CHEST POINTS EVOLUTION")
+                    lbl_box_live = ctx.get("trends_box_live", "Current")
+                    lbl_box_past = ctx.get("trends_box_past", "Past")
+                    lbl_box_gap = ctx.get("trends_box_gap", "Gap")
                     
                     st.markdown("<br>", unsafe_allow_html=True)
-                    # RISOLTO: Ora le etichette sono dinamiche e prendono le traduzioni dal file JSON selezionato
                     st.markdown(f"""<div class="chat-box" style="padding: 12px !important; border-left: 5px solid #d4b373 !important; max-width: 600px; margin: 0 auto;"><span style="color: #a69e8d; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;">{lbl_box_title}</span><br><span style="font-size: 14px; color: #f0e6d2;">{lbl_box_live}: <b>{mostra_l}</b> | {lbl_box_past}: {mostra_h}</span><br><span style="font-size: 14px; color: {col_g}; font-weight: bold;">{lbl_box_gap}: {"+" if gap_val > 0 else ""}{mostra_g}</span></div>""", unsafe_allow_html=True)
                 else:
                     st.info("👤 Player details not found in the live log database.")
