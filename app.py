@@ -605,8 +605,8 @@ else:
             )
         )
         st.markdown("<br>", unsafe_allow_html=True)
-        
-        # NUOVO BOX AZZURRO AD ALTA LEGGIBILITÀ
+
+        # BOX INFORMATIVO AZZURRO NATIVO
         text_calc_info = ctx.get("calc_info", "💡 **Tactical Notice:** This button redirects you securely to the official Kaiculator. It dynamically factors in your Captains, Dragons, and multipliers for zero-loss runs.")
         st.markdown(
             f"""
@@ -618,13 +618,18 @@ else:
             """,
             unsafe_allow_html=True
         )
-        
+
         st.markdown("<br>", unsafe_allow_html=True)
         st.link_button(
             ctx.get("calc_btn", "🛡️ OPEN OFFICIAL KAICULATOR 🛡️"),
             "https://kaiculator.kaikaiju.com/",
-            width='stretch',
+            use_container_width=True,
         )
+
+        # --- CHIAMATA ESTERNA INTEGRATA ---
+        st.markdown("<br><hr>", unsafe_allow_html=True)
+        calculator.mostra_calcolatore_simple(ctx)
+
 
          # --- PAGINA 5: CLAN RESULTS (VERSIONE COMPLETA E OTTIMIZZATA) ---
     elif page in ["🏆 Clan Results", ctx.get("menu_res")]:
