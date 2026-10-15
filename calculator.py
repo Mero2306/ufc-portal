@@ -126,27 +126,30 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # 2. ⚔️ ALGORITMO A SATURAZIONE PROPORZIONALE RICALIBRATO SUI CONSUMI REALI
+        # 2. ⚔️ ALGORITMO A BILANCIAMENTO REALE DEGLI SLOT PER I MOSTRI
         categorie_mostri_attive = [m for m in database_mostri if stati_mostri[m["lvl_group"]]]
-        num_categorie_attive = len(categorie_mostri_attive)
+        
+        # Calcoliamo quanti slot (stack) totali occuperanno i mostri selezionati nella marcia
+        totale_slot_attivi = sum(m["stacks"] for m in categorie_mostri_attive)
 
-        if num_categorie_attive > 0 and max_supremacy > 0:
-            # Ripartiamo i 223.000 punti totali in fette uguali per ogni livello selezionato
-            supremazia_per_categoria = max_supremacy / num_categorie_attive
+        if totale_slot_attivi > 0 and max_supremacy > 0:
+            # Calcoliamo quanta Supremazia spetta a un SINGOLO slot della marcia
+            supremazia_per_singolo_slot = max_supremacy / totale_slot_attivi
             
             for mostro in database_mostri:
                 if stati_mostri[mostro["lvl_group"]]:
-                    # Costo totale di Supremazia per muovere un blocco intero (costo autorità * numero slot)
+                    # La Supremazia totale destinata a questo specifico livello (quota slot * numero slot del mostro)
+                    supremazia_destinata = supremazia_per_singolo_slot * mostro["stacks"]
                     costo_singolo_slot = mostro["auth_cost"] * mostro["stacks"]
                     
-                    # Quanti mostri TOTALI della categoria possono entrare in questa fetta di Supremazia
-                    totale_mostri_categoria = int(supremazia_per_categoria / costo_singolo_slot)
+                    # Quanti mostri totali della categoria possono entrare nella risorsa assegnata
+                    totale_mostri_categoria = int(supremazia_destinata / costo_singolo_slot)
                     
-                    # Dividiamo per gli slot per ottenere la cifra arrotondata per decine da inserire in singola casella
+                    # Cifra esatta arrotondata per decine da inserire nella singola casella di gioco
                     mostri_per_singolo_slot = int(totale_mostri_categoria / 10) * 10
                     
                     # Controllo di sicurezza rigido anti-sforo
-                    while (mostri_per_singolo_slot * costo_singolo_slot) > supremazia_per_categoria:
+                    while (mostri_per_singolo_slot * costo_singolo_slot) > supremazia_destinata:
                         mostri_per_singolo_slot -= 10
                         
                     if mostri_per_singolo_slot < 0:
@@ -161,7 +164,7 @@ def mostra_calcolatore_semplice(ctx):
             for mostro in database_mostri:
                 mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": "0", "col_idx": mostro["col_idx"]}
 
-        # Configurazione box riassuntivi finali della marcia
+        # Configurazione box riassuntivi finali
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_txt = f"{max_leadership:,}".replace(",", ".")
         sup_usata_txt = f"{totale_supremacy_usata:,}".replace(",", ".")
