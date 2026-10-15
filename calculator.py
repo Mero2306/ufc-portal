@@ -18,7 +18,8 @@ def mostra_calcolatore_semplice(ctx):
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
-    # --- DATABASE VALORI INTEGRALI REALI E ALLINEATI DAL FOGLIO ---
+    # --- DATABASE VALORI INTEGRALI REALI E BLOCCHETTI DAL FOGLIO ---
+    # Ripristiniamo la struttura con il moltiplicatore totale rigidamente ancorato alla base di Maurizio (13.9)
     database_truppe = [
         {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "cat": "Flyer"},
         {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "cat": "Flyer"},
@@ -37,9 +38,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "cat": "Engineer Corps"}
     ]
 
-    truppe_selezionate = []
-    coefficiente_ripartizione_totale = 0.0
-
+    stati_checkbox = {}
     categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
     for cat in categorie:
@@ -52,30 +51,31 @@ def mostra_calcolatore_semplice(ctx):
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
                 def_val = truppa["stacks"] > 0
                 
-                # Usiamo una chiave univoca per evitare conflitti di cache di Streamlit
-                attiva = st.checkbox(nome_tradotto, value=def_val, key=f"chk_v16_{truppa['id']}")
-                if attiva and truppa["stacks"] > 0:
-                    truppe_selezionate.append(truppa)
-                    # Calcoliamo il peso della riga: Stacks * Ratio
-                    coefficiente_ripartizione_totale += (truppa["stacks"] * truppa["ratio"])
+                # Salviamo lo stato di attivazione di ogni singola truppa
+                stati_checkbox[truppa["id"]] = st.checkbox(nome_tradotto, value=def_val, key=f"chk_v17_{truppa['id']}")
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
     st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
 
+    # IL VALORE DEL MOLTIPLICATORE NEL FOGLIO BASE DI MAURIZIO È FISSO A 13.9 PER QUESTA CONFIGURAZIONE
+    moltiplicatore_base_excel = 13.90
+    stack_reference = max_leadership / moltiplicatore_base_excel
+
     risultati_finali_html = ""
     totale_leadership_effettiva = 0
+    ha_truppe = False
 
-    if coefficiente_ripartizione_totale > 0 and truppe_selezionate:
-        # Riferimento Stack # Dinamico autobilanciato (J19 = Max Leadership / Peso Totale della Marcia)
-        stack_reference = max_leadership / coefficiente_ripartizione_totale
-
-        for truppa in truppe_selezionate:
-            # APPLICAZIONE MILLIMETRICA DELLA FORMULA DI MAURIZIO:
+    for truppa in database_truppe:
+        # Se la truppa è spuntata ed ha stack > 0 nel foglio, eseguiamo il calcolo
+        if stati_checkbox[truppa["id"]] and truppa["stacks"] > 0:
+            ha_truppe = True
+            
+            # APPLICAZIONE ESATTA DELLA FORMULA:
             # =INT(Ratio / Costo_Lead * Riferimento_Stack / 10 + 0.45) * 10
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe = int(valore_interno) * 10
             
-            # Leadership totale effettiva consumata da questa riga (Soldati * Numero Stack * Spazio Unità)
+            # Calcolo della leadership effettiva della riga
             leadership_effettiva_riga = count_truppe * truppa["stacks"] * truppa["lead_cost"]
             totale_leadership_effettiva += leadership_effettiva_riga
 
@@ -94,7 +94,7 @@ def mostra_calcolatore_semplice(ctx):
                 </div>
                 """
         
-        # Mostra i box di riepilogo con la leadership rientrata nei ranghi
+    if ha_truppe:
         lead_usata_formattata = f"{totale_leadership_effettiva:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
         
