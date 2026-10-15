@@ -6,16 +6,16 @@ def mostra_calcolatore_semplice(ctx):
     
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- 1. INPUT LEADERSHIP MASSIMA IMPOSTATO A 0 DI DEFAULT ---
+    # --- 1. INPUT LEADERSHIP MASSIMA A 0 DI DEFAULT ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, key="sc_max_lead_v600"
+        min_value=0, value=0, step=1000, key="sc_max_lead_v700"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
-    # --- 2. DATABASE INTEGRALE CON TUTTE LE TIPOLOGIE DISPONIBILI (STACKS = 1 FISSO PER RIGA) ---
+    # --- 2. DATABASE COMPLETO SENZA I LIVELLI 7 ---
     database_truppe = [
         # --- LIVELLO 9 ---
         {"id": "g9_flyer", "name": "L9 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "cat": "Flyer"},
@@ -37,10 +37,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "s8_ranged", "name": "L8 Spec Ranged", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "cat": "Ranged"},
         {"id": "g8_melee", "name": "L8 Guard Melee (Mischia)", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "cat": "Melee"},
         {"id": "s8_melee", "name": "L8 Spec Melee", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "cat": "Melee"},
-        {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "cat": "Engineer Corps"},
-        
-        # --- LIVELLO 7 ---
-        {"id": "l7_flyer", "name": "L7 Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 1.82, "cat": "Flyer"}
+        {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "cat": "Engineer Corps"}
     ]
 
     truppe_selezionate = []
@@ -48,7 +45,7 @@ def mostra_calcolatore_semplice(ctx):
     moltiplicatore_dinamico = 0.0
     categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
-    # Interfaccia Checkbox (Tutte attive all'avvio, l'utente spegne quelle che non gli servono)
+    # Generazione Checkbox
     for cat in categorie:
         st.markdown(f"**{cat}**")
         cols = st.columns(2)
@@ -57,7 +54,7 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v600_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v700_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
@@ -87,10 +84,9 @@ def mostra_calcolatore_semplice(ctx):
     risultati_finali_html = ""
     totale_leadership_usata = 0
 
-    # Se il giocatore ha inserito una leadership maggiore di 0, esegui i calcoli
     if max_leadership > 0 and stack_reference > 0:
         for truppa in truppe_selezionate:
-            # APPLICAZIONE FORMULA ORIGINALE DI MAURIZIO
+            # FORMULA ORIGINALE DI MAURIZIO
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe = int(valore_interno) * 10
             
