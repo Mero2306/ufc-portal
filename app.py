@@ -3,6 +3,8 @@ import json
 import os
 import streamlit as st
 import trends
+import calculator
+
 
 # 1. PAGE SETTINGS & WAR DESIGN
 st.set_page_config(
