@@ -8,7 +8,7 @@ def mostra_calcolatore_semplice(ctx):
     # --- 1. INPUT LEADERSHIP MASSIMA ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, key="sc_max_lead_v1500"
+        min_value=0, value=0, step=1000, key="sc_max_lead_v1600"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -45,7 +45,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "g8_ranged", "name": "Liv.8 Guard Ranged", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "cat": "Ranged"},
         {"id": "s8_ranged", "name": "Liv.8 Spec Ranged", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "cat": "Ranged"},
         {"id": "g8_melee", "name": "Liv.8 Guard Melee", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "cat": "Melee"},
-        {"id": "s8_melee", "name": "Liv.8 Spec Melee", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "cat": "Melee"},
+        {"id": "s8_melee", "name": "Liv.8 Spec Melee", "lead_cost": 1, "ratio": 1.00, "cat": "Melee"},
         {"id": "c8_engineer", "name": "Liv.8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "cat": "Engineer Corps"}
     ]
 
@@ -63,7 +63,7 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v1500_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v1600_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
@@ -77,18 +77,19 @@ def mostra_calcolatore_semplice(ctx):
     else:
         stack_reference = 0
 
-    st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
-
-    risultati_finali_html = ""
-    totale_leadership_usata = 0
-
-    # Calcolo visivo finale dei plotoni
+    # Calcolo visivo finale dei plotoni (viene eseguito solo se la leadership è impostata)
     if max_leadership > 0 and stack_reference > 0:
-        # Apriamo il contenitore Flexbox per ospitare le colonne affiancate
-        risultati_finali_html += '<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-start; width: 100%;">'
+        st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
+        
+        # Monitor della leadership allocata centrale
+        lead_usata_formattata = ""
+        totale_leadership_usata = 0
+        
+        # Prepariamo la stringa della griglia CSS compatta a 4 colonne
+        risultati_finali_html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(22%, 1fr)); gap: 12px; width: 100%;">'
         
         for truppa in truppe_selezionate:
-            # APPLICAZIONE FORMULA ORIGINALE DI MAURIZIO
+            # FORMULA ORIGINALE DI MAURIZIO
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe = int(valore_interno) * 10
             
@@ -98,24 +99,19 @@ def mostra_calcolatore_semplice(ctx):
             count_formattato = f"{count_truppe:,}".replace(",", ".")
             nome_tradotto_riga = ctx.get(truppa["name"], truppa["name"])
 
-            # MODIFICA: Creazione di mini box compatti che si affiancano a gruppi di 4 in riga
             if count_truppe > 0:
                 risultati_finali_html += f"""
-                <div class="chat-box" style="flex: 1; min-width: calc(25% - 10px); max-width: calc(25% - 10px); text-align: center; padding: 10px!important; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                    <span style="color:#a69e8d; font-size:12px; font-weight:500; display: block; margin-bottom: 4px; line-height: 1.2; height: 28px; overflow: hidden;">{nome_tradotto_riga}</span>
+                <div class="chat-box" style="text-align: center; padding: 12px!important; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80px;">
+                    <span style="color:#a69e8d; font-size:12px; font-weight:500; display: block; margin-bottom: 6px; line-height: 1.2;">{nome_tradotto_riga}</span>
                     <b style="color:#bd9b53; font-size:18px; display: block;">{count_formattato}</b>
                 </div>
                 """
         
-        risultati_finali_html += '</div>' # Chiusura del contenitore flex
+        risultati_finali_html += '</div>'
 
         lead_usata_formattata = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
         
-        # MODIFICA: Rimosso interamente il secondo blocco (Remaining Leadership) - Rimasto solo l'Allocated centrato
-        st.markdown(f'<div class="chat-box" style="text-align:center; max-width: 400px; margin: 0 auto 15px auto;"><h3>{ctx.get("calc_total_used_lead_lbl", "Total Leadership Allocated")}</h3><p style="font-size:24px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_formattata} / {lead_max_formattata}</p></div>', unsafe_allow_html=True)
-        
-        st.markdown("<br>", unsafe_allow_html=True)
+        # Stampa a schermo dei box riepilogativi definitivi
+        st.markdown(f'<div class="chat-box" style="text-align:center; max-width: 400px; margin: 0 auto 20px auto;"><h3>{ctx.get("calc_total_used_lead_lbl", "Total Leadership Allocated")}</h3><p style="font-size:24px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_formattata} / {lead_max_formattata}</p></div>', unsafe_allow_html=True)
         st.markdown(risultati_finali_html, unsafe_allow_html=True)
-    else:
-        st.info(ctx.get('calc_no_troops_allocated', 'Inserisci un valore di Leadership Massima per calcolare la distribuzione dei plotoni.'))
