@@ -8,7 +8,7 @@ def mostra_calcolatore_semplice(ctx):
     # --- 1. INPUT LEADERSHIP MASSIMA ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, key="sc_max_lead_v1600"
+        min_value=0, value=0, step=1000, key="sc_max_lead_v1700"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -24,28 +24,28 @@ def mostra_calcolatore_semplice(ctx):
 
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
-    # --- 2. DATABASE COMPLETO DELLE TRUPPE ---
+    # --- 2. DATABASE COMPLETO CON GLI STACK ORIGINALI DI MAURIZIO ---
     database_truppe = [
         # --- LIVELLO 9 ---
-        {"id": "g9_flyer", "name": "Liv.9 Guard Flyer", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "cat": "Flyer"},
-        {"id": "s9_flyer", "name": "Liv.9 Spec Flyer", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "cat": "Flyer"},
-        {"id": "g9_mounted", "name": "Liv.9 Guard Mounted", "lead_cost": 2, "stacks": 1, "ratio": 0.55, "cat": "Mounted"},
-        {"id": "s9_mounted", "name": "Liv.9 Spec Mounted", "lead_cost": 2, "stacks": 1, "ratio": 0.55, "cat": "Mounted"},
-        {"id": "g9_ranged", "name": "Liv.9 Guard Ranged", "lead_cost": 1, "stacks": 1, "ratio": 0.55, "cat": "Ranged"},
-        {"id": "s9_ranged", "name": "Liv.9 Spec Ranged", "lead_cost": 1, "stacks": 1, "ratio": 0.55, "cat": "Ranged"},
-        {"id": "g9_melee", "name": "Liv.9 Guard Melee", "lead_cost": 1, "stacks": 1, "ratio": 0.55, "cat": "Melee"},
-        {"id": "s9_melee", "name": "Liv.9 Spec Melee", "lead_cost": 1, "stacks": 1, "ratio": 0.55, "cat": "Melee"},
+        {"id": "g9_flyer", "name": "Liv.9 Guard Flyer", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "cat": "Flyer"},
+        {"id": "s9_flyer", "name": "Liv.9 Spec Flyer", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "cat": "Flyer"},
+        {"id": "g9_mounted", "name": "Liv.9 Guard Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "cat": "Mounted"},
+        {"id": "s9_mounted", "name": "Liv.9 Spec Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "cat": "Mounted"},
+        {"id": "g9_ranged", "name": "Liv.9 Guard Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "cat": "Ranged"},
+        {"id": "s9_ranged", "name": "Liv.9 Spec Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "cat": "Ranged"},
+        {"id": "g9_melee", "name": "Liv.9 Guard Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "cat": "Melee"},
+        {"id": "s9_melee", "name": "Liv.9 Spec Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "cat": "Melee"},
         {"id": "c9_engineer", "name": "Liv.9 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 0.57, "cat": "Engineer Corps"},
 
         # --- LIVELLO 8 ---
-        {"id": "g8_flyer", "name": "Liv.8 Guard Flyer", "lead_cost": 20, "stacks": 1, "ratio": 1.00, "cat": "Flyer"},
-        {"id": "s8_flyer", "name": "Liv.8 Spec Flyer", "lead_cost": 20, "stacks": 1, "ratio": 1.00, "cat": "Flyer"},
-        {"id": "g8_mounted", "name": "Liv.8 Guard Mounted", "lead_cost": 2, "stacks": 1, "ratio": 1.00, "cat": "Mounted"},
-        {"id": "s8_mounted", "name": "Liv.8 Spec Mounted", "lead_cost": 2, "stacks": 1, "ratio": 1.00, "cat": "Mounted"},
-        {"id": "g8_ranged", "name": "Liv.8 Guard Ranged", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "cat": "Ranged"},
-        {"id": "s8_ranged", "name": "Liv.8 Spec Ranged", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "cat": "Ranged"},
-        {"id": "g8_melee", "name": "Liv.8 Guard Melee", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "cat": "Melee"},
-        {"id": "s8_melee", "name": "Liv.8 Spec Melee", "lead_cost": 1, "ratio": 1.00, "cat": "Melee"},
+        {"id": "g8_flyer", "name": "Liv.8 Guard Flyer", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "cat": "Flyer"},
+        {"id": "s8_flyer", "name": "Liv.8 Spec Flyer", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "cat": "Flyer"},
+        {"id": "g8_mounted", "name": "Liv.8 Guard Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "cat": "Mounted"},
+        {"id": "s8_mounted", "name": "Liv.8 Spec Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "cat": "Mounted"},
+        {"id": "g8_ranged", "name": "Liv.8 Guard Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "cat": "Ranged"},
+        {"id": "s8_ranged", "name": "Liv.8 Spec Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "cat": "Ranged"},
+        {"id": "g8_melee", "name": "Liv.8 Guard Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "cat": "Melee"},
+        {"id": "s8_melee", "name": "Liv.8 Spec Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "cat": "Melee"},
         {"id": "c8_engineer", "name": "Liv.8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "cat": "Engineer Corps"}
     ]
 
@@ -63,11 +63,11 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v1600_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v1700_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
-                    moltiplicatore_dinamico += truppa["ratio"]
+                    moltiplicatore_dinamico += (truppa["stacks"] * truppa["ratio"])
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
@@ -77,23 +77,22 @@ def mostra_calcolatore_semplice(ctx):
     else:
         stack_reference = 0
 
-    # Calcolo visivo finale dei plotoni (viene eseguito solo se la leadership è impostata)
+    # Calcolo visivo finale dei plotoni
     if max_leadership > 0 and stack_reference > 0:
         st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
         
-        # Monitor della leadership allocata centrale
-        lead_usata_formattata = ""
         totale_leadership_usata = 0
         
-        # Prepariamo la stringa della griglia CSS compatta a 4 colonne
+        # CORREZIONE: Apriamo il contenitore Flex/Grid PRIMA del ciclo delle truppe, così nessuna riga esce "rotta"!
         risultati_finali_html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(22%, 1fr)); gap: 12px; width: 100%;">'
         
         for truppa in truppe_selezionate:
-            # FORMULA ORIGINALE DI MAURIZIO
+            # APPLICAZIONE FORMULA ORIGINALE DI MAURIZIO
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe = int(valore_interno) * 10
             
-            leadership_riga = count_truppe * truppa["lead_cost"]
+            # La leadership tiene conto del numero degli stack, ma a schermo mostriamo solo il valore puro
+            leadership_riga = count_truppe * truppa["stacks"] * truppa["lead_cost"]
             totale_leadership_usata += leadership_riga
 
             count_formattato = f"{count_truppe:,}".replace(",", ".")
@@ -107,7 +106,7 @@ def mostra_calcolatore_semplice(ctx):
                 </div>
                 """
         
-        risultati_finali_html += '</div>'
+        risultati_finali_html += '</div>' # Chiusura del contenitore grid coerente
 
         lead_usata_formattata = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
