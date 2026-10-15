@@ -1,47 +1,48 @@
+
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # TITOLO E DESCRIZIONI STORICHE UFC AGGANCIATE AL DIZIONARIO LINGUE
-    st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Calcolatore di truppe.')}</h1>", unsafe_allow_html=True)
-    st.write(ctx.get('calc_write', 'Accedi al simulatore di eserciti e stack più efficiente utilizzato dalla maggioranza dei clan di Total Battle.'))
+    # Ripristino rigido dei testi di intestazione UFC collegati ai file .json
+    st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
+    st.write(ctx.get('calc_write', 'Access the army and stack simulator used by most of the Total Battle clans.'))
     
-    # --- NOTIFICA SUI CAPITANI PERSONALIZZATA ---
+    # --- NOTIFICA SUI CAPITANI SOTTO IL TITOLO (PULITA E COERENTE) ---
     st.markdown(f"""
     <div class="chat-box" style="padding:16px 20px!important; text-align:left; color:#f0e6d2; border-left:5px solid #cc4125!important; margin-bottom:20px; background: rgba(255, 255, 255, 0.02); width:100%;">
-        <b style="color:#cc4125; font-size:15px; letter-spacing:0.5px; display:block; margin-bottom:6px;">{ctx.get('calc_note_title', '⚠️ NOTA IMPORTANTE SUI CAPITANI:')}</b>
+        <b style="color:#cc4125; font-size:15px; letter-spacing:0.5px; display:block; margin-bottom:6px;">{ctx.get('calc_note_title', '⚠️ IMPORTANT CAPTAIN NOTE:')}</b>
         <span style="font-size:13.5px; color:#e1d7c6; line-height:1.5; font-weight:400; display:block;">
-            {ctx.get('calc_note_text', 'Questo calcolatore assume l''utilizzo di capitani standard. Se utilizzi capitani che forniscono bonus salute specifici a una singola tipologia di truppa o mostro, la formula di distribuzione non si bilancerà correttamente.')}
+            {ctx.get('calc_note_text', 'This calculator assumes you are using standard captains. If you use captains that grant specific health bonuses to a single troop or monster type, the distribution formula will not balance correctly.')}
         </span>
     </div>
     """, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- INPUT AFFIANCATI (LEADERSHIP + SUPREMAZIA) ---
+    # --- INPUT AFFIANCATI ---
     c1, c2 = st.columns(2)
     max_leadership = c1.number_input(
-        ctx.get('calc_max_leadership_lbl', 'Leadership Massima:'),
-        min_value=0, value=0, step=1000, format="%d", key="sc_max_lead_v2026"
+        ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
+        min_value=0, value=0, step=1000, format="%d", key="sc_max_lead_v2026_final"
     )
     max_supremacy = c2.number_input(
-        ctx.get('calc_max_supremacy_lbl', 'Supremazia Massima:'),
-        min_value=0, value=0, step=1000, format="%d", key="sc_max_sup_v2026"
+        ctx.get('calc_max_supremacy_lbl', 'Maximum Supremacy:'),
+        min_value=0, value=0, step=1000, format="%d", key="sc_max_sup_v2026_final"
     )
 
-    # --- BOX DI CONFERMA VISIVA ---
+    # --- BOX DI CONFERMA VISIVA AUTOBILANCIATO ---
     if max_leadership > 0 or max_supremacy > 0:
         lead_txt = f"{max_leadership:,}".replace(",", ".")
         sup_txt = f"{max_supremacy:,}".replace(",", ".")
         st.markdown(f"""
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 500px; margin: 10px auto 25px auto; padding: 8px !important; border: 1px solid #bd9b53; background: rgba(189, 155, 83, 0.05); border-radius: 4px; text-align: center;">
-            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">{ctx.get('calc_confirmed_lead', 'LEADERSHIP CONFERMATA')}</span><p style="font-size: 20px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif;">{lead_txt}</p></div>
-            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">{ctx.get('calc_confirmed_sup', 'SUPREMAZIA CONFERMATA')}</span><p style="font-size: 20px; font-weight: bold; color: #bd9b53; margin: 0; font-family: 'Cinzel', serif;">{sup_txt}</p></div>
+            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">{ctx.get('calc_confirmed_lead', 'CONFIRMED LEADERSHIP')}</span><p style="font-size: 20px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif;">{lead_txt}</p></div>
+            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">{ctx.get('calc_confirmed_sup', 'CONFIRMED SUPREMACY')}</span><p style="font-size: 20px; font-weight: bold; color: #bd9b53; margin: 0; font-family: 'Cinzel', serif;">{sup_txt}</p></div>
         </div>
         """, unsafe_allow_html=True)
     else:
-        testo_notifica = ctx.get('calc_no_troops_allocated', 'Inserisci un valore di Leadership Massima o Supremazia Massima per calcolare la distribuzione.')
+        testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter your Maximum Leadership or Maximum Supremacy value to calculate the troop stack distribution.')
         st.markdown(f'<div class="chat-box" style="padding:15px!important; text-align:center; color:#a69e8d; border-left:4px solid #bd9b53!important; margin-bottom:20px;">{testo_notifica}</div>', unsafe_allow_html=True)
 
-    st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Seleziona le Truppe e i Mostri da Includere nella Marcia')}")
+    st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops and Monsters to Include in March')}")
 
     # --- DATABASE COMPLETO TRUPPE REGOLARI ---
     database_truppe = [
@@ -65,7 +66,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # Database Mostri
+    # Database Mostri Compatto
     database_mostri = [
         {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
         {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
@@ -82,17 +83,17 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_unif_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_unif_{truppa['id']}_v5")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     moltiplicatore_truppe += truppa["ratio"]
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
-    st.markdown(f"**{ctx.get('calc_monsters_config_title', '🛡️ Configurazione Mostri')}**")
+    st.markdown(f"**{ctx.get('calc_monsters_config_title', '🛡️ Monsters Configuration')}**")
     c_m1, c_m2, c_m3 = st.columns(3)
-    attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Includi Mostri Livello 9 (M9)"), value=True, key="chk_unif_m9")
-    attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Includi Mostri Livello 8 (M8)"), value=True, key="chk_unif_m8")
-    attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Includi Mostri Livello 7 (M7)"), value=True, key="chk_unif_m7")
+    attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v5")
+    attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v5")
+    attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
     
     stati_mostri = {"M9": attiva_m9, "M8": attiva_m8, "M7": attiva_m7}
     # --- 4. CALCOLO REATTIVO BACKGROUND DISTINTO (PARTE 2) ---
