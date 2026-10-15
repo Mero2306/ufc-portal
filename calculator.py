@@ -75,13 +75,13 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # CORREZIONE: I titoli delle categorie ora pescano la traduzione corretta o usano le etichette delle file (1-5) come riferimento
+    # RIPRISTINO RIGIDO DELLE ICONE STORICHE UFC DAVANTI AI TITOLI DELLE CATEGORIE
     mappa_titoli_categorie = {
-        "Flyer": ctx.get("Level 9 Guardians", "🛡️ Flyer"),
-        "Mounted": ctx.get("Level 9 Guardians Mounted", "⚡ Mounted"),
-        "Ranged": ctx.get("Level 9 Guardians Ranged", "⚔️ Ranged"),
-        "Melee": ctx.get("Level 9 Guardians Melee", "🔮 Melee"),
-        "Engineer Corps": ctx.get("Level 9 Engineer Corps", "📐 Engineer Corps")
+        "Flyer": f"🛡️ {ctx.get('Level 9 Guardians', 'Flyer')}",
+        "Mounted": f"⚡ {ctx.get('Level 9 Guardians Mounted', 'Mounted')}",
+        "Ranged": f"⚔️ {ctx.get('Level 9 Guardians Ranged', 'Ranged')}",
+        "Melee": f"🔮 {ctx.get('Level 9 Guardians Melee', 'Melee')}",
+        "Engineer Corps": f"📐 {ctx.get('Level 9 Engineer Corps', 'Engineer Corps')}"
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
