@@ -13,7 +13,7 @@ def mostra_calcolatore_semplice(ctx):
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8"],
-        key="sc_guard_level_selector_final_v19"
+        key="sc_guard_level_selector_final_v20"
     )
 
     # --- 2. INPUT LEADERSHIP MASSIMA ---
@@ -35,44 +35,45 @@ def mostra_calcolatore_semplice(ctx):
         "Catapulte 8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- 4. DATABASE REALE E COMPLETO CON I PARAMETRI DEL FOGLIO DI MAURIZIO ---
+    # --- 4. DATABASE REALE ALLINEATO CON PRE-IMPOSTAZIONE INTELLIGENTE A 13.90 ---
+    # Impostiamo def_on=True sulle guardie base e catapulte, e def_on=False sugli specialisti per centrare la marcia standard
     database_truppe = [
         # --- TIER 9 ---
-        {"id": "g9_flyer", "name": "L9 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "Guardie 9", "cat": "Flyer"},
-        {"id": "s9_flyer", "name": "L9 Spec Flyer (Griffin/Lion)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "Specialisti 9", "cat": "Flyer"},
+        {"id": "g9_flyer", "name": "L9 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "Guardie 9", "cat": "Flyer", "def_on": True},
+        {"id": "s9_flyer", "name": "L9 Spec Flyer (Griffin/Lion)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "Specialisti 9", "cat": "Flyer", "def_on": False},
         
-        {"id": "g9_mounted", "name": "L9 Guard Mounted (Cavalli)", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Mounted"},
-        {"id": "s9_mounted", "name": "L9 Spec Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "Specialisti 9", "cat": "Mounted"},
+        {"id": "g9_mounted", "name": "L9 Guard Mounted (Cavalli)", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Mounted", "def_on": True},
+        {"id": "s9_mounted", "name": "L9 Spec Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "Specialisti 9", "cat": "Mounted", "def_on": False},
         
-        {"id": "g9_ranged", "name": "L9 Guard Ranged (Arco)", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Ranged"},
-        {"id": "s9_ranged", "name": "L9 Spec Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "Specialisti 9", "cat": "Ranged"},
+        {"id": "g9_ranged", "name": "L9 Guard Ranged (Arco)", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Ranged", "def_on": True},
+        {"id": "s9_ranged", "name": "L9 Spec Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "Specialisti 9", "cat": "Ranged", "def_on": False},
         
-        {"id": "g9_melee", "name": "L9 Guard Melee (Mischia)", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Melee"},
-        {"id": "s9_melee", "name": "L9 Spec Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "Specialisti 9", "cat": "Melee"},
+        {"id": "g9_melee", "name": "L9 Guard Melee (Mischia)", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Melee", "def_on": True},
+        {"id": "s9_melee", "name": "L9 Spec Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "Specialisti 9", "cat": "Melee", "def_on": False},
         
-        {"id": "c9_engineer", "name": "C9 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 0.57, "filter_key": "Catapulte 9", "cat": "Engineer Corps"},
+        {"id": "c9_engineer", "name": "C9 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 0.57, "filter_key": "Catapulte 9", "cat": "Engineer Corps", "def_on": True},
 
         # --- TIER 8 ---
-        {"id": "g8_flyer", "name": "L8 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Flyer"},
-        {"id": "s8_flyer", "name": "L8 Spec Flyer", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Flyer"},
+        {"id": "g8_flyer", "name": "L8 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Flyer", "def_on": True},
+        {"id": "s8_flyer", "name": "L8 Spec Flyer", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Flyer", "def_on": False},
         
-        {"id": "g8_mounted", "name": "L8 Guard Mounted (Cavalli)", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Mounted"},
-        {"id": "s8_mounted", "name": "L8 Spec Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Mounted"},
+        {"id": "g8_mounted", "name": "L8 Guard Mounted (Cavalli)", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Mounted", "def_on": True},
+        {"id": "s8_mounted", "name": "L8 Spec Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Mounted", "def_on": False},
         
-        {"id": "g8_ranged", "name": "L8 Guard Ranged (Arco)", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Ranged"},
-        {"id": "s8_ranged", "name": "L8 Spec Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Ranged"},
+        {"id": "g8_ranged", "name": "L8 Guard Ranged (Arco)", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Ranged", "def_on": True},
+        {"id": "s8_ranged", "name": "L8 Spec Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Ranged", "def_on": False},
         
-        {"id": "g8_melee", "name": "L8 Guard Melee (Mischia)", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Melee"},
-        {"id": "s8_melee", "name": "L8 Spec Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Melee"},
+        {"id": "g8_melee", "name": "L8 Guard Melee (Mischia)", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Melee", "def_on": True},
+        {"id": "s8_melee", "name": "L8 Spec Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Melee", "def_on": False},
         
-        {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "Catapulte 8", "cat": "Engineer Corps"}
+        {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "Catapulte 8", "cat": "Engineer Corps", "def_on": True}
     ]
 
     truppe_selezionate = []
     moltiplicatore_dinamico = 0.0
     categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
-    # Generazione dei checkbox interattivi organizzati per le categorie ufficiali
+    # Interfaccia Checkbox Dinamica organizzata
     for cat in categorie:
         st.markdown(f"**{cat}**")
         cols = st.columns(2)
@@ -82,11 +83,10 @@ def mostra_calcolatore_semplice(ctx):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
                 
-                # Ciascun checkbox attiva e modifica il moltiplicatore in modo reattivo
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v36_{truppa['id']}")
+                # Checkbox interattiva flessibile
+                attiva = st.checkbox(nome_tradotto, value=truppa["def_on"], key=f"chk_v37_{truppa['id']}")
                 if attiva and truppa["stacks"] > 0:
                     truppe_selezionate.append(truppa)
-                    # contr. = Stacks * Ratio
                     contr_riga = truppa["stacks"] * truppa["ratio"]
                     moltiplicatore_dinamico += contr_riga
                     
@@ -113,17 +113,14 @@ def mostra_calcolatore_semplice(ctx):
     totale_leadership_usata = 0
 
     if moltiplicatore_dinamico > 0 and truppe_selezionate:
-        # Riferimento Stack # (J19 = Leadership Massima / Moltiplicatore Dinamico)
         stack_reference = max_leadership / moltiplicatore_dinamico
 
         for truppa in truppe_selezionate:
-            # APPLICAZIONE MILLIMETRICA FORMULA DI MAURIZIO:
-            # =INT(Ratio / Costo_Lead * Riferimento_Stack / 10 + 0.45) * 10
-            # Il valore ottenuto è GIÀ il totale complessivo della riga, non va moltiplicato per gli stack!
+            # APPLICAZIONE FORMULA ORIGINALE EXCEL DI MAURIZIO
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe_totale_riga = int(valore_interno) * 10
             
-            # CORREZIONE: La leadership della riga è semplicemente il conteggio totale * il costo unità
+            # La leadership consumata reale è data dal conteggio complessivo della riga * il costo unità
             leadership_riga = count_truppe_totale_riga * truppa["lead_cost"]
             totale_leadership_usata += leadership_riga
 
@@ -142,7 +139,6 @@ def mostra_calcolatore_semplice(ctx):
                 </div>
                 """
         
-        # Box riassuntivi finali autobilanciati
         lead_usata_formattata = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
         
