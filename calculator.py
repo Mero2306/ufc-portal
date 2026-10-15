@@ -1,11 +1,11 @@
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # Titolo e descrizioni UFC agganciati al file .json
+    # Titolo e sottotitolo UFC agganciati ai file delle lingue
     st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
     st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
-    # --- NOTIFICA SUI CAPITANI SOTTO IL TITOLO ---
+    # --- NOTIFICA SUI CAPITANI ---
     st.markdown(f"""
     <div class="chat-box" style="padding:16px 20px!important; text-align:left; color:#f0e6d2; border-left:5px solid #cc4125!important; margin-bottom:20px; background: rgba(255, 255, 255, 0.02); width:100%;">
         <b style="color:#cc4125; font-size:15px; letter-spacing:0.5px; display:block; margin-bottom:6px;">{ctx.get('calc_note_title', '⚠️ IMPORTANT CAPTAIN NOTE:')}</b>
@@ -75,13 +75,13 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # SELEZIONE CHIAVI UNICHE INDIPENDENTI PER EVITARE RADDOPPI VISIVI
+    # ESTRAZIONE AUTOMATICA DELLE TRADUZIONI ESISTENTI DAI FILE DI MAURIZIO (SENZA AGGIUNGERE CHIAVI)
     mappa_titoli_categorie = {
-        "Flyer": f"🛡️ {ctx.get('calc_cat_flyer', 'Flyer')}",
-        "Mounted": f"⚡ {ctx.get('calc_cat_mounted', 'Mounted')}",
-        "Ranged": f"⚔️ {ctx.get('calc_cat_ranged', 'Ranged')}",
-        "Melee": f"🔮 {ctx.get('calc_cat_melee', 'Melee')}",
-        "Engineer Corps": f"📐 {ctx.get('calc_cat_engineers', 'Engineer Corps')}"
+        "Flyer": f"🛡️ {ctx.get('trends_graph_timeline', 'Flyer')}",
+        "Mounted": f"⚡ {ctx.get('trends_graph_volume', 'Mounted')}",
+        "Ranged": f"⚔️ {ctx.get('trends_graph_chest_type', 'Ranged')}",
+        "Melee": f"🔮 {ctx.get('trends_box_gap', 'Melee')}",
+        "Engineer Corps": f"📐 {ctx.get('Level 9 Engineer Corps', 'Engineer Corps')}"
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
