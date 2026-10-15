@@ -2,17 +2,28 @@ import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
     st.markdown(f"<h1>{ctx.get('simple_calc_main_h1', '🧮 Simple Troops Calculator')}</h1>", unsafe_allow_html=True)
-    st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
+    # Se il giocatore non ha inserito la leadership, mostra la notifica direttamente qui in alto
+    # Rimosso il vecchio sottotitolo come richiesto
     st.markdown("<br>", unsafe_allow_html=True)
 
     # --- 1. INPUT LEADERSHIP MASSIMA ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, key="sc_max_lead_v1100"
+        min_value=0, value=0, step=1000, key="sc_max_lead_v1200"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
+
+    # --- NOTIFICA IN ALTO SE LA LEADERSHIP È 0 (INTEGRATA NELLO STILE UFC SCURO) ---
+    if max_leadership == 0:
+        testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter a Maximum Leadership value to calculate the troop stack distribution.')
+        st.markdown(f"""
+        <div class="chat-box" style="padding:15px!important; text-align:center; color:#a69e8d; border-left:4px solid #bd9b53!important; margin-bottom:20px;">
+            {testo_notifica}
+        </div>
+        """, unsafe_allow_html=True)
+
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
     # --- 2. DATABASE COMPLETO DELLE TRUPPE ---
@@ -54,7 +65,7 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v1100_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v1200_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
@@ -73,7 +84,7 @@ def mostra_calcolatore_semplice(ctx):
     risultati_finali_html = ""
     totale_leadership_usata = 0
 
-    # Calcolo visivo finale dei plotoni
+    # Calcolo visivo finale dei plotoni se la leadership inserita è maggiore di 0
     if max_leadership > 0 and stack_reference > 0:
         for truppa in truppe_selezionate:
             # APPLICAZIONE FORMULA ORIGINALE DI MAURIZIO
@@ -110,11 +121,3 @@ def mostra_calcolatore_semplice(ctx):
         
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(risultati_finali_html, unsafe_allow_html=True)
-    else:
-        # MODIFICA: Scritta in inglese e racchiusa nello stile chat-box per rimuovere lo sfondo azzurro nativo
-        testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter a Maximum Leadership value to calculate the troop stack distribution.')
-        st.markdown(f"""
-        <div class="chat-box" style="padding:15px!important; text-align:center; color:#a69e8d; border-left:4px solid #bd9b53!important;">
-            {testo_notifica}
-        </div>
-        """, unsafe_allow_html=True)
