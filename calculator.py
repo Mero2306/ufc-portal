@@ -5,16 +5,16 @@ def mostra_calcolatore_semplice(ctx):
     st.write(ctx.get('simple_calc_main_subtitle', 'Configure march settings and customize active troops.'))
     
     c1, c2 = st.columns(2)
-    livello_scelto = c1.selectbox(ctx.get('calc_select_guard_level', 'Seleziona livello:'), ["G9", "G8"], key="sc_lvl_v7")
-    max_leadership = c2.number_input(ctx.get('calc_max_leadership_lbl', 'Max Leadership:'), min_value=0, value=332000, step=1000, key="sc_lead_v7")
+    livello_scelto = c1.selectbox(ctx.get('calc_select_guard_level', 'Seleziona livello:'), ["G9", "G8"], key="sc_lvl_v8")
+    max_leadership = c2.number_input(ctx.get('calc_max_leadership_lbl', 'Max Leadership:'), min_value=0, value=332000, step=1000, key="sc_lead_v8")
 
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops')}")
     filtri = {"G9": livello_scelto == "G9", "S9": livello_scelto == "G9", "C9": livello_scelto == "G9", "G8": True, "S8": True, "C8": True}
 
-    # Struttura dati nativa immutata dal foglio di Maurizio
+    # Struttura dati nativa dal foglio di Maurizio
     config_base = [
         {"t": "Flyer", "lead": 20, "st": 2, "r9": 0.50, "r8": 1.00, "sp": True, "eng": False},
-        {"t": "Mounted", "lead": 2, "st": 2, "r9": 0.55, "r8": 1.00, "sp": True, "eng": False},
+        {"id": "mounted", "t": "Mounted", "lead": 2, "st": 2, "r9": 0.55, "r8": 1.00, "sp": True, "eng": False},
         {"t": "Ranged", "lead": 1, "st": 4, "r9": 0.55, "r8": 1.00, "sp": True, "eng": False},
         {"t": "Melee", "lead": 1, "st": 4, "r9": 0.55, "r8": 1.00, "sp": True, "eng": False},
         {"t": "Engineer Corps", "lead": 10, "st": 1, "r9": 0.57, "r8": 1.03, "sp": False, "eng": True}
@@ -30,8 +30,7 @@ def mostra_calcolatore_semplice(ctx):
                 database_truppe.append({"id": f"s8_{c['t'].lower()}", "name": f"L8 Spec {c['t']}", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "S8", "cat": c["t"], "grp": "S8"})
         else:
             database_truppe.append({"id": "c9_eng", "name": "C9 Engineer Corps", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r9"], "f_key": "C9", "cat": c["t"], "grp": "ENG"})
-            database_truppe.append({"id": "c8_eng", "name": "C8 Engineer Corps", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "C8", "cat": c["t"], "grp": "ENG"}
-    ]
+            database_truppe.append({"id": "c8_eng", "name": "C8 Engineer Corps", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "C8", "cat": c["t"], "grp": "ENG"})
 
     stati_checkbox = {}
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
@@ -40,16 +39,14 @@ def mostra_calcolatore_semplice(ctx):
         truppe_in_cat = [t for t in database_truppe if t["cat"] == cat and filtri[t["f_key"]]]
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
-                attiva = st.checkbox(ctx.get(truppa["name"], truppa["name"]), value=True, key=f"chk_f7_{truppa['id']}")
+                attiva = st.checkbox(ctx.get(truppa["name"], truppa["name"]), value=True, key=f"chk_f8_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
         st.markdown("<hr style='margin: 4px 0; opacity: 0.05;'>", unsafe_allow_html=True)
 
-    # --- ALGORITMO DI PROTEZIONE DEL BILANCIAMENTO A SQUADRE ---
-    # Calcoliamo il moltiplicatore bloccando la sovrapposizione simultanea di Guardie e Specialisti
+    # --- ALGORITMO DI PROTEZIONE DEL BILANCIAMENTO ---
     moltiplicatore_dinamico = 0.0
     for t in database_truppe:
         if filtri[t["f_key"]] and stati_checkbox[t["id"]]:
-            # Sottraiamo il doppione simmetrico se sia Guard che Spec dello stesso Tier sono accesi insieme
             is_spec_duplicate = t["grp"] in ["S9", "S8"] and stati_checkbox.get(t["id"].replace("s9_", "g9_").replace("s8_", "g8_"), False)
             if not is_spec_duplicate:
                 moltiplicatore_dinamico += (t["stacks"] * t["ratio"])
