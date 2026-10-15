@@ -5,7 +5,7 @@ def mostra_calcolatore_semplice(ctx):
         f"<h1>{ctx.get('simple_calc_main_h1', '🧮 Simple Troops Calculator')}</h1>",
         unsafe_allow_html=True,
     )
-    st.write(ctx.get('simple_calc_main_subtitle', 'Select your guard level configuration to balance your march stacks.'))
+    st.write(ctx.get('simple_calc_main_subtitle', 'Select your guard level configuration and customize your active troops.'))
     
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -13,10 +13,10 @@ def mostra_calcolatore_semplice(ctx):
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8"],
-        key="sc_guard_level_selector_final_v6"
+        key="sc_guard_level_selector_final_v7"
     )
 
-    # --- INPUT LEADERSHIP MASSIMA ---
+    # --- INPUT LEADERSHIP MASSIMA (IL CARDINE DEL CALCOLO) ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
         min_value=0, value=332000, step=1000, key="sc_max_lead"
@@ -25,7 +25,7 @@ def mostra_calcolatore_semplice(ctx):
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
-    # --- CONFIGURAZIONE ATTIVAZIONE LIVELLI IN BASE ALLA SELEZIONE ---
+    # --- ATTIVAZIONE AUTOMATICA LIVELLI MASSIMI DI BASE ---
     filtri_attivi = {
         "L9": livello_scelto == "G9",
         "L8": livello_scelto in ["G9", "G8"],
@@ -33,7 +33,7 @@ def mostra_calcolatore_semplice(ctx):
         "C8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- DATABASE COMPLETO ALLINEATO AL FOGLIO CON MELEE E RANGED IN PARALLELO ---
+    # --- DATABASE COMPLETO DELLE TRUPPE CON I LORO PESI FISSI NATIVI ---
     database_truppe = [
         {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer"},
         {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
@@ -52,10 +52,10 @@ def mostra_calcolatore_semplice(ctx):
     ]
 
     truppe_selezionate = []
-    stati_checkbox = {}
+    moltiplicatore_dinamico = 0.0
     categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
-    # Generazione dei checkbox per permettere di escludere truppe a piacimento
+    # Generazione dei checkbox interattivi (Mostra solo le truppe disponibili per il Tier scelto)
     for cat in categorie:
         st.markdown(f"**{cat}**")
         cols = st.columns(3)
@@ -65,32 +65,48 @@ def mostra_calcolatore_semplice(ctx):
             with cols[idx % 3]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
                 
-                # Attive di default all'interno dei filtri massimi di livello
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v23_{truppa['id']}")
-                stati_checkbox[truppa["id"]] = attiva
+                # Il checkbox modifica in tempo reale il moltiplicatore
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v24_{truppa['id']}")
                 if attiva and truppa["stacks"] > 0:
                     truppe_selezionate.append(truppa)
+                    # contr. = Stacks * Ratio
+                    contr_riga = truppa["stacks"] * truppa["ratio"]
+                    moltiplicatore_dinamico += contr_riga
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
-    # --- CALCOLO BASE FISSO SULLA MATRICE INTEGRALE DEL FOGLIO (20.10) ---
-    # Questo coefficiente fisso garantisce che deselezionando elementi i numeri parziali rimangano stabili
-    moltiplicatore_strutturale_excel = 20.10
-    stack_reference = max_leadership / moltiplicatore_strutturale_excel
+    # --- DISPLAY DEL MOLTIPLICATORE DINAMICO ---
+    st.markdown(
+        f"""
+        <div class="chat-box" style="text-align: center; max-width: 500px; margin: 20px auto; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 10px !important;">
+            <h2 style="margin: 0 0 2px 0; font-size: 13px; color: #bd9b53; letter-spacing: 0.5px; font-family: 'Cinzel', serif;">
+                {ctx.get('calc_auto_multiplier_lbl', 'AUTOMATIC MULTIPLIER')}
+            </h2>
+            <p style="font-size: 26px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif;">
+                {moltiplicatore_dinamico:.2f}
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
 
     risultati_finali_html = ""
     totale_leadership_effettiva = 0
 
-    if truppe_selezionate:
+    # IL CALCOLO ORA SEGUE IL FLUSSO REATTIVO: Se togli truppe, il denominatore cala e la quota per le altre sale!
+    if moltiplicatore_dinamico > 0 and truppe_selezionate:
+        # J19 = Leadership Massima / Moltiplicatore Dinamico delle sole truppe spuntate!
+        stack_reference = max_leadership / moltiplicatore_dinamico
+
         for truppa in truppe_selezionate:
-            # APPLICAZIONE LETTERALE E PRECISA DELLA FORMULA EXCEL:
+            # APPLICAZIONE MILLIMETRICA DELLA FORMULA DI MAURIZIO:
             # =INT(Ratio / Costo_Lead * Riferimento_Stack / 10 + 0.45) * 10
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe_per_stack = int(valore_interno) * 10
             
-            # Calcolo della leadership parziale consumata
+            # Leadership consumata realmente
             leadership_riga = count_truppe_per_stack * truppa["stacks"] * truppa["lead_cost"]
             totale_leadership_effettiva += leadership_riga
 
@@ -104,15 +120,23 @@ def mostra_calcolatore_semplice(ctx):
                     <span style="color:#f0e6d2; font-weight:500;">{nome_tradotto_riga} <small style="color:#bd9b53;">({truppa['stacks']} Stacks)</small></span>
                     <div style="text-align:right;">
                         <span style="color:#bd9b53; font-weight:bold; font-size:18px; margin-right:15px;">{count_formattato} u. <small style="font-size:11px;color:#a69e8d;">/stack</small></span>
-                        <span style="color:#a69e8d; font-size:13px;">(Lead riga: {lead_riga_formattata})</span>
+                        <span style="color:#a69e8d; font-size:13px;">(Lead: {lead_riga_formattata})</span>
                     </div>
                 </div>
                 """
         
-        # Stampa dei box riassuntivi della leadership usata
+        # Mostra i box della Leadership usata e rimanente
         lead_usata_formattata = f"{totale_leadership_effettiva:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
-        st.markdown(f'<div class="chat-box" style="text-align:center;"><h3>Total Theoretical Leadership Allocated</h3><p style="font-size:24px;color:#e69138;font-weight:bold;margin:0;">{lead_usata_formattata} / {lead_max_formattata}</p></div>', unsafe_allow_html=True)
+        
+        col_res1, col_res2 = st.columns(2)
+        with col_res1:
+            st.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_lead_lbl", "Total Leadership Allocated")}</h3><p style="font-size:24px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_formattata} / {lead_max_formattata}</p></div>', unsafe_allow_html=True)
+        with col_res2:
+            rimanente = max_leadership - totale_leadership_effettiva
+            rimanente_formattata = f"{rimanente:,}".replace(",", ".")
+            colore_rimanente = "#38761d" if rimanente >= 0 else "#990000"
+            st.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_remaining_lead_lbl", "Remaining Leadership")}</h3><p style="font-size:24px;color:{colore_rimanente};font-weight:bold;margin:0;">{rimanente_formattata}</p></div>', unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(risultati_finali_html, unsafe_allow_html=True)
