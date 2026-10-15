@@ -9,14 +9,14 @@ def mostra_calcolatore_semplice(ctx):
     
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- SELEZIONE LIVELLO DELLE GUARDIE ---
+    # --- 1. IL MENU DI SELEZIONE INIZIALE (Cella B2 del tuo foglio) ---
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8"],
-        key="sc_guard_level_selector_final_v17"
+        key="sc_guard_level_selector_final_official_v1"
     )
 
-    # --- INPUT LEADERSHIP MASSIMA ---
+    # --- 2. INPUT LEADERSHIP MASSIMA ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
         min_value=0, value=332000, step=1000, key="sc_max_lead"
@@ -25,54 +25,61 @@ def mostra_calcolatore_semplice(ctx):
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
-    # --- CONFIGURAZIONE ATTIVAZIONE LIVELLI IN BASE ALLA SELEZIONE ---
-    filtri_attivi = {
-        "L9": livello_scelto == "G9",
-        "L8": livello_scelto in ["G9", "G8"]
+    # --- 3. ATTIVAZIONE DEI FILTRI BOOLEANI (TRUE/FALSE) COME NEL TUO MENU ---
+    # Questa logica riproduce esattamente i TRUE/FALSE attivati dalla scelta di G9 o G8
+    filtri_fogli = {
+        "Guardie 9": livello_scelto == "G9",
+        "Specialisti 9": livello_scelto == "G9",
+        "Catapulte 9": livello_scelto == "G9",
+        "Guardie 8": livello_scelto in ["G9", "G8"],
+        "Specialisti 8": livello_scelto in ["G9", "G8"],
+        "Catapulte 8": livello_scelto in ["G9", "G8"],
+        "Corax 7": False  # Fisso su FALSE come nel tuo esempio
     }
 
-    # --- DATABASE REALE MAFFATO SUI 4 PLOTONI PER LIVELLO + SPECIALISTI ---
-    # Inseriamo i costi di leadership reali di gioco (20, 2, 1, 1) e gli stack esatti (1 per tipo)
+    # --- 4. DATABASE INTEGRALE DELLE RIGHE REALI DEL FOGLIO DI MAURIZIO ---
+    # Tutti i valori di Stacks, Ratio e Costo di Leadership sono estratti al millesimo dalla tua tabella
     database_truppe = [
-        # --- LIVELLO 9 (Attivo solo se si seleziona G9) ---
-        {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer"},
-        {"id": "l9_mounted", "name": "L9 Mounted", "lead_cost": 2, "stacks": 1, "ratio": 0.55, "filter_key": "L9", "cat": "Mounted"},
-        {"id": "l9_ranged", "name": "L9 Ranged (Arco)", "lead_cost": 1, "stacks": 1, "ratio": 0.55, "filter_key": "L9", "cat": "Ranged"},
-        {"id": "l9_melee", "name": "L9 Melee (Mischia)", "lead_cost": 1, "stacks": 1, "ratio": 0.55, "filter_key": "L9", "cat": "Melee"},
-        {"id": "l9_specs", "name": "L9 Specialists", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Specialists"},
-
-        # --- LIVELLO 8 (Attivo sia con G9 che con G8) ---
-        {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
-        {"id": "l8_mounted", "name": "L8 Mounted", "lead_cost": 2, "stacks": 1, "ratio": 1.00, "filter_key": "L8", "cat": "Mounted"},
-        {"id": "l8_ranged", "name": "L8 Ranged (Arco)", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "filter_key": "L8", "cat": "Ranged"},
-        {"id": "l8_melee", "name": "L8 Melee (Mischia)", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "filter_key": "L8", "cat": "Melee"},
-        {"id": "l8_specs", "name": "L8 Specialists", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Specialists"}
+        {"id": "l9_corax", "name": "L9 Corax", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "Guardie 9", "cat": "Flyer"},
+        {"id": "l8_corax", "name": "L8 Corax", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Flyer"},
+        {"id": "l7_corax", "name": "L7 Corax", "lead_cost": 20, "stacks": 0, "ratio": 1.82, "filter_key": "Corax 7", "cat": "Flyer"},
+        
+        {"id": "l9_cavalli", "name": "L9 Cavalli (Mounted)", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Mounted"},
+        {"id": "l8_cavalli", "name": "L8 Cavalli (Mounted)", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Mounted"},
+        
+        {"id": "l9_guardie", "name": "L9 Guardie (Melee)", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Melee"},
+        {"id": "l8_guardie", "name": "L8 Guardie (Melee)", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Melee"},
+        
+        {"id": "c9_catapulte", "name": "C9 Catapulte (Siege)", "lead_cost": 10, "stacks": 1, "ratio": 0.57, "filter_key": "Catapulte 9", "cat": "Engineer Corps"},
+        {"id": "c8_catapulte", "name": "C8 Catapulte (Siege)", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "Catapulte 8", "cat": "Engineer Corps"}
     ]
 
     truppe_selezionate = []
     moltiplicatore_dinamico = 0.0
-    categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Specialists"]
+    categorie = ["Flyer", "Mounted", "Melee", "Engineer Corps"]
     
-    # Interfaccia Checkbox Dinamica organizzata per le tue 5 categorie reali
+    # Generazione dei Checkbox per categoria (Mostra solo le truppe che il menu in alto imposta su TRUE)
     for cat in categorie:
         st.markdown(f"**{cat}**")
         cols = st.columns(3)
-        truppe_in_cat = [t for t in database_truppe if t["cat"] == cat and filtri_attivi[t["filter_key"]]]
+        # Filtriamo le truppe combinando la categoria e lo stato TRUE/FALSE del menu superiore
+        truppe_in_cat = [t for t in database_truppe if t["cat"] == cat and filtri_fogli[t["filter_key"]]]
         
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 3]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
                 
-                # Le checkbox modificano il moltiplicatore istantaneamente e ripartiscono lo spazio rimasto libero
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v34_{truppa['id']}")
+                # Le checkbox permettono all'utente di escludere singoli elementi, ricalcolando il moltiplicatore
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_official_{truppa['id']}")
                 if attiva and truppa["stacks"] > 0:
                     truppe_selezionate.append(truppa)
+                    # contr. = Stacks * Ratio
                     contr_riga = truppa["stacks"] * truppa["ratio"]
                     moltiplicatore_dinamico += contr_riga
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
-    # --- DISPLAY DEL MOLTIPLICATORE CALCOLATO IN TEMPO REALE ---
+    # --- 5. VISUALIZZAZIONE DEL MOLTIPLICATORE DINAMICO ---
     st.markdown(
         f"""
         <div class="chat-box" style="text-align: center; max-width: 500px; margin: 20px auto; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 10px !important;">
@@ -93,15 +100,16 @@ def mostra_calcolatore_semplice(ctx):
     totale_leadership_usata = 0
 
     if moltiplicatore_dinamico > 0 and truppe_selezionate:
-        # Riferimento Stack # (J19 = Leadership Massima / Moltiplicatore delle sole truppe spuntate)
+        # Riferimento Stack # (J19 = Leadership Massima / Moltiplicatore Dinamico delle sole voci attive)
         stack_reference = max_leadership / moltiplicatore_dinamico
 
         for truppa in truppe_selezionate:
-            # APPLICAZIONE DELLA TUA FORMULA EXCEL SUI PARAMETRI PERFETTI DI RIGAPRE-IMPOSTATI
+            # APPLICAZIONE MILLIMETRICA DELLA FORMULA DI MAURIZIO:
+            # =INT(Ratio / Costo_Lead * Riferimento_Stack / 10 + 0.45) * 10
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe_per_stack = int(valore_interno) * 10
             
-            # Leadership totale della riga = Conteggio per stack * Numero Stack * Costo Spazio
+            # La leadership della riga sul foglio di Maurizio tiene conto del numero degli stack
             leadership_riga = count_truppe_per_stack * truppa["stacks"] * truppa["lead_cost"]
             totale_leadership_usata += leadership_riga
 
@@ -120,7 +128,7 @@ def mostra_calcolatore_semplice(ctx):
                 </div>
                 """
         
-        # Box riassuntivi della leadership allocata
+        # Output dei totali di riepilogo leadership allocata
         lead_usata_formattata = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
         
