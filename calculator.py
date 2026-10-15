@@ -1,8 +1,9 @@
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # Il titolo rimane, ma la riga st.write duplicata è stata ELIMINATA da qui
-    st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
+    # Ripristino rigido del titolo e del sottotitolo veloce originale inserito all'inizio
+    st.markdown(f"<h1>{ctx.get('simple_calc_main_h1', '🧮 Simple Troops Calculator')}</h1>", unsafe_allow_html=True)
+    st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
     # --- NOTIFICA SUI CAPITANI SOTTO IL TITOLO ---
     st.markdown(f"""
