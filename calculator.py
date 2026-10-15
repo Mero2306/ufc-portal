@@ -65,7 +65,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # DATABASE MOSTRI TOTALMENTE ALLINEATO ALLA TUA TABELLA REALE (Costi 53, 53, 43 e Ratio esatti)
+    # DATABASE MOSTRI RIGIDO: Costi autorità estratti dalla tua tabella (53, 53, 43)
     database_mostri = [
         {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 53, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
         {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 53, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
@@ -126,37 +126,25 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # 2. ⚔️ NUOVO ALGORITMO EXCEL CLONATO AL 100% PER I MOSTRI
-        # Il Riferimento Stack ricavato dalla tabella corrisponde esattamente a stack_ref_lead
+        # 2. ⚔️ ALGORITMO EXCEL CORRETTO SENZA MOLTIPLICATORI PARASSITI
         riferimento_stack_excel = stack_ref_lead
 
         for mostro in database_mostri:
             if stati_mostri[mostro["lvl_group"]] and riferimento_stack_excel > 0:
-                # Formula Excel Rigida: (Ratio * Riferimento Stack / Costo) * 10
-                quantita_totale_teorica = (mostro["ratio"] * riferimento_stack_excel / mostro["auth_cost"]) * 10
-                count_totale_arrotondato = int(quantita_totale_teorica / 10) * 10
+                # Formula Excel Corretta: (Ratio * Riferimento Stack / Costo)
+                # Rimossa la moltiplicazione per 10 che gonfiava i dati
+                quantita_totale_teorica = (mostro["ratio"] * riferimento_stack_excel / mostro["auth_cost"])
                 
-                # Dividiamo per gli stack (slot) per ricavare il valore esatto da inserire in ogni casella del gioco
-                mostri_per_singolo_slot = int(count_totale_arrotondato / mostro["stacks"])
+                # Dividiamo rigido per il numero di stack per ottenere la quota esatta per singola casella
+                mostri_per_singolo_slot = int(quantita_totale_teorica / mostro["stacks"])
                 
-                # Ricalcoliamo la Supremazia effettiva consumata (mostri per slot * numero slot * costo autorità)
+                # Ricalcoliamo il consumo reale (mostri per slot * numero slot * costo autorità)
                 totale_supremacy_usata += (mostri_per_singolo_slot * mostro["stacks"] * mostro["auth_cost"])
                 
                 count_formattato = f"{mostri_per_singolo_slot:,}".replace(",", ".")
                 mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": count_formattato, "col_idx": mostro["col_idx"]}
             else:
                 mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": "0", "col_idx": mostro["col_idx"]}
-
-        # Freno di sicurezza centralizzato: se per qualche motivo il calcolo supera max_supremacy, riduce proporzionalmente
-        if totale_supremacy_usata > max_supremacy and max_supremacy > 0:
-            rapporto_riduzione = max_supremacy / totale_supremacy_usata
-            totale_supremacy_usata = 0
-            for mostro in database_mostri:
-                if stati_mostri[mostro["lvl_group"]]:
-                    cifra_precedente = int(mappa_mostri_risultati[mostro["id"]]["count"].replace(".", ""))
-                    nuova_cifra_slot = int((cifra_precedente * rapporto_riduzione) / 10) * 10
-                    totale_supremacy_usata += (nuova_cifra_slot * mostro["stacks"] * mostro["auth_cost"])
-                    mappa_mostri_risultati[mostro["id"]]["count"] = f"{nuova_cifra_slot:,}".replace(",", ".")
 
         # Configurazione delle scritte finali dei box riassuntivi
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
