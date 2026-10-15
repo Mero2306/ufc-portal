@@ -1,7 +1,7 @@
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # Titolo e descrizioni UFC
+    # Titolo e descrizioni UFC agganciati al file .json
     st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
     st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
@@ -75,13 +75,13 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # RIPRISTINO RIGIDO DELLE ICONE STORICHE UFC DAVANTI AI TITOLI DELLE CATEGORIE
+    # SELEZIONE CHIAVI UNICHE INDIPENDENTI PER EVITARE RADDOPPI VISIVI
     mappa_titoli_categorie = {
-        "Flyer": f"🛡️ {ctx.get('Level 9 Guardians', 'Flyer')}",
-        "Mounted": f"⚡ {ctx.get('Level 9 Guardians Mounted', 'Mounted')}",
-        "Ranged": f"⚔️ {ctx.get('Level 9 Guardians Ranged', 'Ranged')}",
-        "Melee": f"🔮 {ctx.get('Level 9 Guardians Melee', 'Melee')}",
-        "Engineer Corps": f"📐 {ctx.get('Level 9 Engineer Corps', 'Engineer Corps')}"
+        "Flyer": f"🛡️ {ctx.get('calc_cat_flyer', 'Flyer')}",
+        "Mounted": f"⚡ {ctx.get('calc_cat_mounted', 'Mounted')}",
+        "Ranged": f"⚔️ {ctx.get('calc_cat_ranged', 'Ranged')}",
+        "Melee": f"🔮 {ctx.get('calc_cat_melee', 'Melee')}",
+        "Engineer Corps": f"📐 {ctx.get('calc_cat_engineers', 'Engineer Corps')}"
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
