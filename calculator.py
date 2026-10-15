@@ -134,9 +134,15 @@ def mostra_calcolatore_semplice(ctx):
         # Calcolo Mostri
         for mostro in database_mostri:
             if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
+                # FORMULA DI MAURIZIO ORIGINALE IMMUTATA
                 valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10) + 0.5
                 count_mostri = int(valore_interno) * 10
-                totale_supremacy_usata += count_mostri * mostro["stacks"] * mostro["auth_cost"]
+                
+                # CORREZIONE BUG: L'autorità del singolo quadratino della griglia è (Conteggio * Costo)
+                # Il totale cumulativo si bilancia perfettamente senza quadruplicare le somme
+                auth_singolo_mostro = count_mostri * mostro["auth_cost"]
+                totale_supremacy_usata += auth_singolo_mostro
+                
                 count_formattato = f"{count_mostri:,}".replace(",", ".")
             else:
                 count_formattato = "0"
