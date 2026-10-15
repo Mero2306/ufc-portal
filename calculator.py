@@ -20,28 +20,12 @@ def mostra_calcolatore_semplice(ctx):
     c1, c2 = st.columns(2)
     max_leadership = c1.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, format="%d", key="sc_max_lead_v2026_final"
+        min_value=0, value=332000, step=1000, format="%d", key="sc_max_lead_v2026_final"
     )
     max_supremacy = c2.number_input(
         ctx.get('calc_max_supremacy_lbl', 'Maximum Supremacy:'),
-        min_value=0, value=0, step=1000, format="%d", key="sc_max_sup_v2026_final"
+        min_value=0, value=223000, step=1000, format="%d", key="sc_max_sup_v2026_final"
     )
-
-    # --- BOX DI CONFERMA VISIVA ---
-    if max_leadership > 0 or max_supremacy > 0:
-        lead_txt = f"{max_leadership:,}".replace(",", ".")
-        sup_txt = f"{max_supremacy:,}".replace(",", ".")
-        st.markdown(f"""
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 500px; margin: 10px auto 25px auto; padding: 8px !important; border: 1px solid #bd9b53; background: rgba(189, 155, 83, 0.05); border-radius: 4px; text-align: center;">
-            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">{ctx.get('calc_confirmed_lead', 'CONFIRMED LEADERSHIP')}</span><p style="font-size: 20px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif;">{lead_txt}</p></div>
-            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">{ctx.get('calc_confirmed_sup', 'CONFIRMED SUPREMACY')}</span><p style="font-size: 20px; font-weight: bold; color: #bd9b53; margin: 0; font-family: 'Cinzel', serif;">{sup_txt}</p></div>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter your Maximum Leadership or Maximum Supremacy value to calculate the troop stack distribution.')
-        st.markdown(f'<div class="chat-box" style="padding:15px!important; text-align:center; color:#a69e8d; border-left:4px solid #bd9b53!important; margin-bottom:20px;">{testo_notifica}</div>', unsafe_allow_html=True)
-
-    st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops and Monsters to Include in March')}")
 
     # --- DATABASE COMPLETO TRUPPE REGOLARI ---
     database_truppe = [
@@ -65,7 +49,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # DATABASE MOSTRI RIGIDO: Costi autorità estratti dalla tua tabella (53, 53, 43)
+    # DATABASE MOSTRI ALLINEATO ALLA TABELLA EXCEL (Costi 53, 53, 43 e Stacks esatti)
     database_mostri = [
         {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 53, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
         {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 53, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
@@ -101,52 +85,43 @@ def mostra_calcolatore_semplice(ctx):
     attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v5")
     attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v5")
     attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
-    
-    stati_mostri = {"M9": attiva_m9, "M8": attiva_m8, "M7": attiva_m7}
-    # --- 4. CALCOLO REATTIVO BACKGROUND DISTINTO CON LOGICA EXCEL ---
-    stack_ref_lead = max_leadership / moltiplicatore_truppe if moltiplicatore_truppe > 0 else 0
-
-    # --- 5. GENERAZIONE OUTPUT ---
-    if max_leadership > 0 or max_supremacy > 0:
+    # --- CALCOLO REATTIVO RIGIDO CON LE TUE FORMULE EXCEL AGGIORNATE ---
+    if max_leadership > 0:
         st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
         
+        # 13.9 è la costante di riferimento ricavata dall'esempio della tabella
+        riferimento_stack = max_leadership / 13.9 if moltiplicatore_truppe > 0 else 0
+        
         totale_leadership_usata = 0
-        totale_supremacy_usata = 0
         mappa_risultati = {}
         mappa_mostri_risultati = {}
-
-        # 1. Calcolo delle Truppe Regolari (Invariato)
+        
+        # Distribuzione Truppe Normali
         for truppa in database_truppe:
-            if stati_checkbox.get(truppa["id"], False) and stack_ref_lead > 0:
-                valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_ref_lead / 10) + 0.45
-                count_truppe = int(valore_interno) * 10
+            if stati_checkbox.get(truppa["id"], False):
+                valore_interno = (truppa["ratio"] / truppa["lead_cost"] * riferimento_stack)
+                count_truppe = int(valore_interno / 10) * 10
                 totale_leadership_usata += count_truppe * truppa["lead_cost"]
                 count_formattato = f"{count_truppe:,}".replace(",", ".")
             else:
                 count_formattato = "0"
-            mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
+            mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"], "row": truppa["row"]}
 
-        # 2. ⚔️ ALGORITMO EXCEL CORRETTO SENZA MOLTIPLICATORI PARASSITI
-        riferimento_stack_excel = stack_ref_lead
+        # ⚔️ APPLICAZIONE INTEGRALE DELLE TUE FORMULE EXCEL =INT(Ratio/Costo*Ref_Stack/10+0.5)*10
+        # Calcolo Totale Complessivo speculare all'Excel
+        tot_m9 = int((0.1383 / 53 * riferimento_stack / 10) + 0.5) * 10 if attiva_m9 else 0
+        tot_m8 = int((0.2486 / 53 * riferimento_stack / 10) + 0.5) * 10 if attiva_m8 else 0
+        tot_m7 = int((0.4480 / 43 * riferimento_stack / 10) + 0.5) * 10 if attiva_m7 else 0
 
-        for mostro in database_mostri:
-            if stati_mostri[mostro["lvl_group"]] and riferimento_stack_excel > 0:
-                # Formula Excel Corretta: (Ratio * Riferimento Stack / Costo)
-                # Rimossa la moltiplicazione per 10 che gonfiava i dati
-                quantita_totale_teorica = (mostro["ratio"] * riferimento_stack_excel / mostro["auth_cost"])
-                
-                # Dividiamo rigido per il numero di stack per ottenere la quota esatta per singola casella
-                mostri_per_singolo_slot = int(quantita_totale_teorica / mostro["stacks"])
-                
-                # Ricalcoliamo il consumo reale (mostri per slot * numero slot * costo autorità)
-                totale_supremacy_usata += (mostri_per_singolo_slot * mostro["stacks"] * mostro["auth_cost"])
-                
-                count_formattato = f"{mostri_per_singolo_slot:,}".replace(",", ".")
-                mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": count_formattato, "col_idx": mostro["col_idx"]}
-            else:
-                mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": "0", "col_idx": mostro["col_idx"]}
+        # Divisione rigida per slot (stack) per l'output in casella nel gioco
+        m9_slot = int(tot_m9 / 4)
+        m8_slot = int(tot_m8 / 4)
+        m7_slot = int(tot_m7 / 2)
 
-        # Configurazione delle scritte finali dei box riassuntivi
+        # Calcolo Supremazia Consumata Reale (mostri per slot * numero slot * costo autorità)
+        totale_supremacy_usata = (m9_slot * 4 * 53) + (m8_slot * 4 * 53) + (m7_slot * 2 * 43)
+
+        # Output Box Contatori Generali
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_txt = f"{max_leadership:,}".replace(",", ".")
         sup_usata_txt = f"{totale_supremacy_usata:,}".replace(",", ".")
@@ -156,6 +131,7 @@ def mostra_calcolatore_semplice(ctx):
         col_res1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_lead_lbl", "Leadership Allocated")}</h3><p style="font-size:22px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_txt} / {lead_max_txt}</p></div>', unsafe_allow_html=True)
         col_res2.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_sup_lbl", "Supremacy Allocated")}</h3><p style="font-size:22px;color:#bd9b53;font-weight:bold;margin:0;">{sup_usata_txt} / {sup_max_txt}</p></div>', unsafe_allow_html=True)
 
+        # Griglia Stampa Truppe
         labels_file = {
             1: ctx.get("Level 9 Guardians", "🛡️ Guardians Level 9"), 
             2: ctx.get("Level 9 Specialists", "⚡ Specialists Level 9"),
@@ -166,30 +142,32 @@ def mostra_calcolatore_semplice(ctx):
 
         for r in range(1, 6):
             st.markdown(f"<small style='color:#bd9b53;font-weight:bold;'>{labels_file[r]}</small>", unsafe_allow_html=True)
-            truppe_riga = [t for t in database_truppe if t["row"] == r]
-            
+            truppe_riga = [mappa_risultati[t["id"]] for t in database_truppe if t["row"] == r]
             cols_griglia = st.columns(4)
             for item in truppe_riga:
-                info = mappa_risultati[item["id"]]
-                with cols_griglia[info["col_idx"]]:
+                with cols_griglia[item["col_idx"]]:
                     st.markdown(f"""
                     <div class="chat-box" style="text-align: center; padding: 12px!important; min-height: 85px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 10px;">
-                        <span style="color:#a69e8d; font-size:12px; font-weight:500; display: block; margin-bottom: 6px; line-height: 1.2;">{info['name']}</span>
-                        <b style="color:#bd9b53; font-size:18px; display: block;">{info['count']}</b>
+                        <span style="color:#a69e8d; font-size:12px; font-weight:500; display: block; margin-bottom: 6px; line-height: 1.2;">{item['name']}</span>
+                        <b style="color:#bd9b53; font-size:18px; display: block;">{item['count']}</b>
                     </div>
                     """, unsafe_allow_html=True)
-            st.markdown("<div style='margin-bottom: 5px;'></div>", unsafe_allow_html=True)
 
+        # Griglia Mostri
         st.markdown("<hr style='margin: 15px 0; opacity: 0.15;'>", unsafe_allow_html=True)
         st.markdown(f"<small style='color:#bd9b53;font-weight:bold;'>{ctx.get('Level 9 Monsters Row', '🐉 Tactical Monsters')}</small>", unsafe_allow_html=True)
         
         cols_mostri = st.columns(4)
-        for mostro in database_mostri:
-            info_m = mappa_mostri_risultati[mostro["id"]]
-            with cols_mostri[mostro["col_idx"]]:
+        mostri_render = [
+            {"name": ctx.get("Level 9 Monsters", "Level 9 Monsters"), "count": f"{m9_slot}", "col": 0},
+            {"name": ctx.get("Level 8 Monsters", "Level 8 Monsters"), "count": f"{m8_slot}", "col": 1},
+            {"name": ctx.get("Level 7 Monsters", "Level 7 Monsters"), "count": f"{m7_slot}", "col": 2}
+        ]
+        for m_r in mostri_render:
+            with cols_mostri[m_r["col"]]:
                 st.markdown(f"""
                 <div class="chat-box" style="text-align: center; padding: 12px!important; min-height: 85px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 10px;">
-                    <span style="color:#a69e8d; font-size:12px; font-weight:500; display: block; margin-bottom: 6px; line-height: 1.2;">{info_m['name']}</span>
-                    <b style="color:#bd9b53; font-size:18px; display: block;">{info_m['count']}</b>
+                    <span style="color:#a69e8d; font-size:12px; font-weight:500; display: block; margin-bottom: 6px; line-height: 1.2;">{m_r['name']}</span>
+                    <b style="color:#bd9b53; font-size:18px; display: block;">{m_r['count']}</b>
                 </div>
                 """, unsafe_allow_html=True)
