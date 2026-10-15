@@ -9,7 +9,7 @@ def mostra_calcolatore_semplice(ctx):
     
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- SELEZIONE LIVELLO DELLE GUARDIE (Identico alla cella del tuo foglio) ---
+    # --- SELEZIONE LIVELLO DELLE GUARDIE ---
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8", "G7"],
@@ -23,7 +23,6 @@ def mostra_calcolatore_semplice(ctx):
     )
 
     # --- CONFIGURAZIONE ATTIVAZIONE LIVELLI IN BASE ALLA SELEZIONE ---
-    # Se selezioni G9 attiviamo L9, L8 e C9, C8 (Moltiplicatore 13.9)
     filtri_attivi = {
         "L9": livello_scelto == "G9",
         "L8": livello_scelto in ["G9", "G8"],
@@ -33,7 +32,6 @@ def mostra_calcolatore_semplice(ctx):
     }
 
     # --- DATABASE COMPLETO RIGIDO SENZA RIGHE DUPLICATE ---
-    # Questo database mappa esattamente le 9 righe delle truppe regolari del tuo foglio Excel
     database_truppe = [
         {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer"},
         {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
@@ -52,7 +50,6 @@ def mostra_calcolatore_semplice(ctx):
     moltiplicatore_totale = 0.0
     truppe_attive = []
 
-    # Calcoliamo il moltiplicatore totale sommando solo i contr. delle truppe che superano il filtro del livello
     for truppa in database_truppe:
         if filtri_attivi[truppa["filter_key"]] and truppa["stacks"] > 0:
             truppe_attive.append(truppa)
@@ -77,21 +74,19 @@ def mostra_calcolatore_semplice(ctx):
     st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
 
     risultati_finali_html = ""
-    totale_leadership_effettiva = 0
+    totale_leadership_usata = 0
 
     if moltiplicatore_totale > 0 and truppe_attive:
-        # Calcolo del Riferimento Stack # centrale (J19 = Max Leadership / Moltiplicatore)
         stack_reference = max_leadership / moltiplicatore_totale
 
         for truppa in truppe_attive:
-            # APPLICAZIONE MILLIMETRICA DELLA TUA FORMULA:
-            # =INT(Ratio / Costo_Lead * Riferimento_Stack / 10 + 0.45) * 10
+            # APPLICAZIONE FORMULA ORIGINALE
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe_per_stack = int(valore_interno) * 10
             
-            # Leadership totale della riga (Truppe per stack * Numero Stack * Costo di Leadership)
+            # Calcolo della leadership parziale della riga
             leadership_riga = count_truppe_per_stack * truppa["stacks"] * truppa["lead_cost"]
-            totale_leadership_effettiva += leadership_riga
+            totale_leadership_usata += leadership_riga
 
             count_formattato = f"{count_truppe_per_stack:,}".replace(",", ".")
             lead_riga_formattata = f"{leadership_riga:,}".replace(",", ".")
@@ -108,7 +103,7 @@ def mostra_calcolatore_semplice(ctx):
                 </div>
                 """
         
-        # Box riassuntivi della leadership usata
+        # Correzione NameError qui: le variabili ora puntano correttamente a totale_leadership_usata
         lead_usata_formattata = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
         
