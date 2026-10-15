@@ -65,11 +65,11 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # Database Mostri (Parametri originali bloccati)
+    # Database Mostri
     database_mostri = [
-        {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
-        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
-        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "col_idx": 2}
+        {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "lvl_group": "M9", "col_idx": 0},
+        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "lvl_group": "M8", "col_idx": 1},
+        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 43, "stacks": 2, "lvl_group": "M7", "col_idx": 2}
     ]
 
     stati_checkbox = {}
@@ -106,13 +106,6 @@ def mostra_calcolatore_semplice(ctx):
     # --- CALCOLO REATTIVO BACKGROUND DISTINTO ---
     stack_ref_lead = max_leadership / moltiplicatore_truppe if moltiplicatore_truppe > 0 else 0
 
-    moltiplicatore_mostri = 0.0
-    for m in database_mostri:
-        if stati_mostri[m["lvl_group"]]:
-            moltiplicatore_mostri += (m["stacks"] * m["ratio"])
-            
-    stack_ref_monsters = max_supremacy / moltiplicatore_mostri if moltiplicatore_mostri > 0 else 0
-
     # --- GENERAZIONE OUTPUT ---
     if max_leadership > 0 or max_supremacy > 0:
         st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
@@ -122,6 +115,7 @@ def mostra_calcolatore_semplice(ctx):
         mappa_risultati = {}
         mappa_mostri_risultati = {}
 
+        # 1. Calcolo Truppe Regolari (Invariato)
         for truppa in database_truppe:
             if stati_checkbox.get(truppa["id"], False) and stack_ref_lead > 0:
                 valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_ref_lead / 10) + 0.45
@@ -132,42 +126,42 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # ⚔️ ALGORITMO ANTI-SFORO CON DIVISIONE PER STACK (VALORE PER SINGOLO SLOT IN GIOCO)
-        safety_loop_counter = 0
-        while safety_loop_counter < 100:
-            test_supremacy_totale = 0
+        # 2. ⚔️ NUOVO ALGORITMO A SATURAZIONE PROPORZIONALE REALE PER I MOSTRI
+        categorie_mostri_attive = [m for m in database_mostri if stati_mostri[m["lvl_group"]]]
+        num_categorie_attive = len(categorie_mostri_attive)
+
+        if num_categorie_attive > 0 and max_supremacy > 0:
+            # Dividiamo equamente il totale dei tuoi punti Supremazia tra i livelli selezionati
+            supremazia_per_categoria = max_supremacy / num_categorie_attive
+            
             for mostro in database_mostri:
-                if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
-                    valore_totale_mostri = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10)
-                    count_totale = int(valore_totale_mostri) * 10
+                if stati_mostri[mostro["lvl_group"]]:
+                    # Il costo di 1 singolo mostro moltiplicato per quanti slot occupa in marcia
+                    costo_singolo_slot = mostro["auth_cost"] * mostro["stacks"]
                     
-                    # Dividiamo per il numero di stack per ottenere il valore esatto da inserire nel singolo slot del gioco
-                    count_per_singolo_slot = int(count_totale / mostro["stacks"])
+                    # Quanti mostri TOTALI della categoria riempiono questa fetta di Supremazia
+                    totale_mostri_categoria = int(supremazia_per_categoria / costo_singolo_slot)
                     
-                    # Il costo reale di Supremazia calcolato è: (mostri per slot) * (numero di slot) * (costo autorità)
-                    test_supremacy_totale += (count_per_singolo_slot * mostro["stacks"] * mostro["auth_cost"])
-            
-            if test_supremacy_totale <= max_supremacy or stack_ref_monsters <= 0:
-                break
-            
-            stack_ref_monsters *= 0.99
-            safety_loop_counter += 1
+                    # Dividiamo rigido per il numero di slot per darti il valore ESATTO per singola casella di gioco
+                    mostri_per_singolo_slot = int(totale_mostri_categoria / 10) * 10
+                    
+                    # Controllo di sicurezza anti-sforo millesimale dovuto ad arrotondamenti
+                    while (mostri_per_singolo_slot * costo_singolo_slot) > supremazia_per_categoria:
+                        mostri_per_singolo_slot -= 10
+                        
+                    if mostri_per_singolo_slot < 0:
+                        mostri_per_singolo_slot = 0
+                        
+                    totale_supremacy_usata += (mostri_per_singolo_slot * costo_singolo_slot)
+                    count_formattato = f"{mostri_per_singolo_slot:,}".replace(",", ".")
+                    mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": count_formattato, "col_idx": mostro["col_idx"]}
+                else:
+                    mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": "0", "col_idx": mostro["col_idx"]}
+        else:
+            for mostro in database_mostri:
+                mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": "0", "col_idx": mostro["col_idx"]}
 
-        # Applicazione definitiva dei conteggi mostri calibrati e divisi per slot
-        for mostro in database_mostri:
-            if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
-                valore_totale_mostri = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10)
-                count_totale = int(valore_totale_mostri) * 10
-                
-                # Dividiamo rigido per il numero di slot per l'output a schermo
-                count_per_singolo_slot = int(count_totale / mostro["stacks"])
-                
-                totale_supremacy_usata += (count_per_singolo_slot * mostro["stacks"] * mostro["auth_cost"])
-                count_formattato = f"{count_per_singolo_slot:,}".replace(",", ".")
-            else:
-                count_formattato = "0"
-            mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": count_formattato, "col_idx": mostro["col_idx"]}
-
+        # Configurazione stringhe di testo box
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_txt = f"{max_leadership:,}".replace(",", ".")
         sup_usata_txt = f"{totale_supremacy_usata:,}".replace(",", ".")
