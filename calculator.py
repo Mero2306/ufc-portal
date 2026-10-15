@@ -3,18 +3,18 @@ import streamlit as st
 def mostra_calcolatore_semplice(ctx):
     st.markdown(f"<h1>{ctx.get('simple_calc_main_h1', '🧮 Simple Troops Calculator')}</h1>", unsafe_allow_html=True)
     
-    # --- AVVISO SUI CAPITANI IN ALTO (FORMATTATO NATIVAMENTE SENZA HTML PER COSTRIGERNE LA VISUALIZZAZIONE) ---
+    # --- AVVISO SUI CAPITANI AGGIORNATO (SOLO BONUS SALUTE) ---
     st.error(
         "⚠️ IMPORTANT CAPTAIN NOTE: This calculator assumes you are using standard captains. "
-        "If you use captains that grant specific health or leadership bonuses to a single troop type, "
+        "If you use captains that grant specific health bonuses to a single troop type, "
         "the distribution formula will not balance correctly."
     )
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- 1. INPUT LEADERSHIP MASSIMA CON FORMATTAZIONE DELLE MIGLIAIA ATTIVA (%d) ---
+    # --- 1. INPUT LEADERSHIP MASSIMA ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, format="%d", key="sc_max_lead_v6000"
+        min_value=0, value=0, step=1000, format="%d", key="sc_max_lead_v7000"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -75,7 +75,7 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v6000_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v7000_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
