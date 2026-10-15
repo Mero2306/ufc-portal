@@ -32,7 +32,7 @@ def mostra_calcolatore_semplice(ctx):
         st.markdown(f"""
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 500px; margin: 10px auto 25px auto; padding: 8px !important; border: 1px solid #bd9b53; background: rgba(189, 155, 83, 0.05); border-radius: 4px; text-align: center;">
             <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">CONFIRMED LEADERSHIP</span><p style="font-size: 20px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif;">{lead_txt}</p></div>
-            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">CONFIRMED SUPREMACYYYY</span><p style="font-size: 20px; font-weight: bold; color: #bd9b53; margin: 0; font-family: 'Cinzel', serif;">{sup_txt}</p></div>
+            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">CONFIRMED SUPREMAZIA</span><p style="font-size: 20px; font-weight: bold; color: #bd9b53; margin: 0; font-family: 'Cinzel', serif;">{sup_txt}</p></div>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -63,16 +63,16 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # --- DATABASE COMPLETO MOSTRI ---
+    # --- DATABASE COMPLETO MOSTRI (CORRETTO A COSTO 55) ---
     database_mostri = [
-        {"id": "m9_1", "name": "Level 9 Monster Type 1", "auth_cost": 53, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 0},
-        {"id": "m9_2", "name": "Level 9 Monster Type 2", "auth_cost": 53, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 1},
-        {"id": "m9_3", "name": "Level 9 Monster Type 3", "auth_cost": 53, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 2},
-        {"id": "m9_4", "name": "Level 9 Monster Type 4", "auth_cost": 53, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 3},
-        {"id": "m8_1", "name": "Level 8 Monster Type 1", "auth_cost": 53, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 0},
-        {"id": "m8_2", "name": "Level 8 Monster Type 2", "auth_cost": 53, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 1},
-        {"id": "m8_3", "name": "Level 8 Monster Type 3", "auth_cost": 53, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 2},
-        {"id": "m8_4", "name": "Level 8 Monster Type 4", "auth_cost": 53, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 3},
+        {"id": "m9_1", "name": "Level 9 Monster Type 1", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 0},
+        {"id": "m9_2", "name": "Level 9 Monster Type 2", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 1},
+        {"id": "m9_3", "name": "Level 9 Monster Type 3", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 2},
+        {"id": "m9_4", "name": "Level 9 Monster Type 4", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 3},
+        {"id": "m8_1", "name": "Level 8 Monster Type 1", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 0},
+        {"id": "m8_2", "name": "Level 8 Monster Type 2", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 1},
+        {"id": "m8_3", "name": "Level 8 Monster Type 3", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 2},
+        {"id": "m8_4", "name": "Level 8 Monster Type 4", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 3},
         {"id": "m7_1", "name": "Level 7 Monster Type 1", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "row": 8, "col_idx": 0},
         {"id": "m7_2", "name": "Level 7 Monster Type 2", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "row": 8, "col_idx": 1},
         {"id": "m7_3", "name": "Level 7 Monster Type 3", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "row": 8, "col_idx": 2},
@@ -134,12 +134,11 @@ def mostra_calcolatore_semplice(ctx):
         # Calcolo Mostri
         for mostro in database_mostri:
             if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
-                # FORMULA DI MAURIZIO ORIGINALE IMMUTATA
+                # FORMULA DI MAURIZIO CON ARROTONDAMENTO A +0.5 E BLOCCHI DA 10
                 valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10) + 0.5
                 count_mostri = int(valore_interno) * 10
                 
-                # CORREZIONE BUG: L'autorità del singolo quadratino della griglia è (Conteggio * Costo)
-                # Il totale cumulativo si bilancia perfettamente senza quadruplicare le somme
+                # CORREZIONE: La supremazia del singolo slot della griglia rispetta il costo corretto (55 o 43)
                 auth_singolo_mostro = count_mostri * mostro["auth_cost"]
                 totale_supremacy_usata += auth_singolo_mostro
                 
