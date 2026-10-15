@@ -9,7 +9,7 @@ def mostra_calcolatore_semplice(ctx):
     # --- 1. INPUT LEADERSHIP MASSIMA ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, key="sc_max_lead_v900"
+        min_value=0, value=0, step=1000, key="sc_max_lead_v1000"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -54,7 +54,7 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v900_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v1000_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
@@ -62,7 +62,7 @@ def mostra_calcolatore_semplice(ctx):
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
-    # --- 3. CALCOLO REATTIVO IN BACKGROUND (SENZA ALCUN BOX VISIBILE A SCHERMO) ---
+    # --- 3. CALCOLO REATTIVO IN BACKGROUND ---
     if moltiplicatore_dinamico > 0:
         stack_reference = max_leadership / moltiplicatore_dinamico
     else:
@@ -73,7 +73,7 @@ def mostra_calcolatore_semplice(ctx):
     risultati_finali_html = ""
     totale_leadership_usata = 0
 
-    # Calcolo visivo finale dei plotoni se la leadership inserita è maggiore di 0
+    # Calcolo visivo finale dei plotoni
     if max_leadership > 0 and stack_reference > 0:
         for truppa in truppe_selezionate:
             # APPLICAZIONE FORMULA ORIGINALE DI MAURIZIO
@@ -84,16 +84,15 @@ def mostra_calcolatore_semplice(ctx):
             totale_leadership_usata += leadership_riga
 
             count_formattato = f"{count_truppe:,}".replace(",", ".")
-            lead_riga_formattata = f"{leadership_riga:,}".replace(",", ".")
             nome_tradotto_riga = ctx.get(truppa["name"], truppa["name"])
 
+            # MODIFICA: Rimossi "u." e "Lead riga" - lasciato solo il numero puro in grassetto dorato
             if count_truppe > 0:
                 risultati_finali_html += f"""
                 <div class="chat-box" style="display:flex; justify-content:space-between; align-items:center; padding:10px 16px!important; margin-bottom:8px!important;">
                     <span style="color:#f0e6d2; font-weight:500;">{nome_tradotto_riga}</span>
                     <div style="text-align:right;">
-                        <span style="color:#bd9b53; font-weight:bold; font-size:18px; margin-right:15px;">{count_formattato} u.</span>
-                        <span style="color:#a69e8d; font-size:13px;">(Lead riga: {lead_riga_formattata})</span>
+                        <span style="color:#bd9b53; font-weight:bold; font-size:18px;">{count_formattato}</span>
                     </div>
                 </div>
                 """
