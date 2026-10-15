@@ -2,17 +2,26 @@ import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
     st.markdown(f"<h1>{ctx.get('simple_calc_main_h1', '🧮 Simple Troops Calculator')}</h1>", unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # --- NUOVO AVVISO SUI CAPITANI STANDARD IN ALTO SOTTO IL TITOLO ---
+    st.markdown(f"""
+    <div class="chat-box" style="padding:12px 16px!important; text-align:left; color:#f0e6d2; border-left:4px solid #cc4125!important; margin-bottom:15px; background: rgba(204, 65, 37, 0.05);">
+        <b style="color:#cc4125; font-size:13px; letter-spacing:0.5px; display:block; margin-bottom:3px;">⚠️ IMPORTANT CAPTAIN NOTE:</b>
+        <span style="font-size:12px; color:#a69e8d; line-height:1.4;">
+            This calculator assumes you are using standard captains. If you use captains that grant specific health or leadership bonuses to a single troop type, the distribution formula will not balance correctly.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
 
     # --- 1. INPUT LEADERSHIP MASSIMA ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, key="sc_max_lead_v4000"
+        min_value=0, value=0, step=1000, key="sc_max_lead_v5000"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- NOTIFICA IN ALTO SE LA LEADERSHIP È 0 ---
+    # --- NOTIFICA SE LA LEADERSHIP È 0 ---
     if max_leadership == 0:
         testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter a Maximum Leadership value to calculate the troop stack distribution.')
         st.markdown(f"""
@@ -54,6 +63,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Liv.8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
+    truppe_selezionate = []
     stati_checkbox = {}
     moltiplicatore_dinamico = 0.0
     categorie_mostrate = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
@@ -67,9 +77,10 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v4000_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v5000_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
+                    truppe_selezionate.append(truppa)
                     moltiplicatore_dinamico += truppa["ratio"]
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
@@ -87,7 +98,6 @@ def mostra_calcolatore_semplice(ctx):
         totale_leadership_usata = 0
         mappa_risultati = {}
 
-        # Eseguiamo il calcolo preliminare su tutte le truppe
         for truppa in database_truppe:
             is_attiva = stati_checkbox.get(truppa["id"], False)
             
@@ -100,7 +110,6 @@ def mostra_calcolatore_semplice(ctx):
             else:
                 count_formattato = "0"
 
-            # Salviamo il box formattato nella sua posizione di riga e colonna specifica
             mappa_risultati[truppa["id"]] = {
                 "name": ctx.get(truppa["name"], truppa["name"]),
                 "count": count_formattato,
@@ -126,7 +135,6 @@ def mostra_calcolatore_semplice(ctx):
             st.markdown(f"<small style='color:#bd9b53;font-weight:bold;'>{labels_file[r]}</small>", unsafe_allow_html=True)
             truppe_riga = [t for t in database_truppe if t["row"] == r]
             
-            # Creiamo 4 colonne fisse a schermo (anche per la riga dei genieri che ne usa 2, lasciando vuote le altre)
             cols_griglia = st.columns(4)
             
             for truppa in truppe_riga:
