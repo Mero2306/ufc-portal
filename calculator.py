@@ -1,12 +1,10 @@
-
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # Ripristino rigido dei testi di intestazione UFC collegati ai file .json
+    # Il titolo rimane, ma la riga st.write duplicata è stata ELIMINATA da qui
     st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
-    st.write(ctx.get('calc_write', 'Access the army and stack simulator used by most of the Total Battle clans.'))
     
-    # --- NOTIFICA SUI CAPITANI SOTTO IL TITOLO (PULITA E COERENTE) ---
+    # --- NOTIFICA SUI CAPITANI SOTTO IL TITOLO ---
     st.markdown(f"""
     <div class="chat-box" style="padding:16px 20px!important; text-align:left; color:#f0e6d2; border-left:5px solid #cc4125!important; margin-bottom:20px; background: rgba(255, 255, 255, 0.02); width:100%;">
         <b style="color:#cc4125; font-size:15px; letter-spacing:0.5px; display:block; margin-bottom:6px;">{ctx.get('calc_note_title', '⚠️ IMPORTANT CAPTAIN NOTE:')}</b>
@@ -66,7 +64,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # Database Mostri Compatto
+    # Database Mostri
     database_mostri = [
         {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
         {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
