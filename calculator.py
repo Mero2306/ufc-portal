@@ -5,8 +5,8 @@ def mostra_calcolatore_semplice(ctx):
     st.write(ctx.get('simple_calc_main_subtitle', 'Configure march settings and customize active troops.'))
     
     c1, c2 = st.columns(2)
-    livello_scelto = c1.selectbox(ctx.get('calc_select_guard_level', 'Seleziona livello:'), ["G9", "G8"], key="sc_lvl_v9_final")
-    max_leadership = c2.number_input(ctx.get('calc_max_leadership_lbl', 'Max Leadership:'), min_value=0, value=332000, step=1000, key="sc_lead_v9_final")
+    livello_scelto = c1.selectbox(ctx.get('calc_select_guard_level', 'Seleziona livello:'), ["G9", "G8"], key="sc_lvl_v10_final")
+    max_leadership = c2.number_input(ctx.get('calc_max_leadership_lbl', 'Max Leadership:'), min_value=0, value=332000, step=1000, key="sc_lead_v10_final")
 
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops')}")
     filtri = {"G9": livello_scelto == "G9", "S9": livello_scelto == "G9", "C9": livello_scelto == "G9", "G8": True, "S8": True, "C8": True}
@@ -33,23 +33,28 @@ def mostra_calcolatore_semplice(ctx):
             database_truppe.append({"id": "c8_eng", "name": "C8 Engineer Corps", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "C8", "cat": c["t"], "grp": "ENG"})
 
     stati_checkbox = {}
+    moltiplicatore_dinamico = 0.0
+
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
         st.markdown(f"**{cat}**")
         cols = st.columns(2)
         truppe_in_cat = [t for t in database_truppe if t["cat"] == cat and filtri[t["f_key"]]]
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
-                attiva = st.checkbox(ctx.get(truppa["name"], truppa["name"]), value=True, key=f"chk_f9_{truppa['id']}")
+                # All'avvio teniamo accese solo le guardie e genieri (def_on) per agganciare subito il moltiplicatore a 13.90!
+                def_on = truppa["grp"] in ["G9", "G8", "ENG"]
+                attiva = st.checkbox(ctx.get(truppa["name"], truppa["name"]), value=def_on, key=f"chk_f10_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
+                if attiva and truppa["stacks"] > 0:
+                    truppe_selezionate.append(truppa)
+                    moltiplicatore_dinamico += (truppa["stacks"] * truppa["ratio"])
         st.markdown("<hr style='margin: 4px 0; opacity: 0.05;'>", unsafe_allow_html=True)
 
-    # --- ANCORAGGIO STRUTTURALE SPECULARE AL FOGLIO ---
-    # Fissiamo il moltiplicatore base a 13.90 come nel foglio di Maurizio per allineare i volumi parziali
-    moltiplicatore_base_excel = 13.90
-    stack_reference = max_leadership / moltiplicatore_base_excel if moltiplicatore_base_excel > 0 else 0
+    # Il Riferimento Stack (J19) si adatta fluidamente a seconda di quante caselle sono spuntate
+    stack_reference = max_leadership / moltiplicatore_dinamico if moltiplicatore_dinamico > 0 else 0
 
     st.markdown(f"""<div class="chat-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 12px !important; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #1c1810, #0f0d0a) !important; margin-bottom: 20px !important;">
-        <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">MULTIPLIER (B19)</span><p style="font-size: 22px; font-weight: bold; color: #f0e6d2; margin: 0;">{moltiplicatore_base_excel:.2f}</p></div>
+        <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">MULTIPLIER (B19)</span><p style="font-size: 22px; font-weight: bold; color: #f0e6d2; margin: 0;">{moltiplicatore_dinamico:.2f}</p></div>
         <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">STACK REF # (J19)</span><p style="font-size: 22px; font-weight: bold; color: #bd9b53; margin: 0;">{stack_reference:,.2f}</p></div>
     </div>""", unsafe_allow_html=True)
 
@@ -69,18 +74,20 @@ def mostra_calcolatore_semplice(ctx):
     if stack_reference > 0:
         for t in database_truppe:
             if filtri[t["f_key"]] and stati_checkbox[t["id"]] and t["stacks"] > 0:
-                # Formula originale di Maurizio intatta
+                # LA FORMULA DI MAURIZIO GENERA LA QUANTITÀ DI SOLDATI PER SINGOLO STACK
                 valore_interno = (t["ratio"] / t["lead_cost"] * stack_reference / 10) + 0.45
-                count_truppe = int(valore_interno) * 10
-                leadership_riga = count_truppe * t["stacks"] * t["lead_cost"]
+                count_truppe_singolo_stack = int(valore_interno) * 10
+                
+                # La leadership totale della riga tiene conto del numero degli stack reali (st)
+                leadership_riga = count_truppe_singolo_stack * t["stacks"] * t["lead_cost"]
                 totale_leadership_usata += leadership_riga
 
-                if count_truppe > 0:
+                if count_truppe_singolo_stack > 0:
                     short_name = t["name"].replace("L9 ", "").replace("L8 ", "").replace("C9 ", "").replace("C8 ", "")
                     gruppi_html[t["grp"]] += f"""
                     <div style="flex: 1; min-width: 140px; text-align: center; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; border: 1px solid rgba(255,255,255,0.03); margin: 4px;">
                         <span style="font-size: 11px; color: #a69e8d; display: block; font-weight: 500;">{ctx.get(short_name, short_name)}</span>
-                        <b style="font-size: 16px; color: #f0e6d2; display: block; margin: 2px 0;">{count_truppe:,} <span style="font-size:10px; color:#bd9b53; font-weight:normal;">u.</span></b>
+                        <b style="font-size: 16px; color: #f0e6d2; display: block; margin: 2px 0;">{count_truppe_singolo_stack:,} <span style="font-size:10px; color:#bd9b53; font-weight:normal;">u.</span></b>
                         <span style="font-size: 10px; color: #666;">Lead riga: {leadership_riga:,}</span>
                     </div>
                     """
@@ -97,13 +104,12 @@ def mostra_calcolatore_semplice(ctx):
                 </div>
                 """
 
-        # Calcolo dei riepiloghi finali in base a cosa l'utente ha lasciato spuntato
         rimanente = max_leadership - totale_leadership_usata
         c_rim = "#38761d" if rimanente >= 0 else "#990000"
         
         col_res1, col_res2 = st.columns(2)
-        col_res1.markdown(f'<div class="chat-box" style="text-align:center; padding:8px!important;"><h3>Theoretical Allocated</h3><p style="font-size:20px;color:#4a86e8;font-weight:bold;margin:0;">{totale_leadership_usata:,} / {max_leadership:,}</p></div>', unsafe_allow_html=True)
-        col_res2.markdown(f'<div class="chat-box" style="text-align:center; padding:8px!important;"><h3>Theoretical Remaining</h3><p style="font-size:20px;color:{c_rim};font-weight:bold;margin:0;">{rimanente:,}</p></div>', unsafe_allow_html=True)
+        col_res1.markdown(f'<div class="chat-box" style="text-align:center; padding:8px!important;"><h3>Allocated Leadership</h3><p style="font-size:20px;color:#4a86e8;font-weight:bold;margin:0;">{totale_leadership_usata:,} / {max_leadership:,}</p></div>', unsafe_allow_html=True)
+        col_res2.markdown(f'<div class="chat-box" style="text-align:center; padding:8px!important;"><h3>Remaining Space</h3><p style="font-size:20px;color:{c_rim};font-weight:bold;margin:0;">{rimanente:,}</p></div>', unsafe_allow_html=True)
         st.markdown("<br>" + output_corpo_html, unsafe_allow_html=True)
     else:
         st.info("Nessuna formazione selezionata.")
