@@ -25,14 +25,14 @@ def mostra_calcolatore_semplice(ctx):
         min_value=0, value=0, step=1000, format="%d", key="sc_max_sup_v2026"
     )
 
-    # --- BOX DI CONFERMA VISIVA ---
+    # --- BOX DI CONFERMA VISIVA CON TRADUZIONE CORRETTA IN INGLESE ---
     if max_leadership > 0 or max_supremacy > 0:
         lead_txt = f"{max_leadership:,}".replace(",", ".")
         sup_txt = f"{max_supremacy:,}".replace(",", ".")
         st.markdown(f"""
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 500px; margin: 10px auto 25px auto; padding: 8px !important; border: 1px solid #bd9b53; background: rgba(189, 155, 83, 0.05); border-radius: 4px; text-align: center;">
             <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">CONFIRMED LEADERSHIP</span><p style="font-size: 20px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif;">{lead_txt}</p></div>
-            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">CONFIRMED SUPREMAZIA</span><p style="font-size: 20px; font-weight: bold; color: #bd9b53; margin: 0; font-family: 'Cinzel', serif;">{sup_txt}</p></div>
+            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">CONFIRMED SUPREMACY</span><p style="font-size: 20px; font-weight: bold; color: #bd9b53; margin: 0; font-family: 'Cinzel', serif;">{sup_txt}</p></div>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -63,7 +63,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # Database Mostri Compatto
+    # Database Mostri Compatto per Riga Unica
     database_mostri = [
         {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
         {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
@@ -110,6 +110,7 @@ def mostra_calcolatore_semplice(ctx):
         totale_leadership_usata = 0
         totale_supremacy_usata = 0
         mappa_risultati = {}
+        mappa_mostri_risultati = {}
 
         # Calcolo Truppe Regolari (Griglia Rigida 4 Colonne)
         for truppa in database_truppe:
@@ -122,23 +123,33 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # Calcolo Mostri con Sistema di Sicurezza Anti-Sforo
-        mappa_mostri_risultati = {}
+        # ALGORITMO DI RICALIBRAZIONE MILLESIMALE ANTI-SFORO PER I MOSTRI
+        # Se l'arrotondamento nativo sfora la supremazia totale, riduciamo impercettibilmente il riferimento finché non rientra nel budget
+        safety_loop_counter = 0
+        while safety_loop_counter < 100:
+            test_supremacy_totale = 0
+            for mostro in database_mostri:
+                if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
+                    valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10) + 0.5
+                    count_test = int(valore_interno) * 10
+                    test_supremacy_totale += (count_test * mostro["stacks"] * mostro["auth_cost"])
+            
+            if test_supremacy_totale <= max_supremacy or stack_ref_monsters <= 0:
+                break
+            
+            # Riduciamo progressivamente lo stack reference dell'0.1% per smussare l'eccesso decimale
+            stack_ref_monsters *= 0.999
+            safety_loop_counter += 1
+
+        # Applicazione definitiva dei conteggi mostri calibrati
         for mostro in database_mostri:
             if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
                 valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10) + 0.5
                 count_mostri = int(valore_interno) * 10
-                
-                # Controllo se l'arrotondamento +0.5 fa superare la supremazia totale riga
-                # Se sfora, riduce a blocchi di 10 fino a rientrare perfettamente nel budget
-                while (count_mostri * mostro["stacks"] * mostro["auth_cost"]) > max_supremacy and count_mostri > 0:
-                    count_mostri -= 10
-                
                 totale_supremacy_usata += (count_mostri * mostro["stacks"] * mostro["auth_cost"])
                 count_formattato = f"{count_mostri:,}".replace(",", ".")
             else:
                 count_formattato = "0"
-                
             mappa_mostri_risultati[mostro["id"]] = {"name": mostro["name"], "count": count_formattato, "col_idx": mostro["col_idx"]}
 
         # Box riassuntivi delle risorse usate
@@ -151,7 +162,7 @@ def mostra_calcolatore_semplice(ctx):
         col_res1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>Leadership Allocated</h3><p style="font-size:22px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_txt} / {lead_max_txt}</p></div>', unsafe_allow_html=True)
         col_res2.markdown(f'<div class="chat-box" style="text-align:center;"><h3>Supremacy Allocated</h3><p style="font-size:22px;color:#bd9b53;font-weight:bold;margin:0;">{sup_usata_txt} / {sup_max_txt}</p></div>', unsafe_allow_html=True)
 
-        # Configurazione etichette e stampa rigida delle righe di truppe (1-5)
+        # Labels per le righe fisse del tabellone completo
         labels_file = {
             1: "🛡️ Guardians Level 9", 2: "⚡ Specialists Level 9",
             3: "⚔️ Guardians Level 8", 4: "🔮 Specialists Level 8",
@@ -175,7 +186,7 @@ def mostra_calcolatore_semplice(ctx):
                     """, unsafe_allow_html=True)
             st.markdown("<div style='margin-bottom: 5px;'></div>", unsafe_allow_html=True)
 
-        # --- MODIFICA: STAMPA DI TUTTI I MOSTRI IN UN'UNICA RIGA ORIZZONTALE A 4 COLONNE ---
+        # --- STAMPA DI TUTTI I MOSTRI ACCORPATI IN UN'UNICA RIGA ORIZZONTALE A 4 COLONNE ---
         st.markdown("<hr style='margin: 15px 0; opacity: 0.15;'>", unsafe_allow_html=True)
         st.markdown("<small style='color:#bd9b53;font-weight:bold;'>🐉 Tactical Monsters (M9 / M8 / M7)</small>", unsafe_allow_html=True)
         
