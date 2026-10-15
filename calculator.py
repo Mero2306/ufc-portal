@@ -13,7 +13,7 @@ def mostra_calcolatore_semplice(ctx):
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8"],
-        key="sc_guard_level_selector_final_v18"
+        key="sc_guard_level_selector_final_v19"
     )
 
     # --- 2. INPUT LEADERSHIP MASSIMA ---
@@ -25,7 +25,7 @@ def mostra_calcolatore_semplice(ctx):
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
-    # --- 3. ATTIVAZIONE DEI FILTRI BOOLEANI (TRUE/FALSE) ---
+    # --- 3. ATTIVAZIONE DEI FILTRI BOOLEANI (TRUE/FALSE) DI LIVELLO ---
     filtri_fogli = {
         "Guardie 9": livello_scelto == "G9",
         "Specialisti 9": livello_scelto == "G9",
@@ -35,7 +35,7 @@ def mostra_calcolatore_semplice(ctx):
         "Catapulte 8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- 4. DATABASE REALE E COMPLETO DELLE 4 TIPOLOGIE DI GUARDIE E 4 DI SPECIALISTI ---
+    # --- 4. DATABASE REALE E COMPLETO CON I PARAMETRI DEL FOGLIO DI MAURIZIO ---
     database_truppe = [
         # --- TIER 9 ---
         {"id": "g9_flyer", "name": "L9 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "Guardie 9", "cat": "Flyer"},
@@ -72,7 +72,7 @@ def mostra_calcolatore_semplice(ctx):
     moltiplicatore_dinamico = 0.0
     categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
-    # Interfaccia a Checkbox organizzata per categorie ufficiali di gioco
+    # Generazione dei checkbox interattivi organizzati per le categorie ufficiali
     for cat in categorie:
         st.markdown(f"**{cat}**")
         cols = st.columns(2)
@@ -83,15 +83,16 @@ def mostra_calcolatore_semplice(ctx):
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
                 
                 # Ciascun checkbox attiva e modifica il moltiplicatore in modo reattivo
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v35_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v36_{truppa['id']}")
                 if attiva and truppa["stacks"] > 0:
                     truppe_selezionate.append(truppa)
+                    # contr. = Stacks * Ratio
                     contr_riga = truppa["stacks"] * truppa["ratio"]
                     moltiplicatore_dinamico += contr_riga
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
-    # --- DISPLAY DEL MOLTIPLICATORE DINAMICO ---
+    # --- DISPLAY DEL MOLTIPLICATORE DINAMICO AUTOMATICO ---
     st.markdown(
         f"""
         <div class="chat-box" style="text-align: center; max-width: 500px; margin: 20px auto; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 10px !important;">
@@ -112,28 +113,30 @@ def mostra_calcolatore_semplice(ctx):
     totale_leadership_usata = 0
 
     if moltiplicatore_dinamico > 0 and truppe_selezionate:
-        # Riferimento Stack # dinamico che varia se deselezioni singoli blocchi liberando spazio
+        # Riferimento Stack # (J19 = Leadership Massima / Moltiplicatore Dinamico)
         stack_reference = max_leadership / moltiplicatore_dinamico
 
         for truppa in truppe_selezionate:
-            # APPLICAZIONE MILLIMETRICA FORMULA DI MAURIZIO (Arrotondamento condizionato alle decine)
+            # APPLICAZIONE MILLIMETRICA FORMULA DI MAURIZIO:
+            # =INT(Ratio / Costo_Lead * Riferimento_Stack / 10 + 0.45) * 10
+            # Il valore ottenuto è GIÀ il totale complessivo della riga, non va moltiplicato per gli stack!
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
-            count_truppe_per_stack = int(valore_interno) * 10
+            count_truppe_totale_riga = int(valore_interno) * 10
             
-            # Calcolo leadership parziale consumata
-            leadership_riga = count_truppe_per_stack * truppa["stacks"] * truppa["lead_cost"]
+            # CORREZIONE: La leadership della riga è semplicemente il conteggio totale * il costo unità
+            leadership_riga = count_truppe_totale_riga * truppa["lead_cost"]
             totale_leadership_usata += leadership_riga
 
-            count_formattato = f"{count_truppe_per_stack:,}".replace(",", ".")
+            count_formattato = f"{count_truppe_totale_riga:,}".replace(",", ".")
             lead_riga_formattata = f"{leadership_riga:,}".replace(",", ".")
             nome_tradotto_riga = ctx.get(truppa["name"], truppa["name"])
 
-            if count_truppe_per_stack > 0:
+            if count_truppe_totale_riga > 0:
                 risultati_finali_html += f"""
                 <div class="chat-box" style="display:flex; justify-content:space-between; align-items:center; padding:10px 16px!important; margin-bottom:8px!important;">
                     <span style="color:#f0e6d2; font-weight:500;">{nome_tradotto_riga} <small style="color:#bd9b53;">({truppa['stacks']} Stacks)</small></span>
                     <div style="text-align:right;">
-                        <span style="color:#bd9b53; font-weight:bold; font-size:18px; margin-right:15px;">{count_formattato} u. <small style="font-size:11px;color:#a69e8d;">/stack</small></span>
+                        <span style="color:#bd9b53; font-weight:bold; font-size:18px; margin-right:15px;">{count_formattato} u.</span>
                         <span style="color:#a69e8d; font-size:13px;">(Lead riga: {lead_riga_formattata})</span>
                     </div>
                 </div>
