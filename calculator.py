@@ -63,20 +63,11 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # --- DATABASE COMPLETO MOSTRI (CORRETTO A COSTO 55) ---
+    # MODIFICA: Il database dei mostri ora contiene solo 1 voce unica per ciascun livello (stacks = 4 o 2 integrati)
     database_mostri = [
-        {"id": "m9_1", "name": "Level 9 Monster Type 1", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 0},
-        {"id": "m9_2", "name": "Level 9 Monster Type 2", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 1},
-        {"id": "m9_3", "name": "Level 9 Monster Type 3", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 2},
-        {"id": "m9_4", "name": "Level 9 Monster Type 4", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6, "col_idx": 3},
-        {"id": "m8_1", "name": "Level 8 Monster Type 1", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 0},
-        {"id": "m8_2", "name": "Level 8 Monster Type 2", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 1},
-        {"id": "m8_3", "name": "Level 8 Monster Type 3", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 2},
-        {"id": "m8_4", "name": "Level 8 Monster Type 4", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7, "col_idx": 3},
-        {"id": "m7_1", "name": "Level 7 Monster Type 1", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "row": 8, "col_idx": 0},
-        {"id": "m7_2", "name": "Level 7 Monster Type 2", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "row": 8, "col_idx": 1},
-        {"id": "m7_3", "name": "Level 7 Monster Type 3", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "row": 8, "col_idx": 2},
-        {"id": "m7_4", "name": "Level 7 Monster Type 4", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "row": 8, "col_idx": 3}
+        {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6},
+        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7},
+        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "row": 8}
     ]
 
     stati_checkbox = {}
@@ -105,9 +96,10 @@ def mostra_calcolatore_semplice(ctx):
     # --- 4. CALCOLO REATTIVO BACKGROUND DISTINTO (PARTE 2) ---
     stack_ref_lead = max_leadership / moltiplicatore_truppe if moltiplicatore_truppe > 0 else 0
 
+    # Il moltiplicatore dei mostri calcola la somma dei contributi dei soli gruppi attivi
     moltiplicatore_mostri = 0.0
     for m in database_mostri:
-        if stati_mostri[m["lvl_group"]] and m["col_idx"] == 0:
+        if stati_mostri[m["lvl_group"]]:
             moltiplicatore_mostri += (m["stacks"] * m["ratio"])
             
     stack_ref_monsters = max_supremacy / moltiplicatore_mostri if moltiplicatore_mostri > 0 else 0
@@ -120,7 +112,7 @@ def mostra_calcolatore_semplice(ctx):
         totale_supremacy_usata = 0
         mappa_risultati = {}
 
-        # Calcolo Truppe Regolari
+        # Calcolo Truppe Regolari (Griglia Rigida 4 Colonne)
         for truppa in database_truppe:
             if stati_checkbox.get(truppa["id"], False) and stack_ref_lead > 0:
                 valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_ref_lead / 10) + 0.45
@@ -129,23 +121,23 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = f"{count_truppe:,}".replace(",", ".")
             else:
                 count_formattato = "0"
-            mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "row": truppa["row"], "col_idx": truppa["col_idx"]}
+            mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # Calcolo Mostri
+        # Calcolo Mostri (1 Solo Riquadro Centrale per Livello)
+        mappa_mostri_risultati = {}
         for mostro in database_mostri:
             if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
-                # FORMULA DI MAURIZIO CON ARROTONDAMENTO A +0.5 E BLOCCHI DA 10
+                # Formula originale di Maurizio
                 valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10) + 0.5
                 count_mostri = int(valore_interno) * 10
                 
-                # CORREZIONE: La supremazia del singolo slot della griglia rispetta il costo corretto (55 o 43)
-                auth_singolo_mostro = count_mostri * mostro["auth_cost"]
-                totale_supremacy_usata += auth_singolo_mostro
-                
+                # Supremazia totale spesa per l'intera riga (Conteggio * Stacks * Costo Spazio)
+                totale_supremacy_usata += (count_mostri * mostro["stacks"] * mostro["auth_cost"])
                 count_formattato = f"{count_mostri:,}".replace(",", ".")
             else:
                 count_formattato = "0"
-            mappa_risultati[mostro["id"]] = {"name": mostro["name"], "count": count_formattato, "row": mostro["row"], "col_idx": mostro["col_idx"]}
+                
+            mappa_mostri_risultati[mostro["id"]] = {"name": mostro["name"], "count": count_formattato}
 
         # Box riassuntivi delle risorse usate
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
@@ -157,21 +149,20 @@ def mostra_calcolatore_semplice(ctx):
         col_res1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>Leadership Allocated</h3><p style="font-size:22px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_txt} / {lead_max_txt}</p></div>', unsafe_allow_html=True)
         col_res2.markdown(f'<div class="chat-box" style="text-align:center;"><h3>Supremacy Allocated</h3><p style="font-size:22px;color:#bd9b53;font-weight:bold;margin:0;">{sup_usata_txt} / {sup_max_txt}</p></div>', unsafe_allow_html=True)
 
-        # Labels per le righe fisse del tabellone completo
+        # Configurazione etichette e stampa rigida delle righe di truppe (1-5)
         labels_file = {
             1: "🛡️ Guardians Level 9", 2: "⚡ Specialists Level 9",
             3: "⚔️ Guardians Level 8", 4: "🔮 Specialists Level 8",
-            5: "📐 Engineer Corps",
-            6: "🐉 Monsters Level 9 (M9)", 7: "🦁 Monsters Level 8 (M8)", 8: "🦅 Monsters Level 7 (M7)"
+            5: "📐 Engineer Corps"
         }
 
-        # Stampa rigida delle 8 righe orizzontali fisse (Mostra 0 se disattivato)
-        for r in range(1, 9):
+        # Stampa delle prime 5 file rigide (Truppe Regolari a 4 colonne)
+        for r in range(1, 6):
             st.markdown(f"<small style='color:#bd9b53;font-weight:bold;'>{labels_file[r]}</small>", unsafe_allow_html=True)
-            elementi_riga = [t for t in database_truppe if t["row"] == r] + [m for m in database_mostri if m["row"] == r]
+            truppe_riga = [t for t in database_truppe if t["row"] == r]
             
             cols_griglia = st.columns(4)
-            for item in elementi_riga:
+            for item in truppe_riga:
                 info = mappa_risultati[item["id"]]
                 with cols_griglia[info["col_idx"]]:
                     st.markdown(f"""
@@ -181,3 +172,27 @@ def mostra_calcolatore_semplice(ctx):
                     </div>
                     """, unsafe_allow_html=True)
             st.markdown("<div style='margin-bottom: 5px;'></div>", unsafe_allow_html=True)
+
+        # --- STAMPA DELLE RIGHE DEI MOSTRI CON UN UNICO BOX COMPATTO E CENTRATO ---
+        st.markdown("<hr style='margin: 15px 0; opacity: 0.15;'>", unsafe_allow_html=True)
+        
+        labels_mostri = {
+            "m9_group": "🐉 Monsters Level 9 (M9)",
+            "m8_group": "🦁 Monsters Level 8 (M8)",
+            "m7_group": "🦅 Monsters Level 7 (M7)"
+        }
+
+        for m_id, label_riga in labels_mostri.items():
+            st.markdown(f"<small style='color:#bd9b53;font-weight:bold;'>{label_riga}</small>", unsafe_allow_html=True)
+            
+            # Usiamo st.columns(3) e posizioniamo il box al centro (nella seconda colonna) per renderlo elegantissimo
+            c_left, c_center, c_right = st.columns([1, 2, 1])
+            info_m = mappa_mostri_risultati[m_id]
+            
+            with c_center:
+                st.markdown(f"""
+                <div class="chat-box" style="text-align: center; padding: 14px!important; min-height: 85px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 12px; border: 1px solid rgba(189, 155, 83, 0.15); background: rgba(255,255,255,0.01);">
+                    <span style="color:#a69e8d; font-size:13px; font-weight:500; display: block; margin-bottom: 6px;">{info_m['name']}</span>
+                    <b style="color:#bd9b53; font-size:22px; display: block;">{info_m['count']}</b>
+                </div>
+                """, unsafe_allow_html=True)
