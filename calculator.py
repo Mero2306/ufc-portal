@@ -78,62 +78,48 @@ def mostra_calcolatore_semplice(ctx):
     attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v5")
     attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v5")
     attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
-    # --- CALCOLO REATTIVO BACKGROUND DISTINTO STRUTTURATO SULLA SUPREMAZIA ---
-    stack_ref_lead = max_leadership / moltiplicatore_truppe if moltiplicatore_truppe > 0 else 0
-
+    
+    stati_mostri = {"M9": attiva_m9, "M8": attiva_m8, "M7": attiva_m7}
+    # --- CALCOLO REATTIVO BACKGROUND DISTINTO CON LOGICA EXCEL RIPRISTINATA ---
     if max_leadership > 0 or max_supremacy > 0:
         st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
         
+        # Costante di riferimento del clan impostata a 13.9 come da tabella Excel
+        riferimento_stack = max_leadership / 13.9 if moltiplicatore_truppe > 0 else 0
+        
         totale_leadership_usata = 0
-        totale_supremacy_usata = 0
         mappa_risultati = {}
         mappa_mostri_risultati = {}
 
-        # 1. Calcolo delle Truppe Regolari
+        # 1. Calcolo e Ripristino delle Truppe Regolari nella Griglia
         for truppa in database_truppe:
-            if stati_checkbox.get(truppa["id"], False) and stack_ref_lead > 0:
-                valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_ref_lead / 10) + 0.45
-                count_truppe = int(valore_interno) * 10
+            if stati_checkbox.get(truppa["id"], False) and riferimento_stack > 0:
+                valore_interno = (truppa["ratio"] / truppa["lead_cost"] * riferimento_stack)
+                count_truppe = int(valore_interno / 10) * 10
                 totale_leadership_usata += count_truppe * truppa["lead_cost"]
                 count_formattato = f"{count_truppe:,}".replace(",", ".")
             else:
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"], "row": truppa["row"]}
 
-        # 2. Algoritmo di saturazione basato sulla Supremazia e sulla proporzione della Salute
+        # 2. ⚔️ LOGICA EXCEL ORIGINALE RIPRISTINATA: INT(Ratio/Costo*Ref_Stack/10+0.5)*10
         costo_m9 = 53
         costo_m8 = 53
         costo_m7 = 43
 
-        peso_m9 = 1.0 if attiva_m9 else 0.0
-        peso_m8 = 2.0 if attiva_m8 else 0.0
-        peso_m7 = 4.0 if attiva_m7 else 0.0
+        tot_m9 = int(((0.1383 / costo_m9 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m9 else 0
+        tot_m8 = int(((0.2486 / costo_m8 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m8 else 0
+        tot_m7 = int(((0.4480 / costo_m7 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m7 else 0
 
-        costo_combinato_hp = (peso_m9 * costo_m9) + (peso_m8 * costo_m8) + (peso_m7 * costo_m7)
+        # Divisione per slot (stack) per l'output in ogni singola casella di gioco
+        m9_slot = int(tot_m9 / 4)
+        m8_slot = int(tot_m8 / 4)
+        m7_slot = int(tot_m7 / 2)
 
-        if costo_combinato_hp > 0 and max_supremacy > 0:
-            unita_base_x = max_supremacy / costo_combinato_hp
-            
-            m9_slot = int((unita_base_x * peso_m9) / 10) * 10
-            m8_slot = int((unita_base_x * peso_m8) / 10) * 10
-            m7_slot = int((unita_base_x * peso_m7) / 10) * 10
+        # CORREZIONE CONTATORE: La Supremazia usata in gioco è (mostri per slot * numero slot * costo autorità)
+        totale_supremacy_usata = (m9_slot * 4 * costo_m9) + (m8_slot * 4 * costo_m8) + (m7_slot * 2 * costo_m7)
 
-            totale_supremacy_usata = (m9_slot * costo_m9) + (m8_slot * costo_m8) + (m7_slot * costo_m7)
-
-            while totale_supremacy_usata > max_supremacy:
-                if m7_slot >= 10: m7_slot -= 10
-                elif m8_slot >= 10: m8_slot -= 10
-                elif m9_slot >= 10: m9_slot -= 10
-                else: break
-                totale_supremacy_usata = (m9_slot * costo_m9) + (m8_slot * costo_m8) + (m7_slot * costo_m7)
-        else:
-            m9_slot, m8_slot, m7_slot = 0, 0, 0
-
-        mappa_mostri_risultati["m9_group"] = {"name": ctx.get("Level 9 Monsters", "Level 9 Monsters"), "count": f"{m9_slot}", "col_idx": 0}
-        mappa_mostri_risultati["m8_group"] = {"name": ctx.get("Level 8 Monsters", "Level 8 Monsters"), "count": f"{m8_slot}", "col_idx": 1}
-        mappa_mostri_risultati["m7_group"] = {"name": ctx.get("Level 7 Monsters", "Level 7 Monsters"), "count": f"{m7_slot}", "col_idx": 2}
-
-        # Configurazione box riassuntivi finali
+        # Configurazione stringhe di testo box contatori finali
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_txt = f"{max_leadership:,}".replace(",", ".")
         sup_usata_txt = f"{totale_supremacy_usata:,}".replace(",", ".")
@@ -143,7 +129,7 @@ def mostra_calcolatore_semplice(ctx):
         col_res1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_lead_lbl", "Leadership Allocated")}</h3><p style="font-size:22px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_txt} / {lead_max_txt}</p></div>', unsafe_allow_html=True)
         col_res2.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_sup_lbl", "Supremacy Allocated")}</h3><p style="font-size:22px;color:#bd9b53;font-weight:bold;margin:0;">{sup_usata_txt} / {sup_max_txt}</p></div>', unsafe_allow_html=True)
 
-        # Griglia Stampa Truppe
+        # Griglia Stampa Truppe Rigenerata
         labels_file = {
             1: ctx.get("Level 9 Guardians", "🛡️ Guardians Level 9"), 
             2: ctx.get("Level 9 Specialists", "⚡ Specialists Level 9"),
@@ -165,18 +151,18 @@ def mostra_calcolatore_semplice(ctx):
                     </div>
                     """, unsafe_allow_html=True)
 
-        # Griglia Mostri
+        # Griglia Mostri Rigenerata
         st.markdown("<hr style='margin: 15px 0; opacity: 0.15;'>", unsafe_allow_html=True)
         st.markdown(f"<small style='color:#bd9b53;font-weight:bold;'>{ctx.get('Level 9 Monsters Row', '🐉 Tactical Monsters')}</small>", unsafe_allow_html=True)
         
         cols_mostri = st.columns(4)
         mostri_render = [
-            mappa_mostri_risultati["m9_group"],
-            mappa_mostri_risultati["m8_group"],
-            mappa_mostri_risultati["m7_group"]
+            {"name": ctx.get("Level 9 Monsters", "Level 9 Monsters"), "count": f"{m9_slot}", "col": 0},
+            {"name": ctx.get("Level 8 Monsters", "Level 8 Monsters"), "count": f"{m8_slot}", "col": 1},
+            {"name": ctx.get("Level 7 Monsters", "Level 7 Monsters"), "count": f"{m7_slot}", "col": 2}
         ]
         for m_r in mostri_render:
-            with cols_mostri[m_r["col_idx"]]:
+            with cols_mostri[m_r["col"]]:
                 st.markdown(f"""
                 <div class="chat-box" style="text-align: center; padding: 12px!important; min-height: 85px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 10px;">
                     <span style="color:#a69e8d; font-size:12px; font-weight:500; display: block; margin-bottom: 6px; line-height: 1.2;">{m_r['name']}</span>
