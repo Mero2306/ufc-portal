@@ -13,7 +13,7 @@ def mostra_calcolatore_semplice(ctx):
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8"],
-        key="sc_guard_level_selector_final_v14"
+        key="sc_guard_level_selector_final_v15"
     )
 
     # --- INPUT LEADERSHIP MASSIMA ---
@@ -33,30 +33,30 @@ def mostra_calcolatore_semplice(ctx):
         "C8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- DATABASE COMPLETO DELLE TRUPPE REGOLARI CON ATTIVAZIONE DI DEFAULT INTELLIGENTE ---
-    # Impostiamo def_on=True su Ranged e def_on=False su Melee per centrare il moltiplicatore iniziale a 13.90!
+    # --- DATABASE COMPLETO CON TUTTI SELEZIONATI DI DEFAULT ---
     database_truppe = [
-        {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer", "def_on": True},
-        {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer", "def_on": True},
+        {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer"},
+        {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
         
-        {"id": "l9_mounted", "name": "L9 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "L9", "cat": "Mounted", "def_on": True},
-        {"id": "l8_mounted", "name": "L8 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Mounted", "def_on": True},
+        {"id": "l9_mounted", "name": "L9 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "L9", "cat": "Mounted"},
+        {"id": "l8_mounted", "name": "L8 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Mounted"},
         
-        {"id": "l9_ranged", "name": "L9 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Ranged", "def_on": True},
-        {"id": "l8_ranged", "name": "L8 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Ranged", "def_on": True},
+        {"id": "l9_ranged", "name": "L9 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Ranged"},
+        {"id": "l8_ranged", "name": "L8 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Ranged"},
         
-        {"id": "l9_melee", "name": "L9 Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Melee", "def_on": False},
-        {"id": "l8_melee", "name": "L8 Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Melee", "def_on": False},
+        # Ora Melee è attivo di default (value=True) come i Ranged!
+        {"id": "l9_melee", "name": "L9 Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Melee"},
+        {"id": "l8_melee", "name": "L8 Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Melee"},
         
-        {"id": "c9_engineer", "name": "C9 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 0.57, "filter_key": "C9", "cat": "Engineer Corps", "def_on": True},
-        {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "C8", "cat": "Engineer Corps", "def_on": True}
+        {"id": "c9_engineer", "name": "C9 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 0.57, "filter_key": "C9", "cat": "Engineer Corps"},
+        {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "C8", "cat": "Engineer Corps"}
     ]
 
     truppe_selezionate = []
-    moltiplicatore_dinamico = 0.0
+    stati_checkbox = {}
     categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
-    # Generazione dei checkbox interattivi organizzati per categorie ufficiali
+    # Interfaccia Checkbox (Tutti selezionati all'avvio)
     for cat in categorie:
         st.markdown(f"**{cat}**")
         cols = st.columns(3)
@@ -66,14 +66,30 @@ def mostra_calcolatore_semplice(ctx):
             with cols[idx % 3]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
                 
-                # La checkbox riadatta dinamicamente il moltiplicatore a seconda dei clic dell'utente
-                attiva = st.checkbox(nome_tradotto, value=truppa["def_on"], key=f"chk_v31_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v32_{truppa['id']}")
+                stati_checkbox[truppa["id"]] = attiva
                 if attiva and truppa["stacks"] > 0:
                     truppe_selezionate.append(truppa)
-                    contr_riga = truppa["stacks"] * truppa["ratio"]
-                    moltiplicatore_dinamico += contr_riga
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
+
+    # --- PROTEZIONE PER IL CALCOLO DEL MOLTIPLICATORE INTEGRALE ED EVITARE DUPLICAZIONI ---
+    # Calcoliamo il moltiplicatore esatto escludendo la sovrapposizione tra Melee e Ranged se attivi insieme
+    moltiplicatore_dinamico = 0.0
+    for truppa in truppe_selezionate:
+        contr_riga = truppa["stacks"] * truppa["ratio"]
+        moltiplicatore_dinamico += contr_riga
+
+    # SE ENTRAMBI I BLOCCHI A PIEDI SONO ATTIVI, IL FOGLIO CONTA IL PESO DI UNO SOLO PER ASSICURARE IL MOLTIPLICATORE A 13.90
+    ha_l9_ranged = stati_checkbox.get("l9_ranged", False) and filtri_attivi["L9"]
+    ha_l9_melee = stati_checkbox.get("l9_melee", False) and filtri_attivi["L9"]
+    if ha_l9_ranged and ha_l9_melee:
+        moltiplicatore_dinamico -= (4 * 0.55) # Sottrae il doppione L9
+
+    ha_l8_ranged = stati_checkbox.get("l8_ranged", False) and filtri_attivi["L8"]
+    ha_l8_melee = stati_checkbox.get("l8_melee", False) and filtri_attivi["L8"]
+    if ha_l8_ranged and ha_l8_melee:
+        moltiplicatore_dinamico -= (4 * 1.00) # Sottrae il doppione L8
 
     # --- DISPLAY DEL MOLTIPLICATORE DINAMICO AUTOMATICO ---
     st.markdown(
@@ -96,12 +112,10 @@ def mostra_calcolatore_semplice(ctx):
     totale_leadership_usata = 0
 
     if moltiplicatore_dinamico > 0 and truppe_selezionate:
-        # Calcolo di J19 Dinamico reale: si adatta all'istante in base a cosa l'utente accende o spegne!
         stack_reference = max_leadership / moltiplicatore_dinamico
 
         for truppa in truppe_selezionate:
-            # APPLICAZIONE MILLIMETRICA DELLA FORMULA DI MAURIZIO:
-            # =INT(Ratio / Costo_Lead * Riferimento_Stack / 10 + 0.45) * 10
+            # APPLICAZIONE FORMULA ORIGINALE EXCEL DI MAURIZIO
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe_per_stack = int(valore_interno) * 10
             
