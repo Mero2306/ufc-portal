@@ -3,21 +3,21 @@ import streamlit as st
 def mostra_calcolatore_semplice(ctx):
     st.markdown(f"<h1>{ctx.get('simple_calc_main_h1', '🧮 Simple Troops Calculator')}</h1>", unsafe_allow_html=True)
     
-    # --- NOTIFICA SUI CAPITANI PERSONALIZZATA (SENZA SFONDO ROSSO) ---
+    # --- NOTIFICA SUI CAPITANI ALLARGATA E AD ALTA LEGGIBILITÀ ---
     st.markdown(f"""
-    <div class="chat-box" style="padding:12px 16px!important; text-align:left; color:#f0e6d2; border-left:4px solid #cc4125!important; margin-bottom:15px; background: rgba(255, 255, 255, 0.01);">
-        <b style="color:#cc4125; font-size:13px; letter-spacing:0.5px; display:block; margin-bottom:3px;">⚠️ IMPORTANT CAPTAIN NOTE:</b>
-        <span style="font-size:12px; color:#a69e8d; line-height:1.4;">
+    <div class="chat-box" style="padding:16px 20px!important; text-align:left; color:#f0e6d2; border-left:5px solid #cc4125!important; margin-bottom:20px; background: rgba(255, 255, 255, 0.02); width:100%;">
+        <b style="color:#cc4125; font-size:15px; letter-spacing:0.5px; display:block; margin-bottom:6px;">⚠️ IMPORTANT CAPTAIN NOTE:</b>
+        <span style="font-size:13.5px; color:#e1d7c6; line-height:1.5; font-weight:400; display:block;">
             This calculator assumes you are using standard captains. If you use captains that grant specific health bonuses to a single troop type, the distribution formula will not balance correctly.
         </span>
     </div>
     """, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- 1. INPUT LEADERSHIP MASSIMA IN FORMATO DECIMALE CON SEPARATORI ATTIVI ---
+    # --- 1. INPUT LEADERSHIP MASSIMA (FORMATTATO SENZA DECIMALI INUTILI) ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0.0, value=0.0, step=1000.0, format="%.3f", key="sc_max_lead_v8000"
+        min_value=0.0, value=0.0, step=1000.0, format="%.0f", key="sc_max_lead_v9000"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -78,7 +78,7 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v8000_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v9000_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
