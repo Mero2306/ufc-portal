@@ -49,13 +49,6 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # DATABASE MOSTRI ALLINEATO ALLA TABELLA EXCEL (Costi 53, 53, 43 e Stacks esatti)
-    database_mostri = [
-        {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 53, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
-        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 53, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
-        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "col_idx": 2}
-    ]
-
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
@@ -85,43 +78,71 @@ def mostra_calcolatore_semplice(ctx):
     attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v5")
     attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v5")
     attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
-    # --- CALCOLO REATTIVO RIGIDO CON LE TUE FORMULE EXCEL AGGIORNATE ---
-    if max_leadership > 0:
+    
+    stati_mostri = {"M9": attiva_m9, "M8": attiva_m8, "M7": attiva_m7}
+    # --- 4. CALCOLO REATTIVO BACKGROUND ---
+    stack_ref_lead = max_leadership / moltiplicatore_truppe if moltiplicatore_truppe > 0 else 0
+
+    # --- 5. GENERAZIONE OUTPUT ---
+    if max_leadership > 0 or max_supremacy > 0:
         st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
         
-        # 13.9 è la costante di riferimento ricavata dall'esempio della tabella
-        riferimento_stack = max_leadership / 13.9 if moltiplicatore_truppe > 0 else 0
-        
         totale_leadership_usata = 0
+        totale_supremacy_usata = 0
         mappa_risultati = {}
         mappa_mostri_risultati = {}
-        
-        # Distribuzione Truppe Normali
+
+        # 1. Calcolo delle Truppe Regolari (Invariato)
         for truppa in database_truppe:
-            if stati_checkbox.get(truppa["id"], False):
-                valore_interno = (truppa["ratio"] / truppa["lead_cost"] * riferimento_stack)
-                count_truppe = int(valore_interno / 10) * 10
+            if stati_checkbox.get(truppa["id"], False) and stack_ref_lead > 0:
+                valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_ref_lead / 10) + 0.45
+                count_truppe = int(valore_interno) * 10
                 totale_leadership_usata += count_truppe * truppa["lead_cost"]
                 count_formattato = f"{count_truppe:,}".replace(",", ".")
             else:
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"], "row": truppa["row"]}
 
-        # ⚔️ APPLICAZIONE INTEGRALE DELLE TUE FORMULE EXCEL =INT(Ratio/Costo*Ref_Stack/10+0.5)*10
-        # Calcolo Totale Complessivo speculare all'Excel
-        tot_m9 = int((0.1383 / 53 * riferimento_stack / 10) + 0.5) * 10 if attiva_m9 else 0
-        tot_m8 = int((0.2486 / 53 * riferimento_stack / 10) + 0.5) * 10 if attiva_m8 else 0
-        tot_m7 = int((0.4480 / 43 * riferimento_stack / 10) + 0.5) * 10 if attiva_m7 else 0
+        # 2. ⚔️ NUOVO MOTORE DI CALCOLO STRUTTURATO SULLA SATURAZIONE SUPREMAZIA (HP RATIO)
+        # Costo autorità e stack fissi presi dai tuoi dati reali
+        costo_m9_casella = 53 * 4  # 212 punti per unità per slot
+        costo_m8_casella = 53 * 4  # 212 punti per unità per slot
+        costo_m7_casella = 43 * 2  # 86 punti per unità per slot
 
-        # Divisione rigida per slot (stack) per l'output in casella nel gioco
-        m9_slot = int(tot_m9 / 4)
-        m8_slot = int(tot_m8 / 4)
-        m7_slot = int(tot_m7 / 2)
+        # Impostiamo le proporzioni rigide della salute (M9 = 1X, M8 = 2X, M7 = 4X)
+        peso_m9 = 1.0 if attiva_m9 else 0.0
+        peso_m8 = 2.0 if attiva_m8 else 0.0
+        peso_m7 = 4.0 if attiva_m7 else 0.0
 
-        # Calcolo Supremazia Consumata Reale (mostri per slot * numero slot * costo autorità)
-        totale_supremacy_usata = (m9_slot * 4 * 53) + (m8_slot * 4 * 53) + (m7_slot * 2 * 43)
+        # Calcolo del costo totale dell'unità base X
+        costo_unita_base_x = (peso_m9 * costo_m9_casella) + (peso_m8 * costo_m8_casella) + (peso_m7 * costo_m7_casella)
 
-        # Output Box Contatori Generali
+        if costo_unita_base_x > 0 and max_supremacy > 0:
+            # Ricaviamo il valore base X partendo dalla tua Supremazia Massima
+            unita_base_x = max_supremacy / costo_unita_base_x
+            
+            # Applichiamo i moltiplicatori di volume e arrotondiamo rigidamente per decine
+            m9_slot = int((unita_base_x * peso_m9) / 10) * 10
+            m8_slot = int((unita_base_x * peso_m8) / 10) * 10
+            m7_slot = int((unita_base_x * peso_m7) / 10) * 10
+
+            # Freno di sicurezza millesimale anti-sforo dovuto agli arrotondamenti
+            while ((m9_slot * costo_m9_casella) + (m8_slot * costo_m8_casella) + (m7_slot * costo_m7_casella)) > max_supremacy:
+                if m7_slot >= 10: m7_slot -= 10
+                elif m8_slot >= 10: m8_slot -= 10
+                elif m9_slot >= 10: m9_slot -= 10
+                else: break
+
+            totale_supremacy_usata = (m9_slot * costo_m9_casella) + (m8_slot * costo_m8_casella) + (m7_slot * costo_m7_casella)
+        else:
+            m9_slot, m8_slot, m7_slot = 0, 0, 0
+
+        # Mappatura dei risultati dei mostri per la griglia
+        mappa_mostri_risultati["m9_group"] = {"name": ctx.get("Level 9 Monsters", "Level 9 Monsters"), "count": f"{m9_slot}", "col_idx": 0}
+        mappa_mostri_risultati["m8_group"] = {"name": ctx.get("Level 8 Monsters", "Level 8 Monsters"), "count": f"{m8_slot}", "col_idx": 1}
+        mappa_mostri_risultati["m7_group"] = {"name": ctx.get("Level 7 Monsters", "Level 7 Monsters"), "count": f"{m7_slot}", "col_idx": 2}
+
+        # Configurazione box riassuntivi finali
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_txt = f"{max_leadership:,}".replace(",", ".")
         sup_usata_txt = f"{totale_supremacy_usata:,}".replace(",", ".")
@@ -131,7 +152,6 @@ def mostra_calcolatore_semplice(ctx):
         col_res1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_lead_lbl", "Leadership Allocated")}</h3><p style="font-size:22px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_txt} / {lead_max_txt}</p></div>', unsafe_allow_html=True)
         col_res2.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_sup_lbl", "Supremacy Allocated")}</h3><p style="font-size:22px;color:#bd9b53;font-weight:bold;margin:0;">{sup_usata_txt} / {sup_max_txt}</p></div>', unsafe_allow_html=True)
 
-        # Griglia Stampa Truppe
         labels_file = {
             1: ctx.get("Level 9 Guardians", "🛡️ Guardians Level 9"), 
             2: ctx.get("Level 9 Specialists", "⚡ Specialists Level 9"),
@@ -159,12 +179,12 @@ def mostra_calcolatore_semplice(ctx):
         
         cols_mostri = st.columns(4)
         mostri_render = [
-            {"name": ctx.get("Level 9 Monsters", "Level 9 Monsters"), "count": f"{m9_slot}", "col": 0},
-            {"name": ctx.get("Level 8 Monsters", "Level 8 Monsters"), "count": f"{m8_slot}", "col": 1},
-            {"name": ctx.get("Level 7 Monsters", "Level 7 Monsters"), "count": f"{m7_slot}", "col": 2}
+            mappa_mostri_risultati["m9_group"],
+            mappa_mostri_risultati["m8_group"],
+            mappa_mostri_risultati["m7_group"]
         ]
         for m_r in mostri_render:
-            with cols_mostri[m_r["col"]]:
+            with cols_mostri[m_r["col_idx"]]:
                 st.markdown(f"""
                 <div class="chat-box" style="text-align: center; padding: 12px!important; min-height: 85px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 10px;">
                     <span style="color:#a69e8d; font-size:12px; font-weight:500; display: block; margin-bottom: 6px; line-height: 1.2;">{m_r['name']}</span>
