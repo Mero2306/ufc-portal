@@ -65,11 +65,11 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # Database Mostri ricalibrato sui costi di Supremazia proporzionali reali del gioco
+    # DATABASE MOSTRI CORRETTO: Inseriti i costi reali di autorità verificati dal gioco (110, 110, 65)
     database_mostri = [
         {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 110, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
-        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
-        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 30, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "col_idx": 2}
+        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 110, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
+        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 65, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "col_idx": 2}
     ]
 
     stati_checkbox = {}
@@ -126,7 +126,7 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # 2. ⚔️ NUOVO MOTORE CON CONTROLLO DI SICUREZZA COMPLESSIVO REALE
+        # 2. ⚔️ MOTORE CON FRENO DI SICUREZZA CENTRALIZZATO SUI COSTI REALI (110, 110, 65)
         moltiplicatore_mostri = 0.0
         for m in database_mostri:
             if stati_mostri[m["lvl_group"]]:
@@ -134,7 +134,6 @@ def mostra_calcolatore_semplice(ctx):
                 
         stack_ref_monsters = max_supremacy / moltiplicatore_mostri if moltiplicatore_mostri > 0 else 0
 
-        # Ciclo unico centralizzato: controlla e corregge la SOMMA dei tre blocchi
         safety_loop_counter = 0
         while safety_loop_counter < 150:
             test_supremacy_totale = 0
@@ -150,12 +149,11 @@ def mostra_calcolatore_semplice(ctx):
                         mostri_per_singolo_slot = 0
                         
                     conteggi_temporanei[mostro["id"]] = mostri_per_singolo_slot
-                    # Somma reale: mostri per slot * numero slot * costo autorità effettivo
                     test_supremacy_totale += (mostri_per_singolo_slot * mostro["stacks"] * mostro["auth_cost"])
                 else:
                     conteggi_temporanei[mostro["id"]] = 0
             
-            # Se la somma totale rientra nei 223.000 punti dell'utente, usciamo dal ciclo
+            # Se la somma complessiva rientra perfettamente nella tua Supremazia Massima, usciamo
             if test_supremacy_totale <= max_supremacy or stack_ref_monsters <= 0:
                 totale_supremacy_usata = test_supremacy_totale
                 break
@@ -164,7 +162,7 @@ def mostra_calcolatore_semplice(ctx):
             stack_ref_monsters *= 0.99
             safety_loop_counter += 1
 
-        # Generazione definitiva dell'output calibrato
+        # Generazione definitiva dell'output calibrato sui costi reali
         for mostro in database_mostri:
             cifra_slot = conteggi_temporanei.get(mostro["id"], 0)
             count_formattato = f"{cifra_slot:,}".replace(",", ".")
