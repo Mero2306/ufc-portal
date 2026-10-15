@@ -1,4 +1,5 @@
 import streamlit as st
+import math
 
 def mostra_calcolatore_semplice(ctx):
     st.markdown(
@@ -18,7 +19,7 @@ def mostra_calcolatore_semplice(ctx):
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
-    # --- DATABASE AGGIORNATO CON ENGINEER CORPS ---
+    # --- DATABASE VALORI FISSI DEL FOGLIO DI MAURIZIO ---
     database_truppe = [
         {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "contr": 1.00, "cat": "Flyer"},
         {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "contr": 2.00, "cat": "Flyer"},
@@ -40,7 +41,7 @@ def mostra_calcolatore_semplice(ctx):
     truppe_selezionate = []
     moltiplicatore_totale = 0.0
 
-    # Categorie aggiornate con i 5 nomi ufficiali di gioco
+    # Generazione dei 5 gruppi ufficiali con checkbox
     categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
     for cat in categorie:
@@ -59,13 +60,13 @@ def mostra_calcolatore_semplice(ctx):
                     moltiplicatore_totale += truppa["contr"]
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
-    # --- CALCOLO MATEMATICO ---
+    # --- CALCOLO CORE IDENTICO A GOOGLE SHEETS ---
     if moltiplicatore_totale > 0:
         stack_reference = max_leadership / moltiplicatore_totale
     else:
         stack_reference = 0
 
-    # --- DISPLAY DEL MOLTIPLICATORE DINAMICO ---
+    # Display del moltiplicatore aggiornato
     st.markdown(
         f"""
         <div class="chat-box" style="text-align: center; max-width: 500px; margin: 20px auto; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 10px !important;">
@@ -80,7 +81,6 @@ def mostra_calcolatore_semplice(ctx):
         unsafe_allow_html=True
     )
 
-    # --- COMPOSIZIONE FINALE DELLA MARCIA ---
     st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
 
     risultati_finali_html = ""
@@ -89,8 +89,18 @@ def mostra_calcolatore_semplice(ctx):
     if stack_reference > 0 and truppe_selezionate:
         for truppa in truppe_selezionate:
             if truppa["contr"] > 0:
-                leadership_riga = stack_reference * truppa["contr"]
-                count_truppe = round(leadership_riga / truppa["lead_cost"])
+                # Formula base della leadership teorica per riga
+                leadership_teorica = stack_reference * truppa["contr"]
+                
+                # Conteggio grezzo dei soldati
+                count_grezzo = leadership_teorica / truppa["lead_cost"]
+                
+                # REGLA EXCEL: Arrotondamento per difetto alle decine (arrotonda a decine inferiori, es: 6574 -> 6570)
+                count_truppe = math.floor(count_grezzo / 10) * 10
+                
+                # Protezione per evitare valori negativi
+                if count_truppe < 0:
+                    count_truppe = 0
                 
                 leadership_effettiva_riga = count_truppe * truppa["lead_cost"]
                 totale_leadership_effettiva += leadership_effettiva_riga
@@ -99,22 +109,25 @@ def mostra_calcolatore_semplice(ctx):
                 lead_riga_formattata = f"{leadership_effettiva_riga:,}".replace(",", ".")
                 nome_tradotto_riga = ctx.get(truppa["name"], truppa["name"])
 
-                risultati_finali_html += f"""
-                <div class="chat-box" style="display:flex; justify-content:space-between; align-items:center; padding:10px 16px!important; margin-bottom:8px!important;">
-                    <span style="color:#f0e6d2; font-weight:500;">{nome_tradotto_riga}</span>
-                    <div style="text-align:right;">
-                        <span style="color:#bd9b53; font-weight:bold; font-size:18px; margin-right:15px;">{count_formattato} u.</span>
-                        <span style="color:#a69e8d; font-size:13px;">(Lead: {lead_riga_formattata})</span>
+                if count_truppe > 0:
+                    risultati_finali_html += f"""
+                    <div class="chat-box" style="display:flex; justify-content:space-between; align-items:center; padding:10px 16px!important; margin-bottom:8px!important;">
+                        <span style="color:#f0e6d2; font-weight:500;">{nome_tradotto_riga}</span>
+                        <div style="text-align:right;">
+                            <span style="color:#bd9b53; font-weight:bold; font-size:18px; margin-right:15px;">{count_formattato} u.</span>
+                            <span style="color:#a69e8d; font-size:13px;">(Lead: {lead_riga_formattata})</span>
+                        </div>
                     </div>
-                </div>
-                """
+                    """
         
-        # Box riassuntivi della Leadership Totale Allocata
         lead_usata_formattata = f"{totale_leadership_effettiva:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
         st.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_lead_lbl", "Total Leadership Allocated")}</h3><p style="font-size:24px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_formattata} / {lead_max_formattata}</p></div>', unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown(risultati_finali_html, unsafe_allow_html=True)
+        if risultati_finali_html != "":
+            st.markdown(risultati_finali_html, unsafe_allow_html=True)
+        else:
+            st.info(ctx.get('calc_no_troops_allocated', 'Please select at least one troop type with a valid multiplier contribution.'))
     else:
         st.info(ctx.get('calc_no_troops_allocated', 'Please select at least one troop type with a valid multiplier contribution.'))
