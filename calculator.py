@@ -1,11 +1,11 @@
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # Titolo e sottotitolo UFC agganciati ai file delle lingue
+    # Titolo e descrizioni UFC agganciati ai file delle lingue
     st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
     st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
-    # --- NOTIFICA SUI CAPITANI ---
+    # --- NOTIFICA SUI CAPITANI SOTTO IL TITOLO ---
     st.markdown(f"""
     <div class="chat-box" style="padding:16px 20px!important; text-align:left; color:#f0e6d2; border-left:5px solid #cc4125!important; margin-bottom:20px; background: rgba(255, 255, 255, 0.02); width:100%;">
         <b style="color:#cc4125; font-size:15px; letter-spacing:0.5px; display:block; margin-bottom:6px;">{ctx.get('calc_note_title', '⚠️ IMPORTANT CAPTAIN NOTE:')}</b>
@@ -27,7 +27,7 @@ def mostra_calcolatore_semplice(ctx):
         min_value=0, value=0, step=1000, format="%d", key="sc_max_sup_v2026_final"
     )
 
-    # --- BOX DI CONFERMA VISIVA ---
+    # --- BOX DI CONFERMA VISIVA AUTOBILANCIATO ---
     if max_leadership > 0 or max_supremacy > 0:
         lead_txt = f"{max_leadership:,}".replace(",", ".")
         sup_txt = f"{max_supremacy:,}".replace(",", ".")
@@ -75,13 +75,13 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # ESTRAZIONE AUTOMATICA DELLE TRADUZIONI ESISTENTI DAI FILE DI MAURIZIO (SENZA AGGIUNGERE CHIAVI)
+    # CORREZIONE BUG ICONA DOPPIA: Rimosse le icone rigide. Streamlit legge solo la stringa nativa pulita tradotta dal file delle lingue.
     mappa_titoli_categorie = {
-        "Flyer": f"🛡️ {ctx.get('trends_graph_timeline', 'Flyer')}",
-        "Mounted": f"⚡ {ctx.get('trends_graph_volume', 'Mounted')}",
-        "Ranged": f"⚔️ {ctx.get('trends_graph_chest_type', 'Ranged')}",
-        "Melee": f"🔮 {ctx.get('trends_box_gap', 'Melee')}",
-        "Engineer Corps": f"📐 {ctx.get('Level 9 Engineer Corps', 'Engineer Corps')}"
+        "Flyer": ctx.get("trends_graph_timeline", "Flyer"),
+        "Mounted": ctx.get("trends_graph_volume", "Mounted"),
+        "Ranged": ctx.get("trends_graph_chest_type", "Ranged"),
+        "Melee": ctx.get("trends_box_gap", "Melee"),
+        "Engineer Corps": ctx.get("Level 9 Engineer Corps", "Engineer Corps")
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
