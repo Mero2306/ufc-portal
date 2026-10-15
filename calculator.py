@@ -32,7 +32,7 @@ def mostra_calcolatore_semplice(ctx):
         "Catapulte 8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- 4. DATABASE INTEGRALE: OGNI VOCE È RIGIDAMENTE 1 PLOTONE (STACKS = 1) ---
+    # --- 4. DATABASE INTEGRALE: OGNI RIGHE RAPPRESENTA UN PLOTONE SINGOLO (STACKS = 1) ---
     database_truppe = [
         # --- LIVELLO 9 ---
         {"id": "g9_flyer", "name": "L9 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "filter_key": "Guardie 9", "cat": "Flyer"},
@@ -62,7 +62,7 @@ def mostra_calcolatore_semplice(ctx):
     moltiplicatore_dinamico = 0.0
     categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
-    # Generazione Checkbox (Tutte spuntate di default, filtrate per G9/G8)
+    # Generazione Checkbox (Tutte filtrate per G9/G8 ed attive all'avvio)
     for cat in categorie:
         st.markdown(f"**{cat}**")
         cols = st.columns(2)
@@ -75,7 +75,8 @@ def mostra_calcolatore_semplice(ctx):
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
-                    moltiplicatore_dinamico += trsuppa_ratio = truppa["ratio"]
+                    # CORRETTO L'ERRORE DI SINTASSI QUI:
+                    moltiplicatore_dinamico += truppa["ratio"]
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
@@ -103,7 +104,7 @@ def mostra_calcolatore_semplice(ctx):
 
     if stack_reference > 0:
         for truppa in truppe_selezionate:
-            # APPLICAZIONE ESATTA DELLA TUA FORMULA MAURIZIO (SENZA MOLTIPLICATORI ESTERNI DI PLOTONE)
+            # APPLICAZIONE FORMULA ORIGINALE DI MAURIZIO
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe = int(valore_interno) * 10
             
