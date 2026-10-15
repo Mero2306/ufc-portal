@@ -628,7 +628,8 @@ else:
 
         # --- CHIAMATA ESTERNA INTEGRATA ---
         st.markdown("<br><hr>", unsafe_allow_html=True)
-        calculator.mostra_calcolatore_simple(ctx)
+        calculator.mostra_calcolatore_semplice(ctx)
+
 
 
          # --- PAGINA 5: CLAN RESULTS (VERSIONE COMPLETA E OTTIMIZZATA) ---
