@@ -75,13 +75,13 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # CORRETTO: Adesso usa chiavi pulite per i macro-titoli (senza sovrapporsi a L9)
+    # VERIFICATO: Utilizza frammenti puliti estratti dalle tue chiavi esistenti nel file it.json
     mappa_titoli_categorie = {
-        "Flyer": f"🛡️ {ctx.get('cat_flyer', 'Flyer')}",
-        "Mounted": f"⚡ {ctx.get('cat_mounted', 'Mounted')}",
-        "Ranged": f"⚔️ {ctx.get('cat_ranged', 'Ranged')}",
-        "Melee": f"🔮 {ctx.get('cat_melee', 'Melee')}",
-        "Engineer Corps": f"📐 {ctx.get('cat_engineer', 'Engineer Corps')}"
+        "Flyer": f"🛡️ {ctx.get('Level 9 Guardians Flyer', 'Flyer').replace('Liv.9 Guardiani ', '')}",
+        "Mounted": f"⚡ {ctx.get('Level 9 Guardians Mounted', 'Mounted').replace('Liv.9 Guardiani ', '')}",
+        "Ranged": f"⚔️ {ctx.get('Level 9 Guardians Ranged', 'Ranged').replace('Liv.9 Guardiani ', '')}",
+        "Melee": f"🔮 {ctx.get('Level 9 Guardians Melee', 'Melee').replace('Liv.9 Guardiani ', '')}",
+        "Engineer Corps": f"📐 {ctx.get('Level 9 Engineer Corps', 'Engineer Corps')}"
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
@@ -168,12 +168,13 @@ def mostra_calcolatore_semplice(ctx):
         col_res1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_lead_lbl", "Leadership Allocated")}</h3><p style="font-size:22px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_txt} / {lead_max_txt}</p></div>', unsafe_allow_html=True)
         col_res2.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_sup_lbl", "Supremacy Allocated")}</h3><p style="font-size:22px;color:#bd9b53;font-weight:bold;margin:0;">{sup_usata_txt} / {sup_max_txt}</p></div>', unsafe_allow_html=True)
 
+        # VERIFICATO: Agganciato alle chiavi esatte già presenti nel tuo it.json
         labels_file = {
-            1: ctx.get("row_lbl_g9", "🛡️ Guardians Level 9"), 
-            2: ctx.get("row_lbl_s9", "⚡ Specialists Level 9"),
-            3: ctx.get("row_lbl_g8", "⚔️ Guardians Level 8"), 
-            4: ctx.get("row_lbl_s8", "🔮 Specialists Level 8"),
-            5: ctx.get("row_lbl_eng", "📐 Engineer Corps")
+            1: ctx.get("Level 9 Guardians", "🛡️ Guardians Level 9"), 
+            2: ctx.get("Level 9 Specialists", "⚡ Specialists Level 9"),
+            3: ctx.get("Level 8 Guardians", "⚔️ Guardians Level 8"), 
+            4: ctx.get("Level 8 Specialists", "🔮 Specialists Level 8"),
+            5: ctx.get("Level 9 Engineer Corps", "📐 Engineer Corps")
         }
 
         for r in range(1, 6):
