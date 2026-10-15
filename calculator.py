@@ -41,7 +41,7 @@ def mostra_calcolatore_semplice(ctx):
 
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops and Monsters')}")
 
-    # --- DATABASE COMPLETO TRUPPE REGOLARI ---
+    # --- DATABASE TRUPPE REGOLARI ---
     database_truppe = [
         {"id": "g9_flyer", "name": "Level 9 Guardians Flyer", "lead_cost": 20, "ratio": 0.50, "cat": "Flyer", "row": 1, "col_idx": 0},
         {"id": "g9_mounted", "name": "Level 9 Guardians Mounted", "lead_cost": 2, "ratio": 0.55, "cat": "Mounted", "row": 1, "col_idx": 1},
@@ -63,11 +63,11 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # MODIFICA: Il database dei mostri ora contiene solo 1 voce unica per ciascun livello (stacks = 4 o 2 integrati)
+    # Database Mostri Compatto
     database_mostri = [
-        {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "row": 6},
-        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "row": 7},
-        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "row": 8}
+        {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
+        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
+        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "col_idx": 2}
     ]
 
     stati_checkbox = {}
@@ -96,7 +96,6 @@ def mostra_calcolatore_semplice(ctx):
     # --- 4. CALCOLO REATTIVO BACKGROUND DISTINTO (PARTE 2) ---
     stack_ref_lead = max_leadership / moltiplicatore_truppe if moltiplicatore_truppe > 0 else 0
 
-    # Il moltiplicatore dei mostri calcola la somma dei contributi dei soli gruppi attivi
     moltiplicatore_mostri = 0.0
     for m in database_mostri:
         if stati_mostri[m["lvl_group"]]:
@@ -123,21 +122,24 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # Calcolo Mostri (1 Solo Riquadro Centrale per Livello)
+        # Calcolo Mostri con Sistema di Sicurezza Anti-Sforo
         mappa_mostri_risultati = {}
         for mostro in database_mostri:
             if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
-                # Formula originale di Maurizio
                 valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10) + 0.5
                 count_mostri = int(valore_interno) * 10
                 
-                # Supremazia totale spesa per l'intera riga (Conteggio * Stacks * Costo Spazio)
+                # Controllo se l'arrotondamento +0.5 fa superare la supremazia totale riga
+                # Se sfora, riduce a blocchi di 10 fino a rientrare perfettamente nel budget
+                while (count_mostri * mostro["stacks"] * mostro["auth_cost"]) > max_supremacy and count_mostri > 0:
+                    count_mostri -= 10
+                
                 totale_supremacy_usata += (count_mostri * mostro["stacks"] * mostro["auth_cost"])
                 count_formattato = f"{count_mostri:,}".replace(",", ".")
             else:
                 count_formattato = "0"
                 
-            mappa_mostri_risultati[mostro["id"]] = {"name": mostro["name"], "count": count_formattato}
+            mappa_mostri_risultati[mostro["id"]] = {"name": mostro["name"], "count": count_formattato, "col_idx": mostro["col_idx"]}
 
         # Box riassuntivi delle risorse usate
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
@@ -173,26 +175,17 @@ def mostra_calcolatore_semplice(ctx):
                     """, unsafe_allow_html=True)
             st.markdown("<div style='margin-bottom: 5px;'></div>", unsafe_allow_html=True)
 
-        # --- STAMPA DELLE RIGHE DEI MOSTRI CON UN UNICO BOX COMPATTO E CENTRATO ---
+        # --- MODIFICA: STAMPA DI TUTTI I MOSTRI IN UN'UNICA RIGA ORIZZONTALE A 4 COLONNE ---
         st.markdown("<hr style='margin: 15px 0; opacity: 0.15;'>", unsafe_allow_html=True)
+        st.markdown("<small style='color:#bd9b53;font-weight:bold;'>🐉 Tactical Monsters (M9 / M8 / M7)</small>", unsafe_allow_html=True)
         
-        labels_mostri = {
-            "m9_group": "🐉 Monsters Level 9 (M9)",
-            "m8_group": "🦁 Monsters Level 8 (M8)",
-            "m7_group": "🦅 Monsters Level 7 (M7)"
-        }
-
-        for m_id, label_riga in labels_mostri.items():
-            st.markdown(f"<small style='color:#bd9b53;font-weight:bold;'>{label_riga}</small>", unsafe_allow_html=True)
-            
-            # Usiamo st.columns(3) e posizioniamo il box al centro (nella seconda colonna) per renderlo elegantissimo
-            c_left, c_center, c_right = st.columns([1, 2, 1])
-            info_m = mappa_mostri_risultati[m_id]
-            
-            with c_center:
+        cols_mostri = st.columns(4)
+        for mostro in database_mostri:
+            info_m = mappa_mostri_risultati[mostro["id"]]
+            with cols_mostri[mostro["col_idx"]]:
                 st.markdown(f"""
-                <div class="chat-box" style="text-align: center; padding: 14px!important; min-height: 85px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 12px; border: 1px solid rgba(189, 155, 83, 0.15); background: rgba(255,255,255,0.01);">
-                    <span style="color:#a69e8d; font-size:13px; font-weight:500; display: block; margin-bottom: 6px;">{info_m['name']}</span>
-                    <b style="color:#bd9b53; font-size:22px; display: block;">{info_m['count']}</b>
+                <div class="chat-box" style="text-align: center; padding: 12px!important; min-height: 85px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 10px;">
+                    <span style="color:#a69e8d; font-size:12px; font-weight:500; display: block; margin-bottom: 6px; line-height: 1.2;">{info_m['name']}</span>
+                    <b style="color:#bd9b53; font-size:18px; display: block;">{info_m['count']}</b>
                 </div>
                 """, unsafe_allow_html=True)
