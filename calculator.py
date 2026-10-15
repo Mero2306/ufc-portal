@@ -9,13 +9,13 @@ def mostra_calcolatore_semplice(ctx):
     # --- 1. INPUT LEADERSHIP MASSIMA ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, key="sc_max_lead_v1000"
+        min_value=0, value=0, step=1000, key="sc_max_lead_v1100"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
-    # --- 2. DATABASE COMPLETO DELLE TRUPPE REGOLARI E SPECIALISTI T9/T8 ---
+    # --- 2. DATABASE COMPLETO DELLE TRUPPE ---
     database_truppe = [
         # --- LIVELLO 9 ---
         {"id": "g9_flyer", "name": "L9 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "cat": "Flyer"},
@@ -54,7 +54,7 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v1000_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v1100_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
@@ -86,7 +86,6 @@ def mostra_calcolatore_semplice(ctx):
             count_formattato = f"{count_truppe:,}".replace(",", ".")
             nome_tradotto_riga = ctx.get(truppa["name"], truppa["name"])
 
-            # MODIFICA: Rimossi "u." e "Lead riga" - lasciato solo il numero puro in grassetto dorato
             if count_truppe > 0:
                 risultati_finali_html += f"""
                 <div class="chat-box" style="display:flex; justify-content:space-between; align-items:center; padding:10px 16px!important; margin-bottom:8px!important;">
@@ -112,4 +111,10 @@ def mostra_calcolatore_semplice(ctx):
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(risultati_finali_html, unsafe_allow_html=True)
     else:
-        st.info(ctx.get('calc_no_troops_allocated', 'Inserisci un valore di Leadership Massima per calcolare la distribuzione dei plotoni.'))
+        # MODIFICA: Scritta in inglese e racchiusa nello stile chat-box per rimuovere lo sfondo azzurro nativo
+        testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter a Maximum Leadership value to calculate the troop stack distribution.')
+        st.markdown(f"""
+        <div class="chat-box" style="padding:15px!important; text-align:center; color:#a69e8d; border-left:4px solid #bd9b53!important;">
+            {testo_notifica}
+        </div>
+        """, unsafe_allow_html=True)
