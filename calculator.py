@@ -9,7 +9,7 @@ def mostra_calcolatore_semplice(ctx):
     # --- 1. INPUT LEADERSHIP MASSIMA ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, key="sc_max_lead_v800"
+        min_value=0, value=0, step=1000, key="sc_max_lead_v900"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -54,7 +54,7 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v800_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v900_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
@@ -62,7 +62,7 @@ def mostra_calcolatore_semplice(ctx):
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
-    # --- 3. CALCOLO REATTIVO IN BACKGROUND DEL RIFERIMENTO STACK (IL MOLTIPLIPLICATORE ORA È INVISIBILE) ---
+    # --- 3. CALCOLO REATTIVO IN BACKGROUND (SENZA ALCUN BOX VISIBILE A SCHERMO) ---
     if moltiplicatore_dinamico > 0:
         stack_reference = max_leadership / moltiplicatore_dinamico
     else:
