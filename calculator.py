@@ -13,7 +13,7 @@ def mostra_calcolatore_semplice(ctx):
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8"],
-        key="sc_guard_level_selector_final_v11"
+        key="sc_guard_level_selector_final_v12"
     )
 
     # --- INPUT LEADERSHIP MASSIMA ---
@@ -33,14 +33,15 @@ def mostra_calcolatore_semplice(ctx):
         "C8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- DATABASE COMPLETO ALLINEATO RIGIDAMENTE AL FOGLIO ---
-    # CORREZIONI APPLICATE: 
+    # --- DATABASE COMPLETO AGGIORNATO CON GLI STACK REALI ---
+    # CORREZIONI APPLICATE RIGIDAMENTE:
     # - L9 Flyer (Corax) = 1 STACK
+    # - L8 Flyer (Corax) = 1 STACK
     # - L9 Mounted = 1 STACK
     # - L8 Mounted = 1 STACK
     database_truppe = [
         {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer"},
-        {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
+        {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
         
         {"id": "l9_mounted", "name": "L9 Mounted", "lead_cost": 2, "stacks": 1, "ratio": 0.55, "filter_key": "L9", "cat": "Mounted"},
         {"id": "l8_mounted", "name": "L8 Mounted", "lead_cost": 2, "stacks": 1, "ratio": 1.00, "filter_key": "L8", "cat": "Mounted"},
@@ -69,7 +70,7 @@ def mostra_calcolatore_semplice(ctx):
             with cols[idx % 3]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
                 
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v28_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v29_{truppa['id']}")
                 if attiva and truppa["stacks"] > 0:
                     truppe_selezionate.append(truppa)
                     # contr. = Stacks * Ratio
