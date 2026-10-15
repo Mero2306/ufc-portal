@@ -75,13 +75,13 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # RIPRISTINO RIGIDO DELLE ICONE STORICHE UFC DAVANTI AI TITOLI DELLE CATEGORIE
+    # RIMOZIONE DELLA CHIAVE MANUALE DEL RIGHELLO PER RISOLVERE IL BUG DELLE DUE ICONE 📐 📐
     mappa_titoli_categorie = {
         "Flyer": f"🛡️ {ctx.get('Level 9 Guardians', 'Flyer')}",
         "Mounted": f"⚡ {ctx.get('Level 9 Guardians Mounted', 'Mounted')}",
         "Ranged": f"⚔️ {ctx.get('Level 9 Guardians Ranged', 'Ranged')}",
         "Melee": f"🔮 {ctx.get('Level 9 Guardians Melee', 'Melee')}",
-        "Engineer Corps": f"📐 {ctx.get('Level 9 Engineer Corps', 'Engineer Corps')}"
+        "Engineer Corps": ctx.get("Level 9 Engineer Corps", "Engineer Corps")
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
