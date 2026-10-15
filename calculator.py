@@ -75,23 +75,23 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # CORREZIONE BUG ICONA DOPPIA: Rimosse le icone rigide. Streamlit legge solo la stringa nativa pulita tradotta dal file delle lingue.
-    mappa_titoli_categorie = {
-        "Flyer": ctx.get("trends_graph_timeline", "Flyer"),
-        "Mounted": ctx.get("trends_graph_volume", "Mounted"),
-        "Ranged": ctx.get("trends_graph_chest_type", "Ranged"),
-        "Melee": ctx.get("trends_box_gap", "Melee"),
-        "Engineer Corps": ctx.get("Level 9 Engineer Corps", "Engineer Corps")
+    # RIPRISTINO RIGIDO DEI TITOLI ORIGINALI SENZA ALCUNA CHIAVE DEI GRAFICI SBALIATA
+    mappa_titoli_categories = {
+        "Flyer": "Flyer",
+        "Mounted": "Mounted",
+        "Ranged": "Ranged",
+        "Melee": "Melee",
+        "Engineer Corps": "Engineer Corps"
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
-        st.markdown(f"**{mappa_titoli_categorie[cat]}**")
+        st.markdown(f"**{mappa_titoli_categories[cat]}**")
         cols = st.columns(2)
         truppe_in_cat = [t for t in database_truppe if t["cat"] == cat]
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_unif_{truppa['id']}_v5")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_unif_{truppa['id']}_v7")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     moltiplicatore_truppe += truppa["ratio"]
@@ -99,9 +99,9 @@ def mostra_calcolatore_semplice(ctx):
 
     st.markdown(f"**{ctx.get('calc_monsters_config_title', '🛡️ Monsters Configuration')}**")
     c_m1, c_m2, c_m3 = st.columns(3)
-    attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v5")
-    attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v5")
-    attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
+    attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v7")
+    attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v7")
+    attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v7")
     
     stati_mostri = {"M9": attiva_m9, "M8": attiva_m8, "M7": attiva_m7}
     # --- 4. CALCOLO REATTIVO BACKGROUND DISTINTO (PARTE 2) ---
