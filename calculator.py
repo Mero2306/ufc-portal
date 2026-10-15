@@ -11,7 +11,7 @@ def mostra_calcolatore_semplice(ctx):
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops')}")
     filtri = {"G9": livello_scelto == "G9", "S9": livello_scelto == "G9", "C9": livello_scelto == "G9", "G8": True, "S8": True, "C8": True}
 
-    # Database configurazione nativa e pulita dal foglio di Maurizio
+    # Database configurazione nativa dal foglio di Maurizio
     config_base = [
         {"t": "Flyer", "lead": 20, "st": 2, "r9": 0.50, "r8": 1.00, "sp": True, "eng": False},
         {"t": "Mounted", "lead": 2, "st": 2, "r9": 0.55, "r8": 1.00, "sp": True, "eng": False},
@@ -32,6 +32,8 @@ def mostra_calcolatore_semplice(ctx):
             database_truppe.append({"id": "c9_eng", "name": "C9 Engineer Corps", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r9"], "f_key": "C9", "cat": c["t"], "grp": "ENG"})
             database_truppe.append({"id": "c8_eng", "name": "C8 Engineer Corps", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "C8", "cat": c["t"], "grp": "ENG"})
 
+    # CORREZIONE: Inizializzazione corretta della lista truppe_selezionate prima del ciclo checkbox
+    truppe_selezionate = []
     stati_checkbox = {}
     moltiplicatore_dinamico = 0.0
 
@@ -41,7 +43,6 @@ def mostra_calcolatore_semplice(ctx):
         truppe_in_cat = [t for t in database_truppe if t["cat"] == cat and filtri[t["f_key"]]]
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
-                # All'avvio teniamo accese solo le guardie e genieri (def_on) per agganciare subito il moltiplicatore a 13.90!
                 def_on = truppa["grp"] in ["G9", "G8", "ENG"]
                 attiva = st.checkbox(ctx.get(truppa["name"], truppa["name"]), value=def_on, key=f"chk_f10_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
@@ -50,7 +51,6 @@ def mostra_calcolatore_semplice(ctx):
                     moltiplicatore_dinamico += (truppa["stacks"] * truppa["ratio"])
         st.markdown("<hr style='margin: 4px 0; opacity: 0.05;'>", unsafe_allow_html=True)
 
-    # Il Riferimento Stack (J19) si adatta fluidamente a seconda di quante caselle sono spuntate
     stack_reference = max_leadership / moltiplicatore_dinamico if moltiplicatore_dinamico > 0 else 0
 
     st.markdown(f"""<div class="chat-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 12px !important; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #1c1810, #0f0d0a) !important; margin-bottom: 20px !important;">
@@ -74,11 +74,9 @@ def mostra_calcolatore_semplice(ctx):
     if stack_reference > 0:
         for t in database_truppe:
             if filtri[t["f_key"]] and stati_checkbox[t["id"]] and t["stacks"] > 0:
-                # LA FORMULA DI MAURIZIO GENERA LA QUANTITÀ DI SOLDATI PER SINGOLO STACK
                 valore_interno = (t["ratio"] / t["lead_cost"] * stack_reference / 10) + 0.45
                 count_truppe_singolo_stack = int(valore_interno) * 10
                 
-                # La leadership totale della riga tiene conto del numero degli stack reali (st)
                 leadership_riga = count_truppe_singolo_stack * t["stacks"] * t["lead_cost"]
                 totale_leadership_usata += leadership_riga
 
