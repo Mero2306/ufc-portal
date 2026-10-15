@@ -6,11 +6,11 @@ def mostra_calcolatore_semplice(ctx):
     
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- 1. SELEZIONE LIVELLO MASSIMO (Cella B2 del tuo foglio) ---
+    # --- 1. SELEZIONE LIVELLO MASSIMO ---
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8"],
-        key="sc_guard_level_selector_final_v100_perfect"
+        key="sc_guard_level_selector_final_v500_perfect"
     )
 
     # --- 2. INPUT LEADERSHIP MASSIMA ---
@@ -22,35 +22,47 @@ def mostra_calcolatore_semplice(ctx):
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
-    # --- 3. FILTRI BOOLEANI SULLA BASE DEL LIVELLO SELEZIONATO ---
+    # --- 3. ATTIVAZIONE DEI FILTRI BOOLEANI IN BASE ALLA SELEZIONE ---
     filtri_fogli = {
         "Guardie 9": livello_scelto == "G9",
-        "Guardie 8": livello_scelto in ["G9", "G8"],
+        "Specialisti 9": livello_scelto == "G9",
         "Catapulte 9": livello_scelto == "G9",
+        "Guardie 8": livello_scelto in ["G9", "G8"],
+        "Specialisti 8": livello_scelto in ["G9", "G8"],
         "Catapulte 8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- 4. LE ESATTE 9 RIGHE ORIGINALI DEL FOGLIO DI MAURIZIO ---
+    # --- 4. DATABASE INTEGRALE: OGNI VOCE È RIGIDAMENTE 1 PLOTONE (STACKS = 1) ---
     database_truppe = [
-        {"id": "l9_corax", "name": "L9 Guard/Spec Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "Guardie 9", "cat": "Flyer"},
-        {"id": "l8_corax", "name": "L8 Guard/Spec Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Flyer"},
-        
-        {"id": "l9_cavalli", "name": "L9 Guard/Spec Mounted (Cavalli)", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Mounted"},
-        {"id": "l8_cavalli", "name": "L8 Guard/Spec Mounted (Cavalli)", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Mounted"},
-        
-        {"id": "l9_guardie", "name": "L9 Guard/Spec Ranged & Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Foot"},
-        {"id": "l8_guardie", "name": "L8 Guard/Spec Ranged & Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Foot"},
-        
-        {"id": "c9_catapulte", "name": "C9 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 0.57, "filter_key": "Catapulte 9", "cat": "Engineer Corps"},
-        {"id": "c8_catapulte", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "Catapulte 8", "cat": "Engineer Corps"}
+        # --- LIVELLO 9 ---
+        {"id": "g9_flyer", "name": "L9 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "filter_key": "Guardie 9", "cat": "Flyer"},
+        {"id": "s9_flyer", "name": "L9 Spec Flyer (Griffin/Lion)", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "filter_key": "Specialisti 9", "cat": "Flyer"},
+        {"id": "g9_mounted", "name": "L9 Guard Mounted (Cavalli)", "lead_cost": 2, "stacks": 1, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Mounted"},
+        {"id": "s9_mounted", "name": "L9 Spec Mounted", "lead_cost": 2, "stacks": 1, "ratio": 0.55, "filter_key": "Specialisti 9", "cat": "Mounted"},
+        {"id": "g9_ranged", "name": "L9 Guard Ranged (Arco)", "lead_cost": 1, "stacks": 1, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Ranged"},
+        {"id": "s9_ranged", "name": "L9 Spec Ranged", "lead_cost": 1, "stacks": 1, "ratio": 0.55, "filter_key": "Specialisti 9", "cat": "Ranged"},
+        {"id": "g9_melee", "name": "L9 Guard Melee (Mischia)", "lead_cost": 1, "stacks": 1, "ratio": 0.55, "filter_key": "Guardie 9", "cat": "Melee"},
+        {"id": "s9_melee", "name": "L9 Spec Melee", "lead_cost": 1, "stacks": 1, "ratio": 0.55, "filter_key": "Specialisti 9", "cat": "Melee"},
+        {"id": "c9_engineer", "name": "C9 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 0.57, "filter_key": "Catapulte 9", "cat": "Engineer Corps"},
+
+        # --- LIVELLO 8 ---
+        {"id": "g8_flyer", "name": "L8 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Flyer"},
+        {"id": "s8_flyer", "name": "L8 Spec Flyer", "lead_cost": 20, "stacks": 1, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Flyer"},
+        {"id": "g8_mounted", "name": "L8 Guard Mounted (Cavalli)", "lead_cost": 2, "stacks": 1, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Mounted"},
+        {"id": "s8_mounted", "name": "L8 Spec Mounted", "lead_cost": 2, "stacks": 1, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Mounted"},
+        {"id": "g8_ranged", "name": "L8 Guard Ranged (Arco)", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Ranged"},
+        {"id": "s8_ranged", "name": "L8 Spec Ranged", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Ranged"},
+        {"id": "g8_melee", "name": "L8 Guard Melee (Mischia)", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "filter_key": "Guardie 8", "cat": "Melee"},
+        {"id": "s8_melee", "name": "L8 Spec Melee", "lead_cost": 1, "stacks": 1, "ratio": 1.00, "filter_key": "Specialisti 8", "cat": "Melee"},
+        {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "Catapulte 8", "cat": "Engineer Corps"}
     ]
 
     truppe_selezionate = []
     stati_checkbox = {}
     moltiplicatore_dinamico = 0.0
-    categorie = ["Flyer", "Mounted", "Foot", "Engineer Corps"]
+    categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
-    # Interfaccia Checkbox Dinamica
+    # Generazione Checkbox (Tutte spuntate di default, filtrate per G9/G8)
     for cat in categorie:
         st.markdown(f"**{cat}**")
         cols = st.columns(2)
@@ -59,17 +71,15 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v100_final_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v500_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
-                
-                if attiva and truppa["stacks"] > 0:
-                    contr_riga = truppa["stacks"] * truppa["ratio"]
-                    moltiplicatore_dinamico += contr_riga
+                if attiva:
+                    truppe_selezionate.append(truppa)
+                    moltiplicatore_dinamico += trsuppa_ratio = truppa["ratio"]
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
-    # --- 5. CALCOLO DINAMICO DEL RIFERIMENTO STACK ---
+    # --- 5. CALCOLO REATTIVO DEL RIFERIMENTO STACK ---
     if moltiplicatore_dinamico > 0:
         stack_reference = max_leadership / moltiplicatore_dinamico
     else:
@@ -92,30 +102,28 @@ def mostra_calcolatore_semplice(ctx):
     totale_leadership_usata = 0
 
     if stack_reference > 0:
-        for truppa in database_truppe:
-            if filtri_fogli[truppa["filter_key"]] and stati_checkbox[truppa["id"]] and truppa["stacks"] > 0:
-                
-                # FORMULA ORIGINALE DI MAURIZIO
-                valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
-                count_truppe_per_stack = int(valore_interno) * 10
-                
-                leadership_riga = count_truppe_per_stack * truppa["stacks"] * truppa["lead_cost"]
-                totale_leadership_usata += leadership_riga
+        for truppa in truppe_selezionate:
+            # APPLICAZIONE ESATTA DELLA TUA FORMULA MAURIZIO (SENZA MOLTIPLICATORI ESTERNI DI PLOTONE)
+            valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
+            count_truppe = int(valore_interno) * 10
+            
+            leadership_riga = count_truppe * truppa["lead_cost"]
+            totale_leadership_usata += leadership_riga
 
-                count_formattato = f"{count_truppe_per_stack:,}".replace(",", ".")
-                lead_riga_formattata = f"{leadership_riga:,}".replace(",", ".")
-                nome_tradotto_riga = ctx.get(truppa["name"], truppa["name"])
+            count_formattato = f"{count_truppe:,}".replace(",", ".")
+            lead_riga_formattata = f"{leadership_riga:,}".replace(",", ".")
+            nome_tradotto_riga = ctx.get(truppa["name"], truppa["name"])
 
-                if count_truppe_per_stack > 0:
-                    risultati_finali_html += f"""
-                    <div class="chat-box" style="display:flex; justify-content:space-between; align-items:center; padding:10px 16px!important; margin-bottom:8px!important;">
-                        <span style="color:#f0e6d2; font-weight:500;">{nome_tradotto_riga} <small style="color:#bd9b53;">({truppa['stacks']} Stacks)</small></span>
-                        <div style="text-align:right;">
-                            <span style="color:#bd9b53; font-weight:bold; font-size:18px; margin-right:15px;">{count_formattato} u. <small style="font-size:11px;color:#a69e8d;">/stack</small></span>
-                            <span style="color:#a69e8d; font-size:13px;">(Lead riga: {lead_riga_formattata})</span>
-                        </div>
+            if count_truppe > 0:
+                risultati_finali_html += f"""
+                <div class="chat-box" style="display:flex; justify-content:space-between; align-items:center; padding:10px 16px!important; margin-bottom:8px!important;">
+                    <span style="color:#f0e6d2; font-weight:500;">{nome_tradotto_riga}</span>
+                    <div style="text-align:right;">
+                        <span style="color:#bd9b53; font-weight:bold; font-size:18px; margin-right:15px;">{count_formattato} u.</span>
+                        <span style="color:#a69e8d; font-size:13px;">(Lead riga: {lead_riga_formattata})</span>
                     </div>
-                    """
+                </div>
+                """
         
         lead_usata_formattata = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
