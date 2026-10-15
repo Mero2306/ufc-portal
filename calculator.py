@@ -65,7 +65,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # Database Mostri (Moltiplicatori e costi di autorità 55, 55, 43 bloccati)
+    # Database Mostri (Parametri originali bloccati)
     database_mostri = [
         {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
         {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
@@ -132,32 +132,38 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # ⚔️ ALGORITMO ANTI-SFORO CORRETTO PER I MOSTRI (Approssimazione rigida per difetto)
+        # ⚔️ ALGORITMO ANTI-SFORO CON DIVISIONE PER STACK (VALORE PER SINGOLO SLOT IN GIOCO)
         safety_loop_counter = 0
         while safety_loop_counter < 100:
             test_supremacy_totale = 0
             for mostro in database_mostri:
                 if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
-                    # Rimosso il +0.5 per evitare l'arrotondamento per eccesso che faceva sforare in gioco
-                    valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10)
-                    count_test = int(valore_interno) * 10
-                    # Costo calcolato correttamente in base ai reali parametri di gioco
-                    test_supremacy_totale += (count_test * mostro["stacks"] * mostro["auth_cost"])
+                    valore_totale_mostri = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10)
+                    count_totale = int(valore_totale_mostri) * 10
+                    
+                    # Dividiamo per il numero di stack per ottenere il valore esatto da inserire nel singolo slot del gioco
+                    count_per_singolo_slot = int(count_totale / mostro["stacks"])
+                    
+                    # Il costo reale di Supremazia calcolato è: (mostri per slot) * (numero di slot) * (costo autorità)
+                    test_supremacy_totale += (count_per_singolo_slot * mostro["stacks"] * mostro["auth_cost"])
             
             if test_supremacy_totale <= max_supremacy or stack_ref_monsters <= 0:
                 break
             
-            # Riduzione progressiva se la combinazione sfora la Supremazia Massima
             stack_ref_monsters *= 0.99
             safety_loop_counter += 1
 
-        # Applicazione definitiva dei conteggi mostri calibrati al ribasso sicuro
+        # Applicazione definitiva dei conteggi mostri calibrati e divisi per slot
         for mostro in database_mostri:
             if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
-                valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10)
-                count_mostri = int(valore_interno) * 10
-                totale_supremacy_usata += (count_mostri * mostro["stacks"] * mostro["auth_cost"])
-                count_formattato = f"{count_mostri:,}".replace(",", ".")
+                valore_totale_mostri = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10)
+                count_totale = int(valore_totale_mostri) * 10
+                
+                # Dividiamo rigido per il numero di slot per l'output a schermo
+                count_per_singolo_slot = int(count_totale / mostro["stacks"])
+                
+                totale_supremacy_usata += (count_per_singolo_slot * mostro["stacks"] * mostro["auth_cost"])
+                count_formattato = f"{count_per_singolo_slot:,}".replace(",", ".")
             else:
                 count_formattato = "0"
             mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": count_formattato, "col_idx": mostro["col_idx"]}
