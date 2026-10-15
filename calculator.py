@@ -75,13 +75,13 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # VERIFICATO: Utilizza frammenti puliti estratti dalle tue chiavi esistenti nel file it.json
+    # RISOLTO: Pulizia dell'icona duplicata per il Corpo Genieri e rimozione dell'eredità "Liv.9" nel macro-titolo
     mappa_titoli_categorie = {
         "Flyer": f"🛡️ {ctx.get('Level 9 Guardians Flyer', 'Flyer').replace('Liv.9 Guardiani ', '')}",
         "Mounted": f"⚡ {ctx.get('Level 9 Guardians Mounted', 'Mounted').replace('Liv.9 Guardiani ', '')}",
         "Ranged": f"⚔️ {ctx.get('Level 9 Guardians Ranged', 'Ranged').replace('Liv.9 Guardiani ', '')}",
         "Melee": f"🔮 {ctx.get('Level 9 Guardians Melee', 'Melee').replace('Liv.9 Guardiani ', '')}",
-        "Engineer Corps": f"📐 {ctx.get('Level 9 Engineer Corps', 'Engineer Corps')}"
+        "Engineer Corps": f"📐 {ctx.get('Level 9 Engineer Corps', 'Engineer Corps').replace('📐 ', '').replace('Liv.9 ', '')}"
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
@@ -168,7 +168,7 @@ def mostra_calcolatore_semplice(ctx):
         col_res1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_lead_lbl", "Leadership Allocated")}</h3><p style="font-size:22px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_txt} / {lead_max_txt}</p></div>', unsafe_allow_html=True)
         col_res2.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_sup_lbl", "Supremacy Allocated")}</h3><p style="font-size:22px;color:#bd9b53;font-weight:bold;margin:0;">{sup_usata_txt} / {sup_max_txt}</p></div>', unsafe_allow_html=True)
 
-        # VERIFICATO: Agganciato alle chiavi esatte già presenti nel tuo it.json
+        # RISOLTO: Agganciato alle chiavi corrette del file it.json per mostrare i titoli riga corretti
         labels_file = {
             1: ctx.get("Level 9 Guardians", "🛡️ Guardians Level 9"), 
             2: ctx.get("Level 9 Specialists", "⚡ Specialists Level 9"),
