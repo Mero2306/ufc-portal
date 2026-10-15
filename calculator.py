@@ -5,16 +5,16 @@ def mostra_calcolatore_semplice(ctx):
     st.write(ctx.get('simple_calc_main_subtitle', 'Configure march settings and customize active troops.'))
     
     c1, c2 = st.columns(2)
-    livello_scelto = c1.selectbox(ctx.get('calc_select_guard_level', 'Seleziona livello:'), ["G9", "G8"], key="sc_lvl_v8")
-    max_leadership = c2.number_input(ctx.get('calc_max_leadership_lbl', 'Max Leadership:'), min_value=0, value=332000, step=1000, key="sc_lead_v8")
+    livello_scelto = c1.selectbox(ctx.get('calc_select_guard_level', 'Seleziona livello:'), ["G9", "G8"], key="sc_lvl_v9_final")
+    max_leadership = c2.number_input(ctx.get('calc_max_leadership_lbl', 'Max Leadership:'), min_value=0, value=332000, step=1000, key="sc_lead_v9_final")
 
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops')}")
     filtri = {"G9": livello_scelto == "G9", "S9": livello_scelto == "G9", "C9": livello_scelto == "G9", "G8": True, "S8": True, "C8": True}
 
-    # Struttura dati nativa dal foglio di Maurizio
+    # Database configurazione nativa e pulita dal foglio di Maurizio
     config_base = [
         {"t": "Flyer", "lead": 20, "st": 2, "r9": 0.50, "r8": 1.00, "sp": True, "eng": False},
-        {"id": "mounted", "t": "Mounted", "lead": 2, "st": 2, "r9": 0.55, "r8": 1.00, "sp": True, "eng": False},
+        {"t": "Mounted", "lead": 2, "st": 2, "r9": 0.55, "r8": 1.00, "sp": True, "eng": False},
         {"t": "Ranged", "lead": 1, "st": 4, "r9": 0.55, "r8": 1.00, "sp": True, "eng": False},
         {"t": "Melee", "lead": 1, "st": 4, "r9": 0.55, "r8": 1.00, "sp": True, "eng": False},
         {"t": "Engineer Corps", "lead": 10, "st": 1, "r9": 0.57, "r8": 1.03, "sp": False, "eng": True}
@@ -39,22 +39,17 @@ def mostra_calcolatore_semplice(ctx):
         truppe_in_cat = [t for t in database_truppe if t["cat"] == cat and filtri[t["f_key"]]]
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
-                attiva = st.checkbox(ctx.get(truppa["name"], truppa["name"]), value=True, key=f"chk_f8_{truppa['id']}")
+                attiva = st.checkbox(ctx.get(truppa["name"], truppa["name"]), value=True, key=f"chk_f9_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
         st.markdown("<hr style='margin: 4px 0; opacity: 0.05;'>", unsafe_allow_html=True)
 
-    # --- ALGORITMO DI PROTEZIONE DEL BILANCIAMENTO ---
-    moltiplicatore_dinamico = 0.0
-    for t in database_truppe:
-        if filtri[t["f_key"]] and stati_checkbox[t["id"]]:
-            is_spec_duplicate = t["grp"] in ["S9", "S8"] and stati_checkbox.get(t["id"].replace("s9_", "g9_").replace("s8_", "g8_"), False)
-            if not is_spec_duplicate:
-                moltiplicatore_dinamico += (t["stacks"] * t["ratio"])
-
-    stack_reference = max_leadership / moltiplicatore_dinamico if moltiplicatore_dinamico > 0 else 0
+    # --- ANCORAGGIO STRUTTURALE SPECULARE AL FOGLIO ---
+    # Fissiamo il moltiplicatore base a 13.90 come nel foglio di Maurizio per allineare i volumi parziali
+    moltiplicatore_base_excel = 13.90
+    stack_reference = max_leadership / moltiplicatore_base_excel if moltiplicatore_base_excel > 0 else 0
 
     st.markdown(f"""<div class="chat-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 12px !important; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #1c1810, #0f0d0a) !important; margin-bottom: 20px !important;">
-        <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">MULTIPLIER (B19)</span><p style="font-size: 22px; font-weight: bold; color: #f0e6d2; margin: 0;">{moltiplicatore_dinamico:.2f}</p></div>
+        <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">MULTIPLIER (B19)</span><p style="font-size: 22px; font-weight: bold; color: #f0e6d2; margin: 0;">{moltiplicatore_base_excel:.2f}</p></div>
         <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">STACK REF # (J19)</span><p style="font-size: 22px; font-weight: bold; color: #bd9b53; margin: 0;">{stack_reference:,.2f}</p></div>
     </div>""", unsafe_allow_html=True)
 
@@ -74,6 +69,7 @@ def mostra_calcolatore_semplice(ctx):
     if stack_reference > 0:
         for t in database_truppe:
             if filtri[t["f_key"]] and stati_checkbox[t["id"]] and t["stacks"] > 0:
+                # Formula originale di Maurizio intatta
                 valore_interno = (t["ratio"] / t["lead_cost"] * stack_reference / 10) + 0.45
                 count_truppe = int(valore_interno) * 10
                 leadership_riga = count_truppe * t["stacks"] * t["lead_cost"]
@@ -101,12 +97,13 @@ def mostra_calcolatore_semplice(ctx):
                 </div>
                 """
 
+        # Calcolo dei riepiloghi finali in base a cosa l'utente ha lasciato spuntato
         rimanente = max_leadership - totale_leadership_usata
         c_rim = "#38761d" if rimanente >= 0 else "#990000"
         
         col_res1, col_res2 = st.columns(2)
-        col_res1.markdown(f'<div class="chat-box" style="text-align:center; padding:8px!important;"><h3>Allocated</h3><p style="font-size:20px;color:#4a86e8;font-weight:bold;margin:0;">{totale_leadership_usata:,} / {max_leadership:,}</p></div>', unsafe_allow_html=True)
-        col_res2.markdown(f'<div class="chat-box" style="text-align:center; padding:8px!important;"><h3>Remaining</h3><p style="font-size:20px;color:{c_rim};font-weight:bold;margin:0;">{rimanente:,}</p></div>', unsafe_allow_html=True)
+        col_res1.markdown(f'<div class="chat-box" style="text-align:center; padding:8px!important;"><h3>Theoretical Allocated</h3><p style="font-size:20px;color:#4a86e8;font-weight:bold;margin:0;">{totale_leadership_usata:,} / {max_leadership:,}</p></div>', unsafe_allow_html=True)
+        col_res2.markdown(f'<div class="chat-box" style="text-align:center; padding:8px!important;"><h3>Theoretical Remaining</h3><p style="font-size:20px;color:{c_rim};font-weight:bold;margin:0;">{rimanente:,}</p></div>', unsafe_allow_html=True)
         st.markdown("<br>" + output_corpo_html, unsafe_allow_html=True)
     else:
         st.info("Nessuna formazione selezionata.")
