@@ -9,11 +9,11 @@ def mostra_calcolatore_semplice(ctx):
     
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- SELEZIONE LIVELLO DELLE GUARDIE (Identico a cella B2 del foglio) ---
+    # --- SELEZIONE LIVELLO DELLE GUARDIE (Identico alla cella del tuo foglio) ---
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8", "G7"],
-        key="sc_guard_level_selector"
+        key="sc_guard_level_selector_final"
     )
 
     # --- INPUT LEADERSHIP MASSIMA ---
@@ -22,8 +22,8 @@ def mostra_calcolatore_semplice(ctx):
         min_value=0, value=332000, step=1000, key="sc_max_lead"
     )
 
-    # --- FILTRI BOOLEANI AUTOMATICI DERIVATI DALLA SELEZIONE DEL LIVELLO ---
-    # Riproduciamo la griglia TRUE/FALSE presente in cima al tuo foglio Excel
+    # --- CONFIGURAZIONE ATTIVAZIONE LIVELLI IN BASE ALLA SELEZIONE ---
+    # Se selezioni G9 attiviamo L9, L8 e C9, C8 (Moltiplicatore 13.9)
     filtri_attivi = {
         "L9": livello_scelto == "G9",
         "L8": livello_scelto in ["G9", "G8"],
@@ -32,7 +32,8 @@ def mostra_calcolatore_semplice(ctx):
         "C8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- DATABASE COMPLETO DELLE TRUPPE REGOLARI CON VALORI ORIGINALI ---
+    # --- DATABASE COMPLETO RIGIDO SENZA RIGHE DUPLICATE ---
+    # Questo database mappa esattamente le 9 righe delle truppe regolari del tuo foglio Excel
     database_truppe = [
         {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer"},
         {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
@@ -41,9 +42,6 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "l9_mounted", "name": "L9 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "L9", "cat": "Mounted"},
         {"id": "l8_mounted", "name": "L8 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Mounted"},
         
-        {"id": "l9_ranged", "name": "L9 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Ranged"},
-        {"id": "l8_ranged", "name": "L8 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Ranged"},
-        
         {"id": "l9_melee", "name": "L9 Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Melee"},
         {"id": "l8_melee", "name": "L8 Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Melee"},
         
@@ -51,19 +49,17 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "C8", "cat": "Engineer Corps"}
     ]
 
-    # --- CALCOLO AUTOMATICO DEL MOLTIPLICATORE DINAMICO (SUM DI CONTR. ATTIVI) ---
     moltiplicatore_totale = 0.0
     truppe_attive = []
 
+    # Calcoliamo il moltiplicatore totale sommando solo i contr. delle truppe che superano il filtro del livello
     for truppa in database_truppe:
-        # Una truppa è attiva nel calcolo se il suo filtro di livello è TRUE e ha degli stack > 0
         if filtri_attivi[truppa["filter_key"]] and truppa["stacks"] > 0:
             truppe_attive.append(truppa)
-            # contr. = Stacks * Ratio
             contr_riga = truppa["stacks"] * truppa["ratio"]
             moltiplicatore_totale += contr_riga
 
-    # --- COSTRUZIONE DELLA GRAFICA DI RIEPILOGO ---
+    # --- DISPLAY DEL MOLTIPLICATORE RISULTANTE ---
     st.markdown(
         f"""
         <div class="chat-box" style="text-align: center; max-width: 500px; margin: 20px auto; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 10px !important;">
@@ -81,21 +77,21 @@ def mostra_calcolatore_semplice(ctx):
     st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
 
     risultati_finali_html = ""
-    totale_leadership_usata = 0
+    totale_leadership_effettiva = 0
 
     if moltiplicatore_totale > 0 and truppe_attive:
-        # Riferimento Stack # (J19 = Leadership Massima / Moltiplicatore Totale)
+        # Calcolo del Riferimento Stack # centrale (J19 = Max Leadership / Moltiplicatore)
         stack_reference = max_leadership / moltiplicatore_totale
 
         for truppa in truppe_attive:
-            # APPLICAZIONE ESATTA DELLA TUA FORMULA:
+            # APPLICAZIONE MILLIMETRICA DELLA TUA FORMULA:
             # =INT(Ratio / Costo_Lead * Riferimento_Stack / 10 + 0.45) * 10
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe_per_stack = int(valore_interno) * 10
             
-            # Calcolo della leadership parziale consumata da tutta la riga (Truppe per stack * Numero di stack * Costo di Spazio)
+            # Leadership totale della riga (Truppe per stack * Numero Stack * Costo di Leadership)
             leadership_riga = count_truppe_per_stack * truppa["stacks"] * truppa["lead_cost"]
-            totale_leadership_usata += leadership_riga
+            totale_leadership_effettiva += leadership_riga
 
             count_formattato = f"{count_truppe_per_stack:,}".replace(",", ".")
             lead_riga_formattata = f"{leadership_riga:,}".replace(",", ".")
@@ -112,7 +108,7 @@ def mostra_calcolatore_semplice(ctx):
                 </div>
                 """
         
-        # Mostra i box della Leadership usata in base ai conteggi reali finali
+        # Box riassuntivi della leadership usata
         lead_usata_formattata = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
         
