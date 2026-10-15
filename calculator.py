@@ -5,13 +5,13 @@ def mostra_calcolatore_semplice(ctx):
     st.write(ctx.get('simple_calc_main_subtitle', 'Configure march settings and customize active troops.'))
     
     c1, c2 = st.columns(2)
-    livello_scelto = c1.selectbox(ctx.get('calc_select_guard_level', 'Seleziona livello:'), ["G9", "G8"], key="sc_lvl_v5")
-    max_leadership = c2.number_input(ctx.get('calc_max_leadership_lbl', 'Max Leadership:'), min_value=0, value=332000, step=1000, key="sc_lead_v5")
+    livello_scelto = c1.selectbox(ctx.get('calc_select_guard_level', 'Seleziona livello:'), ["G9", "G8"], key="sc_lvl_v6")
+    max_leadership = c2.number_input(ctx.get('calc_max_leadership_lbl', 'Max Leadership:'), min_value=0, value=332000, step=1000, key="sc_lead_v6")
 
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops')}")
     filtri = {"G9": livello_scelto == "G9", "S9": livello_scelto == "G9", "C9": livello_scelto == "G9", "G8": True, "S8": True, "C8": True}
 
-    # Database iper-compresso (Genera dinamicamente le 18 righe Guardie + Specialisti + Genieri)
+    # Configurazione rigida dei dati nativi del foglio di Maurizio
     config_base = [
         {"t": "Flyer", "lead": 20, "st": 2, "r9": 0.50, "r8": 1.00, "sp": True, "eng": False},
         {"t": "Mounted", "lead": 2, "st": 2, "r9": 0.55, "r8": 1.00, "sp": True, "eng": False},
@@ -23,14 +23,14 @@ def mostra_calcolatore_semplice(ctx):
     database_truppe = []
     for c in config_base:
         if not c["eng"]:
-            database_truppe.append({"id": f"g9_{c['t'].lower()}", "name": f"L9 Guard {c['t']}", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r9"], "f_key": "G9", "cat": c["t"]})
-            database_truppe.append({"id": f"g8_{c['t'].lower()}", "name": f"L8 Guard {c['t']}", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "G8", "cat": c["t"]})
+            database_truppe.append({"id": f"g9_{c['t'].lower()}", "name": f"L9 Guard {c['t']}", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r9"], "f_key": "G9", "cat": c["t"], "grp": "G9"})
+            database_truppe.append({"id": f"g8_{c['t'].lower()}", "name": f"L8 Guard {c['t']}", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "G8", "cat": c["t"], "grp": "G8"})
             if c["sp"]:
-                database_truppe.append({"id": f"s9_{c['t'].lower()}", "name": f"L9 Spec {c['t']}", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r9"], "f_key": "S9", "cat": c["t"]})
-                database_truppe.append({"id": f"s8_{c['t'].lower()}", "name": f"L8 Spec {c['t']}", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "S8", "cat": c["t"]})
+                database_truppe.append({"id": f"s9_{c['t'].lower()}", "name": f"L9 Spec {c['t']}", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r9"], "f_key": "S9", "cat": c["t"], "grp": "S9"})
+                database_truppe.append({"id": f"s8_{c['t'].lower()}", "name": f"L8 Spec {c['t']}", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "S8", "cat": c["t"], "grp": "S8"})
         else:
-            database_truppe.append({"id": "c9_eng", "name": "C9 Engineer Corps", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r9"], "f_key": "C9", "cat": c["t"]})
-            database_truppe.append({"id": "c8_eng", "name": "C8 Engineer Corps", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "C8", "cat": c["t"]})
+            database_truppe.append({"id": "c9_eng", "name": "C9 Engineer Corps", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r9"], "f_key": "C9", "cat": c["t"], "grp": "ENG"})
+            database_truppe.append({"id": "c8_eng", "name": "C8 Engineer Corps", "lead_cost": c["lead"], "stacks": c["st"], "ratio": c["r8"], "f_key": "C8", "cat": c["t"], "grp": "ENG"})
 
     truppe_selezionate = []
     stati_checkbox = {}
@@ -42,7 +42,7 @@ def mostra_calcolatore_semplice(ctx):
         truppe_in_cat = [t for t in database_truppe if t["cat"] == cat and filtri[t["f_key"]]]
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
-                attiva = st.checkbox(ctx.get(truppa["name"], truppa["name"]), value=True, key=f"chk_f_{truppa['id']}")
+                attiva = st.checkbox(ctx.get(truppa["name"], truppa["name"]), value=True, key=f"chk_f6_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva and truppa["stacks"] > 0:
                     truppe_selezionate.append(truppa)
@@ -57,32 +57,56 @@ def mostra_calcolatore_semplice(ctx):
     </div>""", unsafe_allow_html=True)
 
     st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
-    risultati_finali_html = ""
+    
     totale_leadership_usata = 0
+    gruppi_html = {"G9": "", "S9": "", "G8": "", "S8": "", "ENG": ""}
+    
+    # Configurazione colori e titoli per ciascun blocco accorpato
+    meta_gruppi = {
+        "G9": {"title": "🛡️ GUARDIE LIVELLO 9", "color": "#bd9b53"},
+        "S9": {"title": "⚡ SPECIALISTI LIVELLO 9", "color": "#cc4125"},
+        "G8": {"title": "⚔️ GUARDIE LIVELLO 8", "color": "#4a86e8"},
+        "S8": {"title": "🔮 SPECIALISTI LIVELLO 8", "color": "#8e7cc3"},
+        "ENG": {"title": "📐 ENGINEER CORPS (CATAPULTE)", "color": "#b45f06"}
+    }
 
     if stack_reference > 0:
         for t in database_truppe:
             if filtri[t["f_key"]] and stati_checkbox[t["id"]] and t["stacks"] > 0:
                 valore_interno = (t["ratio"] / t["lead_cost"] * stack_reference / 10) + 0.45
-                count_truppe_per_stack = int(valore_interno) * 10
-                leadership_riga = count_truppe_per_stack * t["stacks"] * t["lead_cost"]
+                count_truppe = int(valore_interno) * 10
+                leadership_riga = count_truppe * t["stacks"] * t["lead_cost"]
                 totale_leadership_usata += leadership_riga
 
-                b_color = "#bd9b53" if "L9" in t["name"] or "C9" in t["name"] else "#4a86e8"
-                b_lbl = "Tier 9" if "L9" in t["name"] or "C9" in t["name"] else "Tier 8"
+                if count_truppe > 0:
+                    short_name = t["name"].replace("L9 ", "").replace("L8 ", "").replace("C9 ", "").replace("C8 ", "")
+                    gruppi_html[t["grp"]] += f"""
+                    <div style="flex: 1; min-width: 130px; text-align: center; padding: 6px; background: rgba(0,0,0,0.2); border-radius: 4px; border: 1px solid rgba(255,255,255,0.03);">
+                        <span style="font-size: 11px; color: #a69e8d; display: block; font-weight: 500;">{ctx.get(short_name, short_name)}</span>
+                        <b style="font-size: 15px; color: #f0e6d2; display: block; margin: 2px 0;">{count_truppe:,} <span style="font-size:10px; color:#bd9b53; font-weight:normal;">u.</span></b>
+                        <span style="font-size: 10px; color: #777;">Lead: {leadership_riga:,}</span>
+                    </div>
+                    """
 
-                if count_truppe_per_stack > 0:
-                    risultati_finali_html += f"""<div class="chat-box" style="display:flex; justify-content:space-between; align-items:center; padding:10px 15px!important; margin-bottom:8px!important; border-right: 4px solid {b_color} !important; background: rgba(255,255,255,0.02);">
-                        <div><span style="color:#f0e6d2; font-weight:600; font-size:14px;">{ctx.get(t["name"], t["name"])}</span><br><small style="color:{b_color}; font-size:10px; font-weight:bold;">{b_lbl} • {t['stacks']} Stacks</small></div>
-                        <div style="text-align:right;"><span style="color:#f0e6d2; font-weight:bold; font-size:18px; margin-right:5px;">{count_truppe_per_stack:,}</span><span style="color:#bd9b53; font-size:12px;">u.</span><br><small style="color:#a69e8d; font-size:11px;">Lead riga: {leadership_riga:,}</small></div>
-                    </div>"""
-        
+        # Creazione dei macro blocchi orizzontali accorpati
+        output_corpo_html = ""
+        for g_key, g_meta in meta_gruppi.items():
+            if gruppi_html[g_key].strip() != "":
+                output_corpo_html += f"""
+                <div style="padding: 12px; margin-bottom: 12px; border-left: 4px solid {g_meta['color']}; background: rgba(255,255,255,0.015); border-radius: 0 6px 6px 0;">
+                    <div style="font-size: 11px; color: {g_meta['color']}; font-weight: bold; letter-spacing: 0.8px; margin-bottom: 8px;">{g_meta['title']}</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        {gruppi_html[g_key]}
+                    </div>
+                </div>
+                """
+
         rimanente = max_leadership - totale_leadership_usata
         c_rim = "#38761d" if rimanente >= 0 else "#990000"
         
         col_res1, col_res2 = st.columns(2)
         col_res1.markdown(f'<div class="chat-box" style="text-align:center; padding:8px!important;"><h3>Allocated</h3><p style="font-size:20px;color:#4a86e8;font-weight:bold;margin:0;">{totale_leadership_usata:,} / {max_leadership:,}</p></div>', unsafe_allow_html=True)
         col_res2.markdown(f'<div class="chat-box" style="text-align:center; padding:8px!important;"><h3>Remaining</h3><p style="font-size:20px;color:{c_rim};font-weight:bold;margin:0;">{rimanente:,}</p></div>', unsafe_allow_html=True)
-        st.markdown("<br>" + risultati_finali_html, unsafe_allow_html=True)
+        st.markdown("<br>" + output_corpo_html, unsafe_allow_html=True)
     else:
         st.info("Nessuna formazione selezionata.")
