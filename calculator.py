@@ -1,8 +1,8 @@
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # Ripristino rigido del titolo e del sottotitolo veloce originale inserito all'inizio
-    st.markdown(f"<h1>{ctx.get('simple_calc_main_h1', '🧮 Simple Troops Calculator')}</h1>", unsafe_allow_html=True)
+    # Titolo e descrizioni UFC
+    st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
     st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
     # --- NOTIFICA SUI CAPITANI SOTTO IL TITOLO ---
@@ -27,7 +27,7 @@ def mostra_calcolatore_semplice(ctx):
         min_value=0, value=0, step=1000, format="%d", key="sc_max_sup_v2026_final"
     )
 
-    # --- BOX DI CONFERMA VISIVA AUTOBILANCIATO ---
+    # --- BOX DI CONFERMA VISIVA ---
     if max_leadership > 0 or max_supremacy > 0:
         lead_txt = f"{max_leadership:,}".replace(",", ".")
         sup_txt = f"{max_supremacy:,}".replace(",", ".")
@@ -75,8 +75,17 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
+    # CORREZIONE: I titoli delle categorie ora pescano la traduzione corretta o usano le etichette delle file (1-5) come riferimento
+    mappa_titoli_categorie = {
+        "Flyer": ctx.get("Level 9 Guardians", "🛡️ Flyer"),
+        "Mounted": ctx.get("Level 9 Guardians Mounted", "⚡ Mounted"),
+        "Ranged": ctx.get("Level 9 Guardians Ranged", "⚔️ Ranged"),
+        "Melee": ctx.get("Level 9 Guardians Melee", "🔮 Melee"),
+        "Engineer Corps": ctx.get("Level 9 Engineer Corps", "📐 Engineer Corps")
+    }
+    
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
-        st.markdown(f"**{cat}**")
+        st.markdown(f"**{mappa_titoli_categorie[cat]}**")
         cols = st.columns(2)
         truppe_in_cat = [t for t in database_truppe if t["cat"] == cat]
         for idx, truppa in enumerate(truppe_in_cat):
