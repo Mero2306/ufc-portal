@@ -1,7 +1,7 @@
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # Titolo e descrizioni UFC
+    # Titolo e descrizioni originali UFC agganciati ai file delle lingue
     st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
     st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
@@ -27,7 +27,7 @@ def mostra_calcolatore_semplice(ctx):
         min_value=0, value=0, step=1000, format="%d", key="sc_max_sup_v2026_final"
     )
 
-    # --- BOX DI CONFERMA VISIVA ---
+    # --- BOX DI CONFERMA VISIVA AUTOBILANCIATO ---
     if max_leadership > 0 or max_supremacy > 0:
         lead_txt = f"{max_leadership:,}".replace(",", ".")
         sup_txt = f"{max_supremacy:,}".replace(",", ".")
@@ -75,13 +75,13 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # RIPRISTINO RIGIDO DELLE ICONE STORICHE UFC DAVANTI AI TITOLI DELLE CATEGORIE
+    # TITOLI FISSI IN INGLESE COME ALL'INIZIO (Flyer, Mounted, Ranged, Melee, Engineer Corps)
     mappa_titoli_categorie = {
-        "Flyer": f"🛡️ {ctx.get('Level 9 Guardians', 'Flyer')}",
-        "Mounted": f"⚡ {ctx.get('Level 9 Guardians Mounted', 'Mounted')}",
-        "Ranged": f"⚔️ {ctx.get('Level 9 Guardians Ranged', 'Ranged')}",
-        "Melee": f"🔮 {ctx.get('Level 9 Guardians Melee', 'Melee')}",
-        "Engineer Corps": f"📐 {ctx.get('Level 9 Engineer Corps', 'Engineer Corps')}"
+        "Flyer": "Flyer",
+        "Mounted": "Mounted",
+        "Ranged": "Ranged",
+        "Melee": "Melee",
+        "Engineer Corps": "Engineer Corps"
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
@@ -91,7 +91,7 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_unif_{truppa['id']}_v5")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_unif_{truppa['id']}_v99")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     moltiplicatore_truppe += truppa["ratio"]
@@ -99,9 +99,9 @@ def mostra_calcolatore_semplice(ctx):
 
     st.markdown(f"**{ctx.get('calc_monsters_config_title', '🛡️ Monsters Configuration')}**")
     c_m1, c_m2, c_m3 = st.columns(3)
-    attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v5")
-    attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v5")
-    attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
+    attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v99")
+    attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v99")
+    attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v99")
     
     stati_mostri = {"M9": attiva_m9, "M8": attiva_m8, "M7": attiva_m7}
     # --- 4. CALCOLO REATTIVO BACKGROUND DISTINTO (PARTE 2) ---
