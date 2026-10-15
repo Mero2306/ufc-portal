@@ -9,11 +9,11 @@ def mostra_calcolatore_semplice(ctx):
     
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- SELEZIONE LIVELLO DELLE GUARDIE ---
+    # --- SELEZIONE LIVELLO DELLE GUARDIE (G7 RIMOSSO COME RICHIESTO) ---
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
-        ["G9", "G8", "G7"],
-        key="sc_guard_level_selector_final"
+        ["G9", "G8"],
+        key="sc_guard_level_selector_final_v3"
     )
 
     # --- INPUT LEADERSHIP MASSIMA ---
@@ -22,23 +22,27 @@ def mostra_calcolatore_semplice(ctx):
         min_value=0, value=332000, step=1000, key="sc_max_lead"
     )
 
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
+
     # --- CONFIGURAZIONE ATTIVAZIONE LIVELLI IN BASE ALLA SELEZIONE ---
     filtri_attivi = {
         "L9": livello_scelto == "G9",
         "L8": livello_scelto in ["G9", "G8"],
-        "L7": livello_scelto in ["G9", "G8", "G7"],
         "C9": livello_scelto == "G9",
         "C8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- DATABASE COMPLETO RIGIDO SENZA RIGHE DUPLICATE ---
+    # --- DATABASE COMPLETO CON TUTTE LE TIPOLOGIE (INCLUSO RANGED) ---
     database_truppe = [
         {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer"},
         {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
-        {"id": "l7_flyer", "name": "L7 Flyer (Corax)", "lead_cost": 20, "stacks": 0, "ratio": 1.82, "filter_key": "L7", "cat": "Flyer"},
         
         {"id": "l9_mounted", "name": "L9 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "L9", "cat": "Mounted"},
         {"id": "l8_mounted", "name": "L8 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Mounted"},
+        
+        {"id": "l9_ranged", "name": "L9 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Ranged"},
+        {"id": "l8_ranged", "name": "L8 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Ranged"},
         
         {"id": "l9_melee", "name": "L9 Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Melee"},
         {"id": "l8_melee", "name": "L8 Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Melee"},
@@ -47,16 +51,30 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "C8", "cat": "Engineer Corps"}
     ]
 
+    truppe_selezionate = []
     moltiplicatore_totale = 0.0
-    truppe_attive = []
+    categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
+    
+    # Interfaccia a Checkbox organizzata per categorie (Mostra solo le truppe coerenti con G9 o G8 selezionato)
+    for cat in categorie:
+        st.markdown(f"**{cat}**")
+        cols = st.columns(3)
+        truppe_in_cat = [t for t in database_truppe if t["cat"] == cat and filtri_attivi[t["filter_key"]]]
+        
+        for idx, truppa in enumerate(truppe_in_cat):
+            with cols[idx % 3]:
+                nome_tradotto = ctx.get(truppa["name"], truppa["name"])
+                
+                # Di default sono tutte spuntate all'interno del livello massimo scelto
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v20_{truppa['id']}")
+                if attiva and truppa["stacks"] > 0:
+                    truppe_selezionate.append(truppa)
+                    contr_riga = truppa["stacks"] * truppa["ratio"]
+                    moltiplicatore_totale += contr_riga
+                    
+        st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
-    for truppa in database_truppe:
-        if filtri_attivi[truppa["filter_key"]] and truppa["stacks"] > 0:
-            truppe_attive.append(truppa)
-            contr_riga = truppa["stacks"] * truppa["ratio"]
-            moltiplicatore_totale += contr_riga
-
-    # --- DISPLAY DEL MOLTIPLICATORE RISULTANTE ---
+    # --- DISPLAY DEL MOLTIPLICATORE DINAMICO REALE ---
     st.markdown(
         f"""
         <div class="chat-box" style="text-align: center; max-width: 500px; margin: 20px auto; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 10px !important;">
@@ -64,7 +82,7 @@ def mostra_calcolatore_semplice(ctx):
                 {ctx.get('calc_auto_multiplier_lbl', 'AUTOMATIC MULTIPLIER')}
             </h2>
             <p style="font-size: 26px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif;">
-                {moltiplicatore_totale:.1f}
+                {moltiplicatore_totale:.2f}
             </p>
         </div>
         """,
@@ -76,11 +94,13 @@ def mostra_calcolatore_semplice(ctx):
     risultati_finali_html = ""
     totale_leadership_usata = 0
 
-    if moltiplicatore_totale > 0 and truppe_attive:
+    if moltiplicatore_totale > 0 and truppe_selezionate:
+        # Calcolo del Riferimento Stack # dinamico e reattivo basato sulle truppe effettivamente spuntate
         stack_reference = max_leadership / moltiplicatore_totale
 
-        for truppa in truppe_attive:
-            # APPLICAZIONE FORMULA ORIGINALE
+        for truppa in truppe_selezionate:
+            # APPLICAZIONE MILLIMETRICA DELLA FORMULA DI MAURIZIO:
+            # =INT(Ratio / Costo_Lead * Riferimento_Stack / 10 + 0.45) * 10
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe_per_stack = int(valore_interno) * 10
             
@@ -103,7 +123,7 @@ def mostra_calcolatore_semplice(ctx):
                 </div>
                 """
         
-        # Correzione NameError qui: le variabili ora puntano correttamente a totale_leadership_usata
+        # Box riassuntivi della leadership allocata
         lead_usata_formattata = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
         
@@ -112,11 +132,11 @@ def mostra_calcolatore_semplice(ctx):
             st.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_lead_lbl", "Total Leadership Allocated")}</h3><p style="font-size:24px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_formattata} / {lead_max_formattata}</p></div>', unsafe_allow_html=True)
         with col_res2:
             rimanente = max_leadership - totale_leadership_usata
-            rimanente_formattata = f"{rimanente:,}".replace(",", ".")
+            rimanente_formattata = f"{rimanente:,}".replace(".")
             colore_rimanente = "#38761d" if rimanente >= 0 else "#990000"
             st.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_remaining_lead_lbl", "Remaining Leadership")}</h3><p style="font-size:24px;color:{colore_rimanente};font-weight:bold;margin:0;">{rimanente_formattata}</p></div>', unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(risultati_finali_html, unsafe_allow_html=True)
     else:
-        st.info(ctx.get('calc_no_troops_allocated', 'Nessuna truppa allocata per la configurazione corrente.'))
+        st.info(ctx.get('calc_no_troops_allocated', 'Nessuna truppa selezionata per il calcolo.'))
