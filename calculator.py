@@ -6,16 +6,16 @@ def mostra_calcolatore_semplice(ctx):
     
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- 1. INPUT LEADERSHIP MASSIMA A 0 DI DEFAULT ---
+    # --- 1. INPUT LEADERSHIP MASSIMA ---
     max_leadership = st.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=0, step=1000, key="sc_max_lead_v700"
+        min_value=0, value=0, step=1000, key="sc_max_lead_v800"
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops to Include in March')}")
 
-    # --- 2. DATABASE COMPLETO SENZA I LIVELLI 7 ---
+    # --- 2. DATABASE COMPLETO DELLE TRUPPE REGOLARI E SPECIALISTI T9/T8 ---
     database_truppe = [
         # --- LIVELLO 9 ---
         {"id": "g9_flyer", "name": "L9 Guard Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "cat": "Flyer"},
@@ -45,7 +45,7 @@ def mostra_calcolatore_semplice(ctx):
     moltiplicatore_dinamico = 0.0
     categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
-    # Generazione Checkbox
+    # Generazione dei Checkbox delle singole truppe
     for cat in categorie:
         st.markdown(f"**{cat}**")
         cols = st.columns(2)
@@ -54,7 +54,7 @@ def mostra_calcolatore_semplice(ctx):
         for idx, truppa in enumerate(truppe_in_cat):
             with cols[idx % 2]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v700_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v800_{truppa['id']}")
                 stati_checkbox[truppa["id"]] = attiva
                 if attiva:
                     truppe_selezionate.append(truppa)
@@ -62,31 +62,21 @@ def mostra_calcolatore_semplice(ctx):
                     
         st.markdown("<hr style='margin: 5px 0; opacity: 0.1;'>", unsafe_allow_html=True)
 
-    # --- 3. CALCOLO REATTIVO DEL RIFERIMENTO STACK ---
+    # --- 3. CALCOLO REATTIVO IN BACKGROUND DEL RIFERIMENTO STACK (IL MOLTIPLIPLICATORE ORA È INVISIBILE) ---
     if moltiplicatore_dinamico > 0:
         stack_reference = max_leadership / moltiplicatore_dinamico
     else:
         stack_reference = 0
-
-    st.markdown(f"""
-        <div class="chat-box" style="text-align: center; max-width: 500px; margin: 20px auto; border-left: 6px solid #bd9b53 !important; background: linear-gradient(145deg, #241f16, #14120e) !important; padding: 10px !important;">
-            <h2 style="margin: 0 0 2px 0; font-size: 13px; color: #bd9b53; letter-spacing: 0.5px; font-family: 'Cinzel', serif;">
-                {ctx.get('calc_auto_multiplier_lbl', 'CURRENT ACTIVE MULTIPLIER (B19)')}
-            </h2>
-            <p style="font-size: 26px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif;">
-                {moltiplicatore_dinamico:.2f}
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
 
     st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
 
     risultati_finali_html = ""
     totale_leadership_usata = 0
 
+    # Calcolo visivo finale dei plotoni se la leadership inserita è maggiore di 0
     if max_leadership > 0 and stack_reference > 0:
         for truppa in truppe_selezionate:
-            # FORMULA ORIGINALE DI MAURIZIO
+            # APPLICAZIONE FORMULA ORIGINALE DI MAURIZIO
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe = int(valore_interno) * 10
             
