@@ -13,7 +13,7 @@ def mostra_calcolatore_semplice(ctx):
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8"],
-        key="sc_guard_level_selector_final_v12"
+        key="sc_guard_level_selector_final_v13"
     )
 
     # --- INPUT LEADERSHIP MASSIMA ---
@@ -33,18 +33,13 @@ def mostra_calcolatore_semplice(ctx):
         "C8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- DATABASE COMPLETO AGGIORNATO CON GLI STACK REALI ---
-    # CORREZIONI APPLICATE RIGIDAMENTE:
-    # - L9 Flyer (Corax) = 1 STACK
-    # - L8 Flyer (Corax) = 1 STACK
-    # - L9 Mounted = 1 STACK
-    # - L8 Mounted = 1 STACK
+    # --- STRUTTURA DELLE RIGHE SPECULARE AL FOGLIO DI MAURIZIO ---
     database_truppe = [
-        {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer"},
-        {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 1, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
+        {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer"},
+        {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
         
-        {"id": "l9_mounted", "name": "L9 Mounted", "lead_cost": 2, "stacks": 1, "ratio": 0.55, "filter_key": "L9", "cat": "Mounted"},
-        {"id": "l8_mounted", "name": "L8 Mounted", "lead_cost": 2, "stacks": 1, "ratio": 1.00, "filter_key": "L8", "cat": "Mounted"},
+        {"id": "l9_mounted", "name": "L9 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "L9", "cat": "Mounted"},
+        {"id": "l8_mounted", "name": "L8 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Mounted"},
         
         {"id": "l9_ranged", "name": "L9 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Ranged"},
         {"id": "l8_ranged", "name": "L8 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Ranged"},
@@ -70,7 +65,7 @@ def mostra_calcolatore_semplice(ctx):
             with cols[idx % 3]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
                 
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v29_{truppa['id']}")
+                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v30_{truppa['id']}")
                 if attiva and truppa["stacks"] > 0:
                     truppe_selezionate.append(truppa)
                     # contr. = Stacks * Ratio
@@ -103,24 +98,24 @@ def mostra_calcolatore_semplice(ctx):
         stack_reference = max_leadership / moltiplicatore_dinamico
 
         for truppa in truppe_selezionate:
-            # APPLICAZIONE FORMULA ORIGINALE EXCEL DI MAURIZIO
+            # APPLICAZIONE DELLA TUA FORMULA EXCEL: Calcola i soldati per SINGOLO stack
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
-            count_truppe_totale_riga = int(valore_interno) * 10
+            count_truppe_per_stack = int(valore_interno) * 10
             
-            # La leadership consumata reale è data dal conteggio complessivo della riga * il costo unità
-            leadership_riga = count_truppe_totale_riga * truppa["lead_cost"]
+            # La leadership complessiva della riga tiene conto del numero degli stack attivi
+            leadership_riga = count_truppe_per_stack * truppa["stacks"] * truppa["lead_cost"]
             totale_leadership_usata += leadership_riga
 
-            count_formattato = f"{count_truppe_totale_riga:,}".replace(",", ".")
+            count_formattato = f"{count_truppe_per_stack:,}".replace(",", ".")
             lead_riga_formattata = f"{leadership_riga:,}".replace(",", ".")
             nome_tradotto_riga = ctx.get(truppa["name"], truppa["name"])
 
-            if count_truppe_totale_riga > 0:
+            if count_truppe_per_stack > 0:
                 risultati_finali_html += f"""
                 <div class="chat-box" style="display:flex; justify-content:space-between; align-items:center; padding:10px 16px!important; margin-bottom:8px!important;">
                     <span style="color:#f0e6d2; font-weight:500;">{nome_tradotto_riga} <small style="color:#bd9b53;">({truppa['stacks']} Stacks)</small></span>
                     <div style="text-align:right;">
-                        <span style="color:#bd9b53; font-weight:bold; font-size:18px; margin-right:15px;">{count_formattato} u.</span>
+                        <span style="color:#bd9b53; font-weight:bold; font-size:18px; margin-right:15px;">{count_formattato} u. <small style="font-size:11px;color:#a69e8d;">/stack</small></span>
                         <span style="color:#a69e8d; font-size:13px;">(Lead riga: {lead_riga_formattata})</span>
                     </div>
                 </div>
