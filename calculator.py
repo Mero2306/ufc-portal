@@ -67,9 +67,9 @@ def mostra_calcolatore_semplice(ctx):
 
     # Database Mostri
     database_mostri = [
-        {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "lvl_group": "M9", "col_idx": 0},
-        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "lvl_group": "M8", "col_idx": 1},
-        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 43, "stacks": 2, "lvl_group": "M7", "col_idx": 2}
+        {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
+        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
+        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "col_idx": 2}
     ]
 
     stati_checkbox = {}
@@ -126,42 +126,49 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # 2. ⚔️ NUOVO ALGORITMO A SATURAZIONE PROPORZIONALE REALE PER I MOSTRI
-        categorie_mostri_attive = [m for m in database_mostri if stati_mostri[m["lvl_group"]]]
-        num_categorie_attive = len(categorie_mostri_attive)
+        # 2. ⚔️ NUOVO ALGORITMO CON PROPORZIONE SANITARIA (M9 = CIRCA METÀ DI M8)
+        # Calcoliamo il moltiplicatore totale basato sui pesi storici di bilanciamento delle tabelle del clan
+        moltiplicatore_mostri = 0.0
+        for m in database_mostri:
+            if stati_mostri[m["lvl_group"]]:
+                moltiplicatore_mostri += (m["stacks"] * m["ratio"])
+                
+        stack_ref_monsters = max_supremacy / moltiplicatore_mostri if moltiplicatore_mostri > 0 else 0
 
-        if num_categorie_attive > 0 and max_supremacy > 0:
-            # Dividiamo equamente il totale dei tuoi punti Supremazia tra i livelli selezionati
-            supremazia_per_categoria = max_supremacy / num_categorie_attive
+        # Algoritmo di calcolo e riduzione millesimale di sicurezza anti-sforo rigida per slot
+        safety_loop_counter = 0
+        while safety_loop_counter < 100:
+            test_supremacy_totale = 0
+            for mostro in database_mostri:
+                if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
+                    # Calcolo del quantitativo teorico totale per questa categoria
+                    valore_totale_mostri = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10)
+                    count_totale = int(valore_totale_mostri) * 10
+                    
+                    # Dividiamo per gli stack per ottenere la cifra esatta da scrivere nella singola casella di gioco
+                    mostri_per_singolo_slot = int(count_totale / mostro["stacks"])
+                    test_supremacy_totale += (mostri_per_singolo_slot * mostro["stacks"] * mostro["auth_cost"])
             
-            for mostro in database_mostri:
-                if stati_mostri[mostro["lvl_group"]]:
-                    # Il costo di 1 singolo mostro moltiplicato per quanti slot occupa in marcia
-                    costo_singolo_slot = mostro["auth_cost"] * mostro["stacks"]
-                    
-                    # Quanti mostri TOTALI della categoria riempiono questa fetta di Supremazia
-                    totale_mostri_categoria = int(supremazia_per_categoria / costo_singolo_slot)
-                    
-                    # Dividiamo rigido per il numero di slot per darti il valore ESATTO per singola casella di gioco
-                    mostri_per_singolo_slot = int(totale_mostri_categoria / 10) * 10
-                    
-                    # Controllo di sicurezza anti-sforo millesimale dovuto ad arrotondamenti
-                    while (mostri_per_singolo_slot * costo_singolo_slot) > supremazia_per_categoria:
-                        mostri_per_singolo_slot -= 10
-                        
-                    if mostri_per_singolo_slot < 0:
-                        mostri_per_singolo_slot = 0
-                        
-                    totale_supremacy_usata += (mostri_per_singolo_slot * costo_singolo_slot)
-                    count_formattato = f"{mostri_per_singolo_slot:,}".replace(",", ".")
-                    mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": count_formattato, "col_idx": mostro["col_idx"]}
-                else:
-                    mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": "0", "col_idx": mostro["col_idx"]}
-        else:
-            for mostro in database_mostri:
+            if test_supremacy_totale <= max_supremacy or stack_ref_monsters <= 0:
+                break
+            
+            stack_ref_monsters *= 0.99
+            safety_loop_counter += 1
+
+        # Applicazione definitiva dei conteggi bilanciati per slot
+        for mostro in database_mostri:
+            if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
+                valore_totale_mostri = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10)
+                count_totale = int(valore_totale_mostri) * 10
+                
+                mostri_per_singolo_slot = int(count_totale / mostro["stacks"])
+                totale_supremacy_usata += (mostri_per_singolo_slot * mostro["stacks"] * mostro["auth_cost"])
+                count_formattato = f"{mostri_per_singolo_slot:,}".replace(",", ".")
+                mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": count_formattato, "col_idx": mostro["col_idx"]}
+            else:
                 mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": "0", "col_idx": mostro["col_idx"]}
 
-        # Configurazione stringhe di testo box
+        # Configurazione stringhe di testo dei contatori e dei box finali
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_txt = f"{max_leadership:,}".replace(",", ".")
         sup_usata_txt = f"{totale_supremacy_usata:,}".replace(",", ".")
