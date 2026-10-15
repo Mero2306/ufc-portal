@@ -65,7 +65,7 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
-    # Database Mostri
+    # Database Mostri (Moltiplicatori e costi di autorità 55, 55, 43 bloccati)
     database_mostri = [
         {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
         {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 55, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
@@ -75,7 +75,6 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # STRUTTURA RIGIDA: Sfrutta i testi puliti rimuovendo le stringhe ridondanti ed evita i rimpiazzi automatici fallibili
     mappa_titoli_categorie = {
         "Flyer": f"🛡️ {ctx.get('Level 9 Guardians Flyer', 'Flyer').replace('Liv.9 Guardiani ', '')}",
         "Mounted": f"⚡ {ctx.get('Level 9 Guardians Mounted', 'Mounted').replace('Liv.9 Guardiani ', '')}",
@@ -133,25 +132,29 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # ALGORITMO ANTI-SFORO PER I MOSTRI
+        # ⚔️ ALGORITMO ANTI-SFORO CORRETTO PER I MOSTRI (Approssimazione rigida per difetto)
         safety_loop_counter = 0
         while safety_loop_counter < 100:
             test_supremacy_totale = 0
             for mostro in database_mostri:
                 if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
-                    valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10) + 0.5
+                    # Rimosso il +0.5 per evitare l'arrotondamento per eccesso che faceva sforare in gioco
+                    valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10)
                     count_test = int(valore_interno) * 10
+                    # Costo calcolato correttamente in base ai reali parametri di gioco
                     test_supremacy_totale += (count_test * mostro["stacks"] * mostro["auth_cost"])
             
             if test_supremacy_totale <= max_supremacy or stack_ref_monsters <= 0:
                 break
             
-            stack_ref_monsters *= 0.999
+            # Riduzione progressiva se la combinazione sfora la Supremazia Massima
+            stack_ref_monsters *= 0.99
             safety_loop_counter += 1
 
+        # Applicazione definitiva dei conteggi mostri calibrati al ribasso sicuro
         for mostro in database_mostri:
             if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
-                valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10) + 0.5
+                valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10)
                 count_mostri = int(valore_interno) * 10
                 totale_supremacy_usata += (count_mostri * mostro["stacks"] * mostro["auth_cost"])
                 count_formattato = f"{count_mostri:,}".replace(",", ".")
@@ -168,7 +171,6 @@ def mostra_calcolatore_semplice(ctx):
         col_res1.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_lead_lbl", "Leadership Allocated")}</h3><p style="font-size:22px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_txt} / {lead_max_txt}</p></div>', unsafe_allow_html=True)
         col_res2.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_sup_lbl", "Supremacy Allocated")}</h3><p style="font-size:22px;color:#bd9b53;font-weight:bold;margin:0;">{sup_usata_txt} / {sup_max_txt}</p></div>', unsafe_allow_html=True)
 
-        # Configurazione etichette righe finali speculari al file delle lingue
         labels_file = {
             1: ctx.get("Level 9 Guardians", "🛡️ Guardians Level 9"), 
             2: ctx.get("Level 9 Specialists", "⚡ Specialists Level 9"),
