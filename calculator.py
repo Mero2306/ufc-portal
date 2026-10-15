@@ -75,13 +75,13 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # RIMOZIONE DELLA CHIAVE MANUALE DEL RIGHELLO PER RISOLVERE IL BUG DELLE DUE ICONE 📐 📐
+    # CORRETTO: Adesso usa chiavi pulite per i macro-titoli (senza sovrapporsi a L9)
     mappa_titoli_categorie = {
-        "Flyer": f"🛡️ {ctx.get('Level 9 Guardians', 'Flyer')}",
-        "Mounted": f"⚡ {ctx.get('Level 9 Guardians Mounted', 'Mounted')}",
-        "Ranged": f"⚔️ {ctx.get('Level 9 Guardians Ranged', 'Ranged')}",
-        "Melee": f"🔮 {ctx.get('Level 9 Guardians Melee', 'Melee')}",
-        "Engineer Corps": ctx.get("Level 9 Engineer Corps", "Engineer Corps")
+        "Flyer": f"🛡️ {ctx.get('cat_flyer', 'Flyer')}",
+        "Mounted": f"⚡ {ctx.get('cat_mounted', 'Mounted')}",
+        "Ranged": f"⚔️ {ctx.get('cat_ranged', 'Ranged')}",
+        "Melee": f"🔮 {ctx.get('cat_melee', 'Melee')}",
+        "Engineer Corps": f"📐 {ctx.get('cat_engineer', 'Engineer Corps')}"
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
@@ -104,7 +104,7 @@ def mostra_calcolatore_semplice(ctx):
     attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
     
     stati_mostri = {"M9": attiva_m9, "M8": attiva_m8, "M7": attiva_m7}
-    # --- 4. CALCOLO REATTIVO BACKGROUND DISTINTO (PARTE 2) ---
+    # --- CALCOLO REATTIVO BACKGROUND DISTINTO ---
     stack_ref_lead = max_leadership / moltiplicatore_truppe if moltiplicatore_truppe > 0 else 0
 
     moltiplicatore_mostri = 0.0
@@ -114,7 +114,7 @@ def mostra_calcolatore_semplice(ctx):
             
     stack_ref_monsters = max_supremacy / moltiplicatore_mostri if moltiplicatore_mostri > 0 else 0
 
-    # --- 5. GENERAZIONE OUTPUT IN GRIGLIA RIGIDA BLOCCATA ---
+    # --- GENERAZIONE OUTPUT ---
     if max_leadership > 0 or max_supremacy > 0:
         st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
         
@@ -123,7 +123,6 @@ def mostra_calcolatore_semplice(ctx):
         mappa_risultati = {}
         mappa_mostri_risultati = {}
 
-        # Calcolo Truppe Regolari (Griglia Rigida 4 Colonne)
         for truppa in database_truppe:
             if stati_checkbox.get(truppa["id"], False) and stack_ref_lead > 0:
                 valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_ref_lead / 10) + 0.45
@@ -134,7 +133,7 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"]}
 
-        # ALGORITMO DI RICALIBRAZIONE MILLESIMALE ANTI-SFORO PER I MOSTRI
+        # ALGORITMO ANTI-SFORO PER I MOSTRI
         safety_loop_counter = 0
         while safety_loop_counter < 100:
             test_supremacy_totale = 0
@@ -150,7 +149,6 @@ def mostra_calcolatore_semplice(ctx):
             stack_ref_monsters *= 0.999
             safety_loop_counter += 1
 
-        # Applicazione definitiva dei conteggi mostri calibrati
         for mostro in database_mostri:
             if stati_mostri[mostro["lvl_group"]] and stack_ref_monsters > 0:
                 valore_interno = (mostro["ratio"] / mostro["auth_cost"] * stack_ref_monsters / 10) + 0.5
@@ -161,7 +159,6 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_mostri_risultati[mostro["id"]] = {"name": ctx.get(mostro["name"], mostro["name"]), "count": count_formattato, "col_idx": mostro["col_idx"]}
 
-        # Box riassuntivi delle risorse usate tradotti
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_txt = f"{max_leadership:,}".replace(",", ".")
         sup_usata_txt = f"{totale_supremacy_usata:,}".replace(",", ".")
@@ -172,14 +169,13 @@ def mostra_calcolatore_semplice(ctx):
         col_res2.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_sup_lbl", "Supremacy Allocated")}</h3><p style="font-size:22px;color:#bd9b53;font-weight:bold;margin:0;">{sup_usata_txt} / {sup_max_txt}</p></div>', unsafe_allow_html=True)
 
         labels_file = {
-            1: ctx.get("Level 9 Guardians", "🛡️ Guardians Level 9"), 
-            2: ctx.get("Level 9 Specialists", "⚡ Specialists Level 9"),
-            3: ctx.get("Level 8 Guardians", "⚔️ Guardians Level 8"), 
-            4: ctx.get("Level 8 Specialists", "🔮 Specialists Level 8"),
-            5: ctx.get("Level 9 Engineer Corps", "📐 Engineer Corps")
+            1: ctx.get("row_lbl_g9", "🛡️ Guardians Level 9"), 
+            2: ctx.get("row_lbl_s9", "⚡ Specialists Level 9"),
+            3: ctx.get("row_lbl_g8", "⚔️ Guardians Level 8"), 
+            4: ctx.get("row_lbl_s8", "🔮 Specialists Level 8"),
+            5: ctx.get("row_lbl_eng", "📐 Engineer Corps")
         }
 
-        # Stampa delle prime 5 file rigide (Truppe Regolari a 4 colonne)
         for r in range(1, 6):
             st.markdown(f"<small style='color:#bd9b53;font-weight:bold;'>{labels_file[r]}</small>", unsafe_allow_html=True)
             truppe_riga = [t for t in database_truppe if t["row"] == r]
@@ -196,7 +192,6 @@ def mostra_calcolatore_semplice(ctx):
                     """, unsafe_allow_html=True)
             st.markdown("<div style='margin-bottom: 5px;'></div>", unsafe_allow_html=True)
 
-        # --- STAMPA DI TUTTI I MOSTRI ACCORPATI IN UN'UNICA RIGA ORIZZONTALE A 4 COLONNE ---
         st.markdown("<hr style='margin: 15px 0; opacity: 0.15;'>", unsafe_allow_html=True)
         st.markdown(f"<small style='color:#bd9b53;font-weight:bold;'>{ctx.get('Level 9 Monsters Row', '🐉 Tactical Monsters')}</small>", unsafe_allow_html=True)
         
