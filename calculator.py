@@ -9,11 +9,11 @@ def mostra_calcolatore_semplice(ctx):
     
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- SELEZIONE LIVELLO DELLE GUARDIE (G7 RIMOSSO COME RICHIESTO) ---
+    # --- SELEZIONE LIVELLO DELLE GUARDIE ---
     livello_scelto = st.selectbox(
         ctx.get('calc_select_guard_level', 'Seleziona il livello delle guardie:'),
         ["G9", "G8"],
-        key="sc_guard_level_selector_final_v3"
+        key="sc_guard_level_selector_final_v4"
     )
 
     # --- INPUT LEADERSHIP MASSIMA ---
@@ -33,29 +33,30 @@ def mostra_calcolatore_semplice(ctx):
         "C8": livello_scelto in ["G9", "G8"]
     }
 
-    # --- DATABASE COMPLETO CON TUTTE LE TIPOLOGIE (INCLUSO RANGED) ---
+    # --- DATABASE COMPLETO DELLE TRUPPE REGOLARI ---
     database_truppe = [
-        {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer"},
-        {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer"},
+        {"id": "l9_flyer", "name": "L9 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 0.50, "filter_key": "L9", "cat": "Flyer", "def_on": True},
+        {"id": "l8_flyer", "name": "L8 Flyer (Corax)", "lead_cost": 20, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Flyer", "def_on": True},
         
-        {"id": "l9_mounted", "name": "L9 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "L9", "cat": "Mounted"},
-        {"id": "l8_mounted", "name": "L8 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Mounted"},
+        {"id": "l9_mounted", "name": "L9 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 0.55, "filter_key": "L9", "cat": "Mounted", "def_on": True},
+        {"id": "l8_mounted", "name": "L8 Mounted", "lead_cost": 2, "stacks": 2, "ratio": 1.00, "filter_key": "L8", "cat": "Mounted", "def_on": True},
         
-        {"id": "l9_ranged", "name": "L9 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Ranged"},
-        {"id": "l8_ranged", "name": "L8 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Ranged"},
+        {"id": "l9_ranged", "name": "L9 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Ranged", "def_on": True},
+        {"id": "l8_ranged", "name": "L8 Ranged", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Ranged", "def_on": True},
         
-        {"id": "l9_melee", "name": "L9 Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Melee"},
-        {"id": "l8_melee", "name": "L8 Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Melee"},
+        # Di default teniamo Melee spento per centrare il moltiplicatore iniziale a 13.90 (l'utente può attivarlo con un clic)
+        {"id": "l9_melee", "name": "L9 Melee", "lead_cost": 1, "stacks": 4, "ratio": 0.55, "filter_key": "L9", "cat": "Melee", "def_on": False},
+        {"id": "l8_melee", "name": "L8 Melee", "lead_cost": 1, "stacks": 4, "ratio": 1.00, "filter_key": "L8", "cat": "Melee", "def_on": False},
         
-        {"id": "c9_engineer", "name": "C9 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 0.57, "filter_key": "C9", "cat": "Engineer Corps"},
-        {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "C8", "cat": "Engineer Corps"}
+        {"id": "c9_engineer", "name": "C9 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 0.57, "filter_key": "C9", "cat": "Engineer Corps", "def_on": True},
+        {"id": "c8_engineer", "name": "C8 Engineer Corps", "lead_cost": 10, "stacks": 1, "ratio": 1.03, "filter_key": "C8", "cat": "Engineer Corps", "def_on": True}
     ]
 
     truppe_selezionate = []
     moltiplicatore_totale = 0.0
     categorie = ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]
     
-    # Interfaccia a Checkbox organizzata per categorie (Mostra solo le truppe coerenti con G9 o G8 selezionato)
+    # Interfaccia Checkbox organizzata
     for cat in categorie:
         st.markdown(f"**{cat}**")
         cols = st.columns(3)
@@ -65,8 +66,8 @@ def mostra_calcolatore_semplice(ctx):
             with cols[idx % 3]:
                 nome_tradotto = ctx.get(truppa["name"], truppa["name"])
                 
-                # Di default sono tutte spuntate all'interno del livello massimo scelto
-                attiva = st.checkbox(nome_tradotto, value=True, key=f"chk_v20_{truppa['id']}")
+                # Checkbox interattiva flessibile
+                attiva = st.checkbox(nome_tradotto, value=truppa["def_on"], key=f"chk_v21_{truppa['id']}")
                 if attiva and truppa["stacks"] > 0:
                     truppe_selezionate.append(truppa)
                     contr_riga = truppa["stacks"] * truppa["ratio"]
@@ -95,16 +96,13 @@ def mostra_calcolatore_semplice(ctx):
     totale_leadership_usata = 0
 
     if moltiplicatore_totale > 0 and truppe_selezionate:
-        # Calcolo del Riferimento Stack # dinamico e reattivo basato sulle truppe effettivamente spuntate
         stack_reference = max_leadership / moltiplicatore_totale
 
         for truppa in truppe_selezionate:
-            # APPLICAZIONE MILLIMETRICA DELLA FORMULA DI MAURIZIO:
-            # =INT(Ratio / Costo_Lead * Riferimento_Stack / 10 + 0.45) * 10
+            # APPLICAZIONE FORMULA ESATTA DI MAURIZIO
             valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_reference / 10) + 0.45
             count_truppe_per_stack = int(valore_interno) * 10
             
-            # Calcolo della leadership parziale della riga
             leadership_riga = count_truppe_per_stack * truppa["stacks"] * truppa["lead_cost"]
             totale_leadership_usata += leadership_riga
 
@@ -123,7 +121,7 @@ def mostra_calcolatore_semplice(ctx):
                 </div>
                 """
         
-        # Box riassuntivi della leadership allocata
+        # RISOLTO IL TYPO DI FORMATTAZIONE SULLA VARIABILE RIMANENTE
         lead_usata_formattata = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_formattata = f"{max_leadership:,}".replace(",", ".")
         
@@ -132,7 +130,7 @@ def mostra_calcolatore_semplice(ctx):
             st.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_total_used_lead_lbl", "Total Leadership Allocated")}</h3><p style="font-size:24px;color:#4a86e8;font-weight:bold;margin:0;">{lead_usata_formattata} / {lead_max_formattata}</p></div>', unsafe_allow_html=True)
         with col_res2:
             rimanente = max_leadership - totale_leadership_usata
-            rimanente_formattata = f"{rimanente:,}".replace(".")
+            rimanente_formattata = f"{rimanente:,}".replace(",", ".")
             colore_rimanente = "#38761d" if rimanente >= 0 else "#990000"
             st.markdown(f'<div class="chat-box" style="text-align:center;"><h3>{ctx.get("calc_remaining_lead_lbl", "Remaining Leadership")}</h3><p style="font-size:24px;color:{colore_rimanente};font-weight:bold;margin:0;">{rimanente_formattata}</p></div>', unsafe_allow_html=True)
         
