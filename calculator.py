@@ -1,7 +1,7 @@
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # RISOLTO: Ripristinato il tuo vero titolo interno per evitare il doppione in alto
+    # Titolo interno originale per evitare doppioni
     st.markdown(f"<h1>{ctx.get('simple_calc_main_h1', '🧮 Calcolatore Tattico Esercito e Mostri')}</h1>", unsafe_allow_html=True)
     st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
@@ -41,7 +41,7 @@ def mostra_calcolatore_semplice(ctx):
         testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter your Maximum Leadership or Maximum Supremacy value to calculate the troop stack distribution.')
         st.markdown(f'<div class="chat-box" style="padding:15px!important; text-align:center; color:#a69e8d; border-left:4px solid #bd9b53!important; margin-bottom:20px;">{testo_notifica}</div>', unsafe_allow_html=True)
 
-    # TITOLO SELEZIONE TRUPPE ORIGINALE E RIPRISTINATO
+    # TITOLO SELEZIONE TRUPPE ORIGINALE INVARIATO
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops and Monsters to Include in March')}")
 
     # --- DATABASE COMPLETO TRUPPE REGOLARI ---
@@ -64,13 +64,6 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "s8_melee", "name": "Level 8 Specialists Melee", "lead_cost": 1, "ratio": 1.00, "cat": "Melee", "row": 4, "col_idx": 3},
         {"id": "c9_engineer", "name": "Level 9 Engineer Corps", "lead_cost": 10, "ratio": 0.57, "cat": "Engineer Corps", "row": 5, "col_idx": 0},
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
-    ]
-
-    # DATABASE MOSTRI CON I PARAMETRI REALI BLOCCATI
-    database_mostri = [
-        {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 53, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
-        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 53, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
-        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "col_idx": 2}
     ]
 
     stati_checkbox = {}
@@ -102,46 +95,76 @@ def mostra_calcolatore_semplice(ctx):
     attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v5")
     attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v5")
     attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
-    # --- CALCOLO REATTIVO BACKGROUND DISTINTO CON LOGICA EXCEL RIPRISTINATA ---
+    # --- CALCOLO REATTIVO BACKGROUND DISTINTO STRUTTURATO SULLA SUPREMAZIA ---
+    stack_ref_lead = max_leadership / moltiplicatore_truppe if moltiplicatore_truppe > 0 else 0
+
     if max_leadership > 0 or max_supremacy > 0:
         st.markdown(f"### {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
         
-        # Costante di riferimento del clan impostata a 13.9 come da tabella Excel
-        riferimento_stack = max_leadership / 13.9 if moltiplicatore_truppe > 0 else 0
-        
         totale_leadership_usata = 0
+        totale_supremacy_usata = 0
         mappa_risultati = {}
         mappa_mostri_risultati = {}
 
-        # 1. Calcolo e Ripristino delle Truppe Regolari nella Griglia
+        # 1. Calcolo delle Truppe Regolari
         for truppa in database_truppe:
-            if stati_checkbox.get(truppa["id"], False) and riferimento_stack > 0:
-                valore_interno = (truppa["ratio"] / truppa["lead_cost"] * riferimento_stack)
-                count_truppe = int(valore_interno / 10) * 10
+            if stati_checkbox.get(truppa["id"], False) and stack_ref_lead > 0:
+                valore_interno = (truppa["ratio"] / truppa["lead_cost"] * stack_ref_lead / 10) + 0.45
+                count_truppe = int(valore_interno) * 10
                 totale_leadership_usata += count_truppe * truppa["lead_cost"]
                 count_formattato = f"{count_truppe:,}".replace(",", ".")
             else:
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"], "row": truppa["row"]}
 
-        # 2. ⚔️ LOGICA EXCEL ORIGINALE RIPRISTINATA: INT(Ratio/Costo*Ref_Stack/10+0.5)*10
+        # 2. Algoritmo di saturazione basato sulle 14 parti totali (Invertito: M9=2, M8=4, M7=8)
+        # Costi fissi reali autorità per singolo soldato
         costo_m9 = 53
         costo_m8 = 53
         costo_m7 = 43
 
-        tot_m9 = int(((0.1383 / costo_m9 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m9 and riferimento_stack > 0 else 0
-        tot_m8 = int(((0.2486 / costo_m8 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m8 and riferimento_stack > 0 else 0
-        tot_m7 = int(((0.4480 / costo_m7 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m7 and riferimento_stack > 0 else 0
+        # Numero di stack (slot) bloccati rigidamente a 4 per tipo come richiesto
+        stacks_m9 = 4
+        stacks_m8 = 4
+        stacks_m7 = 4
 
-        # Divisione per slot (stack) per l'output in ogni singola casella di gioco
-        m9_slot = int(tot_m9 / 4)
-        m8_slot = int(tot_m8 / 4)
-        m7_slot = int(tot_m7 / 2)
+        peso_m9 = 2.0 if attiva_m9 else 0.0
+        peso_m8 = 4.0 if attiva_m8 else 0.0
+        peso_m7 = 8.0 if attiva_m7 else 0.0
 
-        # CORREZIONE CONTATORE: La Supremazia usata in gioco è (mostri per slot * numero slot * costo autorità)
-        totale_supremacy_usata = (m9_slot * 4 * costo_m9) + (m8_slot * 4 * costo_m8) + (m7_slot * 2 * costo_m7)
+        totale_parti_attive = peso_m9 + peso_m8 + peso_m7
 
-        # Configurazione stringhe di testo box contatori finali
+        if totale_parti_attive > 0 and max_supremacy > 0:
+            # Calcoliamo il valore economico di una singola parte della torta
+            supremacy_per_singola_parte = max_supremacy / totale_parti_attive
+            
+            # Assegniamo il budget monetario e calcoliamo i mostri TOTALI per livello
+            tot_m9_teorico = (supremacy_per_singola_parte * peso_m9) / costo_m9
+            tot_m8_teorico = (supremacy_per_singola_parte * peso_m8) / costo_m8
+            tot_m7_teorico = (supremacy_per_singola_parte * peso_m7) / costo_m7
+
+            # Dividiamo rigidamente per 4 per ricavare la quota esatta per ogni singola casella
+            m9_slot = int((tot_m9_teorico / stacks_m9) / 10) * 10
+            m8_slot = int((tot_m8_teorico / stacks_m8) / 10) * 10
+            m7_slot = int((tot_m7_teorico / stacks_m7) / 10) * 10
+
+            # Controllore di sicurezza rigido complessivo anti-sforo
+            totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
+
+            while totale_supremacy_usata > max_supremacy:
+                if m7_slot >= 10: m7_slot -= 10
+                elif m8_slot >= 10: m8_slot -= 10
+                elif m9_slot >= 10: m9_slot -= 10
+                else: break
+                totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
+        else:
+            m9_slot, m8_slot, m7_slot = 0, 0, 0
+
+        mappa_mostri_risultati["m9_group"] = {"name": ctx.get("Level 9 Monsters", "Level 9 Monsters"), "count": f"{m9_slot}", "col_idx": 0}
+        mappa_mostri_risultati["m8_group"] = {"name": ctx.get("Level 8 Monsters", "Level 8 Monsters"), "count": f"{m8_slot}", "col_idx": 1}
+        mappa_mostri_risultati["m7_group"] = {"name": ctx.get("Level 7 Monsters", "Level 7 Monsters"), "count": f"{m7_slot}", "col_idx": 2}
+
+        # Configurazione box riassuntivi finali
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_txt = f"{max_leadership:,}".replace(",", ".")
         sup_usata_txt = f"{totale_supremacy_usata:,}".replace(",", ".")
@@ -179,12 +202,12 @@ def mostra_calcolatore_semplice(ctx):
         
         cols_mostri = st.columns(4)
         mostri_render = [
-            {"name": ctx.get("Level 9 Monsters", "Level 9 Monsters"), "count": f"{m9_slot}", "col": 0},
-            {"name": ctx.get("Level 8 Monsters", "Level 8 Monsters"), "count": f"{m8_slot}", "col": 1},
-            {"name": ctx.get("Level 7 Monsters", "Level 7 Monsters"), "count": f"{m7_slot}", "col": 2}
+            mappa_mostri_risultati["m9_group"],
+            mappa_mostri_risultati["m8_group"],
+            mappa_mostri_risultati["m7_group"]
         ]
         for m_r in mostri_render:
-            with cols_mostri[m_r["col"]]:
+            with cols_mostri[m_r["col_idx"]]:
                 st.markdown(f"""
                 <div class="chat-box" style="text-align: center; padding: 12px!important; min-height: 85px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 10px;">
                     <span style="color:#a69e8d; font-size:12px; font-weight:500; display: block; margin-bottom: 6px; line-height: 1.2;">{m_r['name']}</span>
