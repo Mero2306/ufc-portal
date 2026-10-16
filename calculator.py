@@ -16,16 +16,32 @@ def mostra_calcolatore_semplice(ctx):
     """, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- INPUT AFFIANCATI ---
+    # --- INPUT AFFIANCATI (CORRETTO: RIPRISTINATI VALORI DI PARTENZA A 0) ---
     c1, c2 = st.columns(2)
     max_leadership = c1.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
-        min_value=0, value=332000, step=1000, format="%d", key="sc_max_lead_v2026_final"
+        min_value=0, value=0, step=1000, format="%d", key="sc_max_lead_v2026_final"
     )
     max_supremacy = c2.number_input(
         ctx.get('calc_max_supremacy_lbl', 'Maximum Supremacy:'),
-        min_value=0, value=223000, step=1000, format="%d", key="sc_max_sup_v2026_final"
+        min_value=0, value=0, step=1000, format="%d", key="sc_max_sup_v2026_final"
     )
+
+    # --- RIPRISTINATO: BOX DI CONFERMA VISIVA CENTRALIZZATO ORIGINALE ---
+    if max_leadership > 0 or max_supremacy > 0:
+        lead_txt = f"{max_leadership:,}".replace(",", ".")
+        sup_txt = f"{max_supremacy:,}".replace(",", ".")
+        st.markdown(f"""
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 500px; margin: 10px auto 25px auto; padding: 8px !important; border: 1px solid #bd9b53; background: rgba(189, 155, 83, 0.05); border-radius: 4px; text-align: center;">
+            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">{ctx.get('calc_confirmed_lead', 'CONFIRMED LEADERSHIP')}</span><p style="font-size: 20px; font-weight: bold; color: #f0e6d2; margin: 0; font-family: 'Cinzel', serif;">{lead_txt}</p></div>
+            <div><span style="font-size: 11px; color: #bd9b53; font-weight: bold;">{ctx.get('calc_confirmed_sup', 'CONFIRMED SUPREMACY')}</span><p style="font-size: 20px; font-weight: bold; color: #bd9b53; margin: 0; font-family: 'Cinzel', serif;">{sup_txt}</p></div>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter your Maximum Leadership or Maximum Supremacy value to calculate the troop stack distribution.')
+        st.markdown(f'<div class="chat-box" style="padding:15px!important; text-align:center; color:#a69e8d; border-left:4px solid #bd9b53!important; margin-bottom:20px;">{testo_notifica}</div>', unsafe_allow_html=True)
+
+    st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops and Monsters to Include in March')}")
 
     # --- DATABASE COMPLETO TRUPPE REGOLARI ---
     database_truppe = [
@@ -107,9 +123,9 @@ def mostra_calcolatore_semplice(ctx):
         costo_m8 = 53
         costo_m7 = 43
 
-        tot_m9 = int(((0.1383 / costo_m9 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m9 else 0
-        tot_m8 = int(((0.2486 / costo_m8 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m8 else 0
-        tot_m7 = int(((0.4480 / costo_m7 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m7 else 0
+        tot_m9 = int(((0.1383 / costo_m9 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m9 and riferimento_stack > 0 else 0
+        tot_m8 = int(((0.2486 / costo_m8 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m8 and riferimento_stack > 0 else 0
+        tot_m7 = int(((0.4480 / costo_m7 * riferimento_stack) / 10) + 0.5) * 10 if attiva_m7 and riferimento_stack > 0 else 0
 
         # Divisione per slot (stack) per l'output in ogni singola casella di gioco
         m9_slot = int(tot_m9 / 4)
