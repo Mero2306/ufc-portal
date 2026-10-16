@@ -41,7 +41,7 @@ def mostra_calcolatore_semplice(ctx):
         testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter your Maximum Leadership or Maximum Supremacy value to calculate the troop stack distribution.')
         st.markdown(f'<div class="chat-box" style="padding:15px!important; text-align:center; color:#a69e8d; border-left:4px solid #bd9b53!important; margin-bottom:20px;">{testo_notifica}</div>', unsafe_allow_html=True)
 
-    # TITOLO SELEZIONE TRUPPE ORIGINALE INVARIATO
+    # TITOLO SELEZIONE TRUPPE ORIGINALE
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops and Monsters to Include in March')}")
 
     # --- DATABASE COMPLETO TRUPPE REGOLARI ---
@@ -117,13 +117,11 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"], "row": truppa["row"]}
 
-        # 2. Algoritmo di saturazione basato sulle 14 parti totali (Invertito: M9=2, M8=4, M7=8)
-        # Costi fissi reali autorità per singolo soldato
+        # 2. Algoritmo di saturazione proporzionale HP con freno di sicurezza anti-sforo reale
         costo_m9 = 53
         costo_m8 = 53
         costo_m7 = 43
 
-        # Numero di stack (slot) bloccati rigidamente a 4 per tipo come richiesto
         stacks_m9 = 4
         stacks_m8 = 4
         stacks_m7 = 4
@@ -135,27 +133,29 @@ def mostra_calcolatore_semplice(ctx):
         totale_parti_attive = peso_m9 + peso_m8 + peso_m7
 
         if totale_parti_attive > 0 and max_supremacy > 0:
-            # Calcoliamo il valore economico di una singola parte della torta
             supremacy_per_singola_parte = max_supremacy / totale_parti_attive
             
-            # Assegniamo il budget monetario e calcoliamo i mostri TOTALI per livello
             tot_m9_teorico = (supremacy_per_singola_parte * peso_m9) / costo_m9
             tot_m8_teorico = (supremacy_per_singola_parte * peso_m8) / costo_m8
             tot_m7_teorico = (supremacy_per_singola_parte * peso_m7) / costo_m7
 
-            # Dividiamo rigidamente per 4 per ricavare la quota esatta per ogni singola casella
             m9_slot = int((tot_m9_teorico / stacks_m9) / 10) * 10
             m8_slot = int((tot_m8_teorico / stacks_m8) / 10) * 10
             m7_slot = int((tot_m7_teorico / stacks_m7) / 10) * 10
 
-            # Controllore di sicurezza rigido complessivo anti-sforo
+            # Calcolo della Supremazia usata complessiva
             totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
 
+            # FRENO DI SICUREZZA RIGIDO: Riduce a blocchi di 10 l'ultimo livello finché non rientra nella Supremazia reale
             while totale_supremacy_usata > max_supremacy:
-                if m7_slot >= 10: m7_slot -= 10
-                elif m8_slot >= 10: m8_slot -= 10
-                elif m9_slot >= 10: m9_slot -= 10
-                else: break
+                if m7_slot >= 10:
+                    m7_slot -= 10
+                elif m8_slot >= 10:
+                    m8_slot -= 10
+                elif m9_slot >= 10:
+                    m9_slot -= 10
+                else:
+                    break
                 totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
         else:
             m9_slot, m8_slot, m7_slot = 0, 0, 0
