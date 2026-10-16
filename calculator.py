@@ -117,7 +117,7 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"], "row": truppa["row"]}
 
-        # 2. Algoritmo di saturazione proporzionale HP con freno di sicurezza anti-sforo reale
+        # 2. Algoritmo di saturazione proporzionale HP calcolato UNITA' PER UNITA'
         costo_m9 = 53
         costo_m8 = 53
         costo_m7 = 43
@@ -139,21 +139,22 @@ def mostra_calcolatore_semplice(ctx):
             tot_m8_teorico = (supremacy_per_singola_parte * peso_m8) / costo_m8
             tot_m7_teorico = (supremacy_per_singola_parte * peso_m7) / costo_m7
 
-            m9_slot = int((tot_m9_teorico / stacks_m9) / 10) * 10
-            m8_slot = int((tot_m8_teorico / stacks_m8) / 10) * 10
-            m7_slot = int((tot_m7_teorico / stacks_m7) / 10) * 10
+            # Calcolo l'unità singola esatta per slot senza troncare rigidamente alle decine
+            m9_slot = int(tot_m9_teorico / stacks_m9)
+            m8_slot = int(tot_m8_teorico / stacks_m8)
+            m7_slot = int(tot_m7_teorico / stacks_m7)
 
-            # Calcolo della Supremazia usata complessiva
+            # Calcolo della Supremazia usata complessiva unità per unità
             totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
 
-            # FRENO DI SICUREZZA RIGIDO: Riduce a blocchi di 10 l'ultimo livello finché non rientra nella Supremazia reale
+            # FRENO DI SICUREZZA ASSOLUTO: Sgrana di 1 singolo mostro alla volta finché non rientra nella Supremazia esatta
             while totale_supremacy_usata > max_supremacy:
-                if m7_slot >= 10:
-                    m7_slot -= 10
-                elif m8_slot >= 10:
-                    m8_slot -= 10
-                elif m9_slot >= 10:
-                    m9_slot -= 10
+                if m7_slot > 0:
+                    m7_slot -= 1
+                elif m8_slot > 0:
+                    m8_slot -= 1
+                elif m9_slot > 0:
+                    m9_slot -= 1
                 else:
                     break
                 totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
