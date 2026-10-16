@@ -1,8 +1,8 @@
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # RIPRISTINATO IL TUO TITOLO ORIGINALE INTESTAZIONE PAGINA
-    st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
+    # RISOLTO: Ripristinato il tuo vero titolo interno per evitare il doppione in alto
+    st.markdown(f"<h1>{ctx.get('simple_calc_main_h1', '🧮 Calcolatore Tattico Esercito e Mostri')}</h1>", unsafe_allow_html=True)
     st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
     # --- NOTIFICA SUI CAPITANI SOTTO IL TITOLO ---
