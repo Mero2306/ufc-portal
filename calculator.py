@@ -41,7 +41,7 @@ def mostra_calcolatore_semplice(ctx):
         testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter your Maximum Leadership or Maximum Supremacy value to calculate the troop stack distribution.')
         st.markdown(f'<div class="chat-box" style="padding:15px!important; text-align:center; color:#a69e8d; border-left:4px solid #bd9b53!important; margin-bottom:20px;">{testo_notifica}</div>', unsafe_allow_html=True)
 
-    # TITOLO SELEZIONE TRUPPE ORIGINALE
+    # TITOLO SELEZIONE TRUPPE ORIGINALE INVARIATO
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops and Monsters to Include in March')}")
 
     # --- DATABASE COMPLETO TRUPPE REGOLARI ---
@@ -117,7 +117,7 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"], "row": truppa["row"]}
 
-        # 2. Algoritmo di saturazione proporzionale HP calcolato UNITA' PER UNITA'
+        # 2. Algoritmo di saturazione proporzionale HP con arrotondamento rigido PER DIFETTO (Truncate)
         costo_m9 = 53
         costo_m8 = 53
         costo_m7 = 43
@@ -139,7 +139,7 @@ def mostra_calcolatore_semplice(ctx):
             tot_m8_teorico = (supremacy_per_singola_parte * peso_m8) / costo_m8
             tot_m7_teorico = (supremacy_per_singola_parte * peso_m7) / costo_m7
 
-            # Calcolo l'unità singola esatta per slot senza troncare rigidamente alle decine
+            # Arrotondamento rigido per difetto (int() rimuove tutti i decimali senza approssimare all'insù)
             m9_slot = int(tot_m9_teorico / stacks_m9)
             m8_slot = int(tot_m8_teorico / stacks_m8)
             m7_slot = int(tot_m7_teorico / stacks_m7)
@@ -147,7 +147,7 @@ def mostra_calcolatore_semplice(ctx):
             # Calcolo della Supremazia usata complessiva unità per unità
             totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
 
-            # FRENO DI SICUREZZA ASSOLUTO: Sgrana di 1 singolo mostro alla volta finché non rientra nella Supremazia esatta
+            # FRENO DI SICUREZZA ASSOLUTO: Se sfora anche solo di 1 punto, toglie un mostro alla volta partendo dal basso
             while totale_supremacy_usata > max_supremacy:
                 if m7_slot > 0:
                     m7_slot -= 1
