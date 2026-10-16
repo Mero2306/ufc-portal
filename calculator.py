@@ -117,7 +117,7 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"], "row": truppa["row"]}
 
-        # 2. Algoritmo basato interamente sui ratei storici della salute (HP Ratio)
+        # 2. Algoritmo basato sui ratei e ricalibrato con arrotondamento RIGIDO PER DIFETTO ALLE DECINE
         costo_m9 = 53
         costo_m8 = 53
         costo_m7 = 43
@@ -126,7 +126,6 @@ def mostra_calcolatore_semplice(ctx):
         stacks_m8 = 4
         stacks_m7 = 4
 
-        # Assegnazione dei ratei originali del clan
         rateo_m9 = 0.1383 if attiva_m9 else 0.0
         rateo_m8 = 0.2486 if attiva_m8 else 0.0
         rateo_m7 = 0.4480 if attiva_m7 else 0.0
@@ -134,25 +133,29 @@ def mostra_calcolatore_semplice(ctx):
         somma_ratei_attivi = rateo_m9 + rateo_m8 + rateo_m7
 
         if somma_ratei_attivi > 0 and max_supremacy > 0:
-            # Trovo il coefficiente base dividendo la Supremazia Massima per la somma dei ratei attivi
             base_supremacy_calcolo = max_supremacy / somma_ratei_attivi
             
-            # Calcolo le unità per slot in modo pulito senza troncamenti a decine fisse
-            m9_slot = int((base_supremacy_calcolo * rateo_m9) / costo_m9 / stacks_m9)
-            m8_slot = int((base_supremacy_calcolo * rateo_m8) / costo_m8 / stacks_m8)
-            m7_slot = int((base_supremacy_calcolo * rateo_m7) / costo_m7 / stacks_m7)
+            # Calcolo iniziale grezzo unità per unità
+            tot_m9_teorico = (base_supremacy_calcolo * rateo_m9) / costo_m9 / stacks_m9
+            tot_m8_teorico = (base_supremacy_calcolo * rateo_m8) / costo_m8 / stacks_m8
+            tot_m7_teorico = (base_supremacy_calcolo * rateo_m7) / costo_m7 / stacks_m7
 
-            # Somma totale del consumo di Supremazia unità per unità
+            # MODIFICA: Taglio netto alle decine inferiori per difetto puro (Truncate a blocchi di 10)
+            m9_slot = int(tot_m9_teorico / 10) * 10
+            m8_slot = int(tot_m8_teorico / 10) * 10
+            m7_slot = int(tot_m7_teorico / 10) * 10
+
+            # Somma totale del consumo di Supremazia ricalcolato a decine tonde
             totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
 
-            # FRENO DI SICUREZZA UNITÀ PER UNITÀ: Toglie 1 mostro alla volta partendo dal basso fino a rientrare nel limite reale
+            # FRENO DI SICUREZZA DI ULTIMA ISTANZA: Riduce di 10 alla volta se gli scarti superano max_supremacy
             while totale_supremacy_usata > max_supremacy:
-                if m7_slot > 0:
-                    m7_slot -= 1
-                elif m8_slot > 0:
-                    m8_slot -= 1
-                elif m9_slot > 0:
-                    m9_slot -= 1
+                if m7_slot >= 10:
+                    m7_slot -= 10
+                elif m8_slot >= 10:
+                    m8_slot -= 10
+                elif m9_slot >= 10:
+                    m9_slot -= 10
                 else:
                     break
                 totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
