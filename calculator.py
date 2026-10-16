@@ -1,7 +1,7 @@
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # Titolo e descrizioni UFC
+    # RIPRISTINATO IL TUO TITOLO ORIGINALE IDENTICO
     st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
     st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
@@ -16,7 +16,7 @@ def mostra_calcolatore_semplice(ctx):
     """, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- INPUT AFFIANCATI (CORRETTO: RIPRISTINATI VALORI DI PARTENZA A 0) ---
+    # --- INPUT AFFIANCATI (IMPOSTATI RIGIDAMENTE A 0 AL CARICAMENTO) ---
     c1, c2 = st.columns(2)
     max_leadership = c1.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
@@ -27,7 +27,7 @@ def mostra_calcolatore_semplice(ctx):
         min_value=0, value=0, step=1000, format="%d", key="sc_max_sup_v2026_final"
     )
 
-    # --- RIPRISTINATO: BOX DI CONFERMA VISIVA CENTRALIZZATO ORIGINALE ---
+    # --- BOX DI CONFERMA VISIVA CENTRALIZZATO ORIGINALE ---
     if max_leadership > 0 or max_supremacy > 0:
         lead_txt = f"{max_leadership:,}".replace(",", ".")
         sup_txt = f"{max_supremacy:,}".replace(",", ".")
@@ -65,15 +65,23 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
 
+    # DATABASE MOSTRI CON I PARAMETRI REALI BLOCCATI
+    database_mostri = [
+        {"id": "m9_group", "name": "Level 9 Monsters", "auth_cost": 53, "stacks": 4, "ratio": 0.1383, "lvl_group": "M9", "col_idx": 0},
+        {"id": "m8_group", "name": "Level 8 Monsters", "auth_cost": 53, "stacks": 4, "ratio": 0.2486, "lvl_group": "M8", "col_idx": 1},
+        {"id": "m7_group", "name": "Level 7 Monsters", "auth_cost": 43, "stacks": 2, "ratio": 0.4480, "lvl_group": "M7", "col_idx": 2}
+    ]
+
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
+    # RIPRISTINATO: Gestione pulita dei macro-titoli delle categorie
     mappa_titoli_categorie = {
         "Flyer": f"🛡️ {ctx.get('Level 9 Guardians Flyer', 'Flyer').replace('Liv.9 Guardiani ', '')}",
         "Mounted": f"⚡ {ctx.get('Level 9 Guardians Mounted', 'Mounted').replace('Liv.9 Guardiani ', '')}",
         "Ranged": f"⚔️ {ctx.get('Level 9 Guardians Ranged', 'Ranged').replace('Liv.9 Guardiani ', '')}",
         "Melee": f"🔮 {ctx.get('Level 9 Guardians Melee', 'Melee').replace('Liv.9 Guardiani ', '')}",
-        "Engineer Corps": f"📐 {ctx.get('menu_calc', 'Engineer Corps').replace('⚔️ ', '').replace('Calcolatore Truppe', 'Corpo Genieri')}"
+        "Engineer Corps": "📐 Corpo Genieri"
     }
     
     for cat in ["Flyer", "Mounted", "Ranged", "Melee", "Engineer Corps"]:
@@ -94,8 +102,6 @@ def mostra_calcolatore_semplice(ctx):
     attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v5")
     attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v5")
     attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
-    
-    stati_mostri = {"M9": attiva_m9, "M8": attiva_m8, "M7": attiva_m7}
     # --- CALCOLO REATTIVO BACKGROUND DISTINTO CON LOGICA EXCEL RIPRISTINATA ---
     if max_leadership > 0 or max_supremacy > 0:
         st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
