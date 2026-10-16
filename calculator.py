@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit st
 
 def mostra_calcolatore_semplice(ctx):
     # Titolo interno originale per evitare doppioni
@@ -65,7 +65,6 @@ def mostra_calcolatore_semplice(ctx):
         {"id": "c9_engineer", "name": "Level 9 Engineer Corps", "lead_cost": 10, "ratio": 0.57, "cat": "Engineer Corps", "row": 5, "col_idx": 0},
         {"id": "c8_engineer", "name": "Level 8 Engineer Corps", "lead_cost": 10, "ratio": 1.03, "cat": "Engineer Corps", "row": 5, "col_idx": 1}
     ]
-
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
@@ -95,6 +94,7 @@ def mostra_calcolatore_semplice(ctx):
     attiva_m9 = c_m1.checkbox(ctx.get("Include Level 9 Monsters (M9)", "Include Level 9 Monsters (M9)"), value=True, key="chk_unif_m9_v5")
     attiva_m8 = c_m2.checkbox(ctx.get("Include Level 8 Monsters (M8)", "Include Level 8 Monsters (M8)"), value=True, key="chk_unif_m8_v5")
     attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
+
     # --- CALCOLO REATTIVO BACKGROUND DISTINTO STRUTTURATO SULLA SUPREMAZIA ---
     stack_ref_lead = max_leadership / moltiplicatore_truppe if moltiplicatore_truppe > 0 else 0
 
@@ -117,10 +117,10 @@ def mostra_calcolatore_semplice(ctx):
                 count_formattato = "0"
             mappa_risultati[truppa["id"]] = {"name": ctx.get(truppa["name"], truppa["name"]), "count": count_formattato, "col_idx": truppa["col_idx"], "row": truppa["row"]}
 
-        # 2. Algoritmo basato sui ratei e ricalibrato con arrotondamento RIGIDO PER DIFETTO ALLE DECINE
-        costo_m9 = 53
-        costo_m8 = 53
-        costo_m7 = 43
+        # 2. Algoritmo basato sui ratei e ricalibrato sulla MEDIA ESATTA dei costi (53.5 e 43.25)
+        costo_m9 = 53.5
+        costo_m8 = 53.5
+        costo_m7 = 43.25
 
         stacks_m9 = 4
         stacks_m8 = 4
@@ -135,29 +135,24 @@ def mostra_calcolatore_semplice(ctx):
         if somma_ratei_attivi > 0 and max_supremacy > 0:
             base_supremacy_calcolo = max_supremacy / somma_ratei_attivi
             
-            # Calcolo iniziale grezzo unità per unità
             tot_m9_teorico = (base_supremacy_calcolo * rateo_m9) / costo_m9 / stacks_m9
             tot_m8_teorico = (base_supremacy_calcolo * rateo_m8) / costo_m8 / stacks_m8
             tot_m7_teorico = (base_supremacy_calcolo * rateo_m7) / costo_m7 / stacks_m7
 
-            # MODIFICA: Taglio netto alle decine inferiori per difetto puro (Truncate a blocchi di 10)
+            # Arrotondamento per difetto alle decine inferiore sicuro
             m9_slot = int(tot_m9_teorico / 10) * 10
             m8_slot = int(tot_m8_teorico / 10) * 10
             m7_slot = int(tot_m7_teorico / 10) * 10
 
-            # Somma totale del consumo di Supremazia ricalcolato a decine tonde
+            # Somma totale del consumo di Supremazia ricalcolato basato sui costi medi
             totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
 
-            # FRENO DI SICUREZZA DI ULTIMA ISTANZA: Riduce di 10 alla volta se gli scarti superano max_supremacy
+            # FRENO DI SICUREZZA DI ULTIMA ISTANZA UNITÀ PER UNITÀ
             while totale_supremacy_usata > max_supremacy:
-                if m7_slot >= 10:
-                    m7_slot -= 10
-                elif m8_slot >= 10:
-                    m8_slot -= 10
-                elif m9_slot >= 10:
-                    m9_slot -= 10
-                else:
-                    break
+                if m7_slot >= 10: m7_slot -= 10
+                elif m8_slot >= 10: m8_slot -= 10
+                elif m9_slot >= 10: m9_slot -= 10
+                else: break
                 totale_supremacy_usata = (m9_slot * stacks_m9 * costo_m9) + (m8_slot * stacks_m8 * costo_m8) + (m7_slot * stacks_m7 * costo_m7)
         else:
             m9_slot, m8_slot, m7_slot = 0, 0, 0
@@ -169,7 +164,7 @@ def mostra_calcolatore_semplice(ctx):
         # Configurazione box riassuntivi finali
         lead_usata_txt = f"{totale_leadership_usata:,}".replace(",", ".")
         lead_max_txt = f"{max_leadership:,}".replace(",", ".")
-        sup_usata_txt = f"{totale_supremacy_usata:,}".replace(",", ".")
+        sup_usata_txt = f"{int(totale_supremacy_usata):,}".replace(",", ".")
         sup_max_txt = f"{max_supremacy:,}".replace(",", ".")
         
         col_res1, col_res2 = st.columns(2)
