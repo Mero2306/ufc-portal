@@ -1,7 +1,7 @@
 import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
-    # RIPRISTINATO IL TUO TITOLO ORIGINALE IDENTICO
+    # RIPRISTINATO IL TUO TITOLO ORIGINALE INTESTAZIONE PAGINA
     st.markdown(f"<h1>{ctx.get('calc_h1', '⚔️ Official Calculator for attacks on epic monsters.')}</h1>", unsafe_allow_html=True)
     st.write(ctx.get('simple_calc_main_subtitle', 'Enter your maximum leadership and customize your active troops.'))
     
@@ -16,7 +16,7 @@ def mostra_calcolatore_semplice(ctx):
     """, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- INPUT AFFIANCATI (IMPOSTATI RIGIDAMENTE A 0 AL CARICAMENTO) ---
+    # --- INPUT AFFIANCATI IMPOSTATI A 0 ---
     c1, c2 = st.columns(2)
     max_leadership = c1.number_input(
         ctx.get('calc_max_leadership_lbl', 'Maximum Leadership:'),
@@ -41,6 +41,7 @@ def mostra_calcolatore_semplice(ctx):
         testo_notifica = ctx.get('calc_no_troops_allocated', 'Please enter your Maximum Leadership or Maximum Supremacy value to calculate the troop stack distribution.')
         st.markdown(f'<div class="chat-box" style="padding:15px!important; text-align:center; color:#a69e8d; border-left:4px solid #bd9b53!important; margin-bottom:20px;">{testo_notifica}</div>', unsafe_allow_html=True)
 
+    # TITOLO SELEZIONE TRUPPE ORIGINALE E RIPRISTINATO
     st.markdown(f"### {ctx.get('calc_select_troops_title', '⚔️ Select Troops and Monsters to Include in March')}")
 
     # --- DATABASE COMPLETO TRUPPE REGOLARI ---
@@ -75,7 +76,6 @@ def mostra_calcolatore_semplice(ctx):
     stati_checkbox = {}
     moltiplicatore_truppe = 0.0
     
-    # RIPRISTINATO: Gestione pulita dei macro-titoli delle categorie
     mappa_titoli_categorie = {
         "Flyer": f"🛡️ {ctx.get('Level 9 Guardians Flyer', 'Flyer').replace('Liv.9 Guardiani ', '')}",
         "Mounted": f"⚡ {ctx.get('Level 9 Guardians Mounted', 'Mounted').replace('Liv.9 Guardiani ', '')}",
@@ -104,7 +104,7 @@ def mostra_calcolatore_semplice(ctx):
     attiva_m7 = c_m3.checkbox(ctx.get("Include Level 7 Monsters (M7)", "Include Level 7 Monsters (M7)"), value=True, key="chk_unif_m7_v5")
     # --- CALCOLO REATTIVO BACKGROUND DISTINTO CON LOGICA EXCEL RIPRISTINATA ---
     if max_leadership > 0 or max_supremacy > 0:
-        st.markdown(f"### 📋 {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
+        st.markdown(f"### {ctx.get('calc_results_h3', 'Calculated March Distribution')}")
         
         # Costante di riferimento del clan impostata a 13.9 come da tabella Excel
         riferimento_stack = max_leadership / 13.9 if moltiplicatore_truppe > 0 else 0
