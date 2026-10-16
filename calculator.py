@@ -1,4 +1,4 @@
-import streamlit st
+import streamlit as st
 
 def mostra_calcolatore_semplice(ctx):
     # Titolo interno originale per evitare doppioni
