@@ -677,7 +677,7 @@ else:
 
         import plotly.express as px
         t_nomi, t_valori = [], []
-        colori = {"Rare Crypt 30": "#4a86e8", "Epic Crypt 30": "#9900ff", "Epic Crypt 35": "#674ea7", "Arachne's Swarm": "#990000", "Epic Undead Squad": "#e6b8af", "Shadow City": "#f4cccc", "Armageddon": "#fce5cd", "Hellforge": "#eaeaea", "Epic Fenrir Squad": "#00bfff", "Jormungandr Squad": "#4682b4", "Epic Chimera Squad": "#ffd700", "Epic Basilisk Squad": "#ffaa00", "Epic Briareus Squad": "#fff2cc", "Sands of Eternity": "#ff4500", "Arcanomancer squad": "#e60000", "Yokai": "#38761d"}
+        colori = {"Rare Crypt 30": "#4a86e8", "Epic Crypt 30": "#9900ff", "Epic Crypt 35": "#674ea7", "Arachne's Swarm": "#990000", "Epic Undead Squad": "#e6b8af", "Shadow City": "#f4cccc", "Armageddon": "#fce5cd", "Hellforge": "#eaeaea", "Epic Fenrir Squad": "#00bfff", "Jormungandr Squad": "#4682b4", "Epic Chimera Squad": "#ffd700", "Epic Basilisk Squad": "#ffaa00", "Epic Briareus Squad": "#fff2cc", "Sands of Eternity": "#ff4500", "Arcanomancer squad": "#e60000", "Halloween": "#38761d"}
         
         for item in dettagli_forzieri:
             try:
