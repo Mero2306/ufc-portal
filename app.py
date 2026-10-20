@@ -370,7 +370,7 @@ else:
                             {"lettera": "BB", "name": "Epic Briareus Squad"},
                             {"lettera": "CO", "name": "Sands of Eternity"},
                             {"lettera": "CP", "name": "Arcanomancer squad"},
-                            {"lettera": "CQ", "name": "Yokai"},
+                            {"lettera": "CQ", "name": "Halloween"},
                             {"lettera": "CR", "name": "Union of Triumph"}
                         ]
 
