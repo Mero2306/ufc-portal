@@ -90,7 +90,7 @@ def mostra_trends_e_stats(ctx):
                     "Epic Undead Squad": 45, "Shadow City": 46, "Armageddon": 47, "Hellforge": 48,
                     "Epic Fenrir Squad": 49, "Jormungandr Squad": 50, "Epic Chimera Squad": 51,
                     "Epic Basilisk Squad": 52, "Epic Briareus Squad": 53, "Sands of Eternity": 92,
-                    "Arcanomancer squad": 93, "Yokai": 94
+                    "Arcanomancer squad": 93, "Halloween": 94
                 }
 
                 if not r_p_l.empty:
